@@ -36,19 +36,23 @@ PHP_FUNCTION(git_diff_tree_to_tree)
 	zval *new_tree = NULL;
 	php_git2_t *_new_tree = NULL;
 	zval *opts = NULL;
-	git_diff_options options = {0};
+	git_diff_options *options = NULL;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"rrra", &repo, &old_tree, &new_tree, &opts) == FAILURE) {
+		"r|rra", &repo, &old_tree, &new_tree, &opts) == FAILURE) {
 		return;
 	}
 
 	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-	ZEND_FETCH_RESOURCE(_old_tree, php_git2_t*, &old_tree, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-	ZEND_FETCH_RESOURCE(_new_tree, php_git2_t*, &new_tree, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-	php_git2_array_to_git_diff_options(&options, opts TSRMLS_CC);
-	result = git_diff_tree_to_tree(&diff, PHP_GIT2_V(_repo, repository), PHP_GIT2_V(_old_tree, tree), PHP_GIT2_V(_new_tree, tree), opts);
-	php_git2_git_diff_options_free(&options);
+    if (old_tree) {
+        ZEND_FETCH_RESOURCE(_old_tree, php_git2_t*, &old_tree, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+    }
+    if (new_tree) {
+        ZEND_FETCH_RESOURCE(_new_tree, php_git2_t*, &new_tree, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+    }
+	php_git2_array_to_git_diff_options(options, opts TSRMLS_CC);
+	result = git_diff_tree_to_tree(&diff, PHP_GIT2_V(_repo, repository), PHP_GIT2_V(_old_tree, tree), PHP_GIT2_V(_new_tree, tree), options);
+	php_git2_git_diff_options_free(options);
 	RETURN_LONG(result);
 }
 /* }}} */
@@ -62,19 +66,22 @@ PHP_FUNCTION(git_diff_tree_to_index)
 	git_diff *diff = NULL;
 	zval *repo = NULL, *old_tree = NULL, *index = NULL, *opts = NULL;
 	php_git2_t *_repo = NULL, *_old_tree = NULL, *_index = NULL, *_diff = NULL;
-	git_diff_options options = {0};
+	git_diff_options *options = NULL;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"rrra", &repo, &old_tree, &index, &opts) == FAILURE) {
+		"r|rra", &repo, &old_tree, &index, &opts) == FAILURE) {
 		return;
 	}
-
 	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-	ZEND_FETCH_RESOURCE(_old_tree, php_git2_t*, &old_tree, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-	ZEND_FETCH_RESOURCE(_index, php_git2_t*, &index, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-	php_git2_array_to_git_diff_options(&options, opts TSRMLS_CC);
-	result = git_diff_tree_to_index(&diff, PHP_GIT2_V(_repo, repository), PHP_GIT2_V(_old_tree, tree), PHP_GIT2_V(_index, index), opts);
-	php_git2_git_diff_options_free(&options);
+    if (old_tree) {
+        ZEND_FETCH_RESOURCE(_old_tree, php_git2_t*, &old_tree, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+    }
+    if (index) {
+        ZEND_FETCH_RESOURCE(_index, php_git2_t*, &index, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+    }
+	php_git2_array_to_git_diff_options(options, opts TSRMLS_CC);
+	result = git_diff_tree_to_index(&diff, PHP_GIT2_V(_repo, repository), PHP_GIT2_V(_old_tree, tree), PHP_GIT2_V(_index, index), options);
+	php_git2_git_diff_options_free(options);
 	if (php_git2_make_resource(&_diff, PHP_GIT2_TYPE_DIFF, diff, 0 TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
@@ -91,18 +98,20 @@ PHP_FUNCTION(git_diff_index_to_workdir)
 	git_diff *diff = NULL;
 	zval *repo = NULL, *index = NULL, *opts = NULL;
 	php_git2_t *_repo = NULL, *_index = NULL, *_diff = NULL;
-	git_diff_options options = GIT_DIFF_OPTIONS_INIT;
+	git_diff_options *options = NULL;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"rra", &repo, &index, &opts) == FAILURE) {
+		"r|ra", &repo, &index, &opts) == FAILURE) {
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-	ZEND_FETCH_RESOURCE(_index, php_git2_t*, &index, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-	php_git2_array_to_git_diff_options(&options, opts TSRMLS_CC);
-	result = git_diff_index_to_workdir(&diff, PHP_GIT2_V(_repo, repository), PHP_GIT2_V(_index, index), opts);
-	php_git2_git_diff_options_free(&options);
+    ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+    if (index) {
+        ZEND_FETCH_RESOURCE(_index, php_git2_t*, &index, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+    }
+	php_git2_array_to_git_diff_options(options, opts TSRMLS_CC);
+	result = git_diff_index_to_workdir(&diff, PHP_GIT2_V(_repo, repository), PHP_GIT2_V(_index, index), options);
+	php_git2_git_diff_options_free(options);
 	if (php_git2_make_resource(&_diff, PHP_GIT2_TYPE_DIFF, diff, 0 TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
@@ -151,17 +160,19 @@ PHP_FUNCTION(git_diff_tree_to_workdir_with_index)
 	git_diff *diff = NULL;
 	zval *repo = NULL, *old_tree = NULL, *opts = NULL;
 	php_git2_t *_repo = NULL, *_old_tree = NULL, *_diff = NULL;
-	git_diff_options options = {0};
+	git_diff_options *options = NULL;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"rra", &repo, &old_tree, &opts) == FAILURE) {
+		"r|ra", &repo, &old_tree, &opts) == FAILURE) {
 		return;
 	}
 
 	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-	ZEND_FETCH_RESOURCE(_old_tree, php_git2_t*, &old_tree, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-	php_git2_array_to_git_diff_options(&options, opts TSRMLS_CC);
-	result = git_diff_tree_to_workdir_with_index(&diff, PHP_GIT2_V(_repo, repository), PHP_GIT2_V(_old_tree, tree), opts);
+	if(old_tree){
+		ZEND_FETCH_RESOURCE(_old_tree, php_git2_t*, &old_tree, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	}
+	php_git2_array_to_git_diff_options(options, opts TSRMLS_CC);
+	result = git_diff_tree_to_workdir_with_index(&diff, PHP_GIT2_V(_repo, repository), PHP_GIT2_V(_old_tree, tree), options);
 	php_git2_git_diff_options_free(&options);
 	if (php_git2_make_resource(&_diff, PHP_GIT2_TYPE_DIFF, diff, 0 TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -218,7 +229,7 @@ PHP_FUNCTION(git_diff_find_similar)
 PHP_FUNCTION(git_diff_options_init)
 {
 	int result = 0;
-	git_diff_options options = {0};
+	git_diff_options *options = NULL;
 	long version = GIT_DIFF_OPTIONS_VERSION;
 	zval *out;
 
@@ -227,8 +238,8 @@ PHP_FUNCTION(git_diff_options_init)
 		return;
 	}
 
-	result = git_diff_options_init(&options, version);
-	php_git2_git_diff_options_to_array(&options, &out TSRMLS_CC);
+	result = git_diff_options_init(options, version);
+	php_git2_git_diff_options_to_array(options, &out TSRMLS_CC);
 	RETURN_ZVAL(out, 0, 1);
 }
 /* }}} */
@@ -381,7 +392,10 @@ PHP_FUNCTION(git_diff_print)
 	}
 
 	ZEND_FETCH_RESOURCE(_diff, php_git2_t*, &diff, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-	if (php_git2_multi_cb_init(&cb, payload TSRMLS_CC, 3, &empty_fcall_info, &empty_fcall_info_cache, &empty_fcall_info, &empty_fcall_info_cache, &fci, &fcc)) {
+	if (php_git2_multi_cb_init(&cb, payload TSRMLS_CC, 3,
+                               &empty_fcall_info, &empty_fcall_info_cache,
+                               &empty_fcall_info, &empty_fcall_info_cache,
+                               &fci, &fcc)) {
 		RETURN_FALSE;
 	}
 	result = git_diff_print(PHP_GIT2_V(_diff, diff), format, php_git2_git_diff_line_cb, cb);
