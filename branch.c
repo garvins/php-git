@@ -189,7 +189,7 @@ PHP_FUNCTION(git_branch_lookup)
  */
 PHP_FUNCTION(git_branch_name)
 {
-	char out[GIT2_BUFFER_SIZE] = {0};
+	const char *out = NULL;
 	zval *ref = NULL;
 	php_git2_t *_ref = NULL;
 	int error = 0;
@@ -232,8 +232,28 @@ PHP_FUNCTION(git_branch_upstream)
 	}
 	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
 }
-/* }}} */
-
+/* }}}
+ 
+/* {{{ proto long git_branch_set_upstream(resource $branch, srting $upstream_name)
+*/
+PHP_FUNCTION(git_branch_set_upstream)
+{
+    php_git2_t *_branch = NULL;
+    zval *branch = NULL;
+    char *upstream_name = NULL;
+    int upstream_name_len = 0;
+    int result = 0;
+    
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
+        "rs", &branch, &upstream_name, &upstream_name_len) == FAILURE){
+        return;
+    }
+    
+    ZEND_FETCH_RESOURCE(_branch, php_git2_t*, &branch, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+    result = git_branch_set_upstream(PHP_GIT2_V(_branch, reference), upstream_name);
+    RETURN_LONG(result);
+}
+/* }}}
 
 /* {{{ proto resource git_branch_upstream_name(resource $repo, string $canonical_branch_name)
  */

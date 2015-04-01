@@ -586,7 +586,7 @@ PHP_FUNCTION(git_index_add_all)
 	if (php_git2_cb_init(&cb, &fci, &fcc, payload TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	result = git_index_add_all(PHP_GIT2_V(_index, index), pathspec, flags, php_git2_index_matched_path_cb, cb);
+	result = git_index_add_all(PHP_GIT2_V(_index, index), &_pathspec, flags, php_git2_index_matched_path_cb, cb);
 	php_git2_cb_free(cb);
 	php_git2_strarray_free(&_pathspec);
 	RETURN_LONG(result);

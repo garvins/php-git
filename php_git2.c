@@ -354,6 +354,21 @@ PHP_FUNCTION(git_libgit2_version)
 }
 
 static zend_function_entry php_git2_functions[] = {
+	/* branch */
+	PHP_FE(git_branch_create, arginfo_git_branch_create)
+	PHP_FE(git_branch_delete, arginfo_git_branch_delete)
+	PHP_FE(git_branch_iterator_new, arginfo_git_branch_iterator_new)
+	PHP_FE(git_branch_next, arginfo_git_branch_next)
+	PHP_FE(git_branch_iterator_free, arginfo_git_branch_iterator_free)
+	PHP_FE(git_branch_move, arginfo_git_branch_move)
+	PHP_FE(git_branch_lookup, arginfo_git_branch_lookup)
+	PHP_FE(git_branch_name, arginfo_git_branch_name)
+	PHP_FE(git_branch_upstream, arginfo_git_branch_upstream)
+	PHP_FE(git_branch_set_upstream, arginfo_git_branch_set_upstream)
+	PHP_FE(git_branch_upstream_name, arginfo_git_branch_upstream_name)
+	PHP_FE(git_branch_is_head, arginfo_git_branch_is_head)
+	PHP_FE(git_branch_remote_name, arginfo_git_branch_remote_name)
+
 	/* repository */
 	PHP_FE(git_repository_new, arginfo_git_repository_new)
 	PHP_FE(git_repository_init, arginfo_git_repository_init)
@@ -1322,7 +1337,11 @@ PHP_MINIT_FUNCTION(git2)
 	REGISTER_LONG_CONSTANT("GIT_MERGE_AUTOMERGE_FAVOR_THEIRS", GIT_MERGE_AUTOMERGE_FAVOR_THEIRS, CONST_CS | CONST_PERSISTENT);
 	/* git_merge_flags_t */
 	REGISTER_LONG_CONSTANT("GIT_MERGE_NO_FASTFORWARD", GIT_MERGE_NO_FASTFORWARD, CONST_CS | CONST_PERSISTENT);
-	REGISTER_LONG_CONSTANT("GIT_MERGE_FASTFORWARD_ONLY", GIT_MERGE_FASTFORWARD_ONLY, CONST_CS | CONST_PERSISTENT);
+    REGISTER_LONG_CONSTANT("GIT_MERGE_FASTFORWARD_ONLY", GIT_MERGE_FASTFORWARD_ONLY, CONST_CS | CONST_PERSISTENT);
+    /* git_merge_opts */
+    REGISTER_LONG_CONSTANT("GIT_MERGE_OPTS_VERSION", GIT_MERGE_OPTS_VERSION, CONST_CS | CONST_PERSISTENT);
+    /* git_merge_tree_opts */
+    REGISTER_LONG_CONSTANT("GIT_MERGE_TREE_OPTS_VERSION", GIT_MERGE_TREE_OPTS_VERSION, CONST_CS | CONST_PERSISTENT);
 
 	/* git_direction */
 	REGISTER_LONG_CONSTANT("GIT_DIRECTION_FETCH", GIT_DIRECTION_FETCH, CONST_CS | CONST_PERSISTENT);

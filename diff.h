@@ -72,8 +72,7 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_git_diff_find_similar, 0, 0, 2)
 	ZEND_ARG_INFO(0, options)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_git_diff_options_init, 0, 0, 2)
-	ZEND_ARG_INFO(0, options)
+ZEND_BEGIN_ARG_INFO_EX(arginfo_git_diff_options_init, 0, 0, 1)
 	ZEND_ARG_INFO(0, version)
 ZEND_END_ARG_INFO()
 

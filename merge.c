@@ -222,7 +222,6 @@ PHP_FUNCTION(git_merge)
 	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	ZEND_FETCH_RESOURCE(_their_head, php_git2_t*, &theirhead, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	heads[0] = PHP_GIT2_V(_their_head, merge_head);
-	options.merge_flags = GIT_MERGE_NO_FASTFORWARD;
 
 	error = git_merge(&out, PHP_GIT2_V(_repo, repository), heads, 1, &options);
 	if (php_git2_check_error(error, "git_merge" TSRMLS_CC)) {
