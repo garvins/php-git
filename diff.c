@@ -29,13 +29,8 @@ PHP_FUNCTION(git_diff_tree_to_tree)
 {
 	int result = 0;
 	git_diff *diff = NULL;
-	zval *repo = NULL;
-	php_git2_t *_repo = NULL;
-	zval *old_tree = NULL;
-	php_git2_t *_old_tree = NULL;
-	zval *new_tree = NULL;
-	php_git2_t *_new_tree = NULL;
-	zval *opts = NULL;
+    zval *repo = NULL, *old_tree = NULL, *new_tree = NULL, *opts = NULL;
+	php_git2_t *_repo = NULL, *_old_tree = NULL, *_new_tree = NULL, *_diff = NULL;
 	git_diff_options *options = NULL;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
@@ -52,8 +47,11 @@ PHP_FUNCTION(git_diff_tree_to_tree)
     }
 	php_git2_array_to_git_diff_options(options, opts TSRMLS_CC);
 	result = git_diff_tree_to_tree(&diff, PHP_GIT2_V(_repo, repository), PHP_GIT2_V(_old_tree, tree), PHP_GIT2_V(_new_tree, tree), options);
-	php_git2_git_diff_options_free(options);
-	RETURN_LONG(result);
+    php_git2_git_diff_options_free(&options);
+    if (php_git2_make_resource(&_diff, PHP_GIT2_TYPE_DIFF, diff, 0 TSRMLS_CC)) {
+        RETURN_FALSE;
+    }
+    ZVAL_RESOURCE(return_value, GIT2_RVAL_P(_diff));
 }
 /* }}} */
 
