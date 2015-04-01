@@ -65,19 +65,19 @@ int php_git2_multi_cb_init(php_git2_multi_cb_t **out, void *payload TSRMLS_DC, i
 
 void php_git2_multi_cb_free(php_git2_multi_cb_t *target);
 
-void php_git2_diff_line_to_array(git_diff_line *line, zval **out TSRMLS_DC);
+void php_git2_diff_line_to_array(const git_diff_line *line, zval **out TSRMLS_DC);
 
-void php_git2_diff_hunk_to_array(git_diff_hunk *hunk, zval **out TSRMLS_DC);
+void php_git2_diff_hunk_to_array(const git_diff_hunk *hunk, zval **out TSRMLS_DC);
 
-void php_git2_diff_file_to_array(git_diff_file *file, zval **out TSRMLS_DC);
+void php_git2_diff_file_to_array(const git_diff_file *file, zval **out TSRMLS_DC);
 
-void php_git2_diff_delta_to_array(git_diff_delta *delta, zval **out TSRMLS_DC);
+void php_git2_diff_delta_to_array(const git_diff_delta *delta, zval **out TSRMLS_DC);
 
 void php_git2_array_to_git_diff_options(git_diff_options *options, zval *array TSRMLS_DC);
 
 void php_git2_git_diff_options_free(git_diff_options *options);
 
-void php_git2_git_diff_options_to_array(git_diff_options *options, zval **out TSRMLS_DC);
+void php_git2_git_diff_options_to_array(const git_diff_options *options, zval **out TSRMLS_DC);
 
 int php_git2_git_diff_file_cb(
 	const git_diff_delta *delta,

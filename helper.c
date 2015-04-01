@@ -552,7 +552,7 @@ void php_git2_multi_cb_free(php_git2_multi_cb_t *target)
 	efree(target);
 }
 
-void php_git2_diff_line_to_array(git_diff_line *line, zval **out TSRMLS_DC)
+void php_git2_diff_line_to_array(const git_diff_line *line, zval **out TSRMLS_DC)
 {
 	zval *result;
 
@@ -569,7 +569,7 @@ void php_git2_diff_line_to_array(git_diff_line *line, zval **out TSRMLS_DC)
 	*out = result;
 }
 
-void php_git2_diff_hunk_to_array(git_diff_hunk *hunk, zval **out TSRMLS_DC)
+void php_git2_diff_hunk_to_array(const git_diff_hunk *hunk, zval **out TSRMLS_DC)
 {
 	zval *result;
 
@@ -588,7 +588,7 @@ void php_git2_diff_hunk_to_array(git_diff_hunk *hunk, zval **out TSRMLS_DC)
 	*out = result;
 }
 
-void php_git2_diff_file_to_array(git_diff_file *file, zval **out TSRMLS_DC)
+void php_git2_diff_file_to_array(const git_diff_file *file, zval **out TSRMLS_DC)
 {
 	zval *result;
 	char buf[41] = {0};
@@ -606,7 +606,7 @@ void php_git2_diff_file_to_array(git_diff_file *file, zval **out TSRMLS_DC)
 	*out = result;
 }
 
-void php_git2_diff_delta_to_array(git_diff_delta *delta, zval **out TSRMLS_DC)
+void php_git2_diff_delta_to_array(const git_diff_delta *delta, zval **out TSRMLS_DC)
 {
 	zval *result, *old, *new;
 
@@ -629,6 +629,10 @@ void php_git2_diff_delta_to_array(git_diff_delta *delta, zval **out TSRMLS_DC)
 
 void php_git2_array_to_git_diff_options(git_diff_options *options, zval *array TSRMLS_DC)
 {
+    if (!array) {
+        return;
+    }
+        
 	git_diff_options_init(options, GIT_DIFF_OPTIONS_VERSION);
 
 	options->version = php_git2_read_arrval_long(array, ZEND_STRS("version") TSRMLS_CC);
@@ -653,7 +657,7 @@ void php_git2_git_diff_options_free(git_diff_options *options)
 	}
 }
 
-void php_git2_git_diff_options_to_array(git_diff_options *options, zval **out TSRMLS_DC)
+void php_git2_git_diff_options_to_array(const git_diff_options *options, zval **out TSRMLS_DC)
 {
 	zval *result, *pathspec;
 
