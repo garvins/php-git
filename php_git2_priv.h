@@ -63,7 +63,7 @@ extern int git2_resource_handle;
         retval.handlers = zend_get_std_object_handlers();
 #  endif
 
-#define PHP_GIT2_V(git2, type) git2 ? git2->v.type : NULL
+#define PHP_GIT2_V(git2, type) git2->v.type
 #define GIT2_RVAL_P(git2) git2->resource_id
 #define GIT2_SHOULD_FREE(git2) git2->should_free_v
 
