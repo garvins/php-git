@@ -497,7 +497,8 @@ static zend_function_entry php_git2_functions[] = {
 	PHP_FE(git_reference_is_valid_name, arginfo_git_reference_is_valid_name)
 	PHP_FE(git_reference_shorthand, arginfo_git_reference_shorthand)
 
-	/* commit */
+    /* commit */
+    PHP_FE(git_commit_free, arginfo_git_commit_free)
 	PHP_FE(git_commit_lookup, arginfo_git_commit_lookup)
 	PHP_FE(git_commit_author, arginfo_git_commit_author)
 	PHP_FE(git_commit_tree, arginfo_git_commit_tree)

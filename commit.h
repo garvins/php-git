@@ -26,6 +26,10 @@
 #ifndef PHP_GIT2_COMMIT_H
 #define PHP_GIT2_COMMIT_H
 
+ZEND_BEGIN_ARG_INFO_EX(arginfo_git_commit_free, 0, 0, 1)
+	ZEND_ARG_INFO(0, commit)
+ZEND_END_ARG_INFO()
+
 ZEND_BEGIN_ARG_INFO_EX(arginfo_git_commit_lookup, 0, 0, 2)
 	ZEND_ARG_INFO(0, repository)
 	ZEND_ARG_INFO(0, oid)
@@ -114,6 +118,10 @@ ZEND_BEGIN_ARG_INFO_EX(arginfo_git_commit_create, 0, 0, 8)
 	ZEND_ARG_INFO(0, tree)
 	ZEND_ARG_INFO(0, parents)
 ZEND_END_ARG_INFO()
+
+/* {{{ proto resource git_commit_free(commit)
+ */
+PHP_FUNCTION(git_commit_free);
 
 /* {{{ proto resource git_commit_lookup(resource $repository, mixed $oid)
 */

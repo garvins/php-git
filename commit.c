@@ -2,6 +2,26 @@
 #include "php_git2_priv.h"
 #include "commit.h"
 
+/* {{{ proto long git_commit_free(resource $commit)
+ */
+PHP_FUNCTION(git_commit_free)
+{
+    zval *commit = NULL;
+    php_git2_t *_commit = NULL;
+    
+    if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
+        "r", &commit) == FAILURE) {
+        return;
+    }
+    
+    ZEND_FETCH_RESOURCE(_commit, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+    if (_commit->should_free_v) {
+        git_commit_free(PHP_GIT2_V(_commit, commit));
+    };
+    zval_ptr_dtor(&commit);
+}
+/* }}} */
+
 /* {{{ proto long git_commit_lookup(resource $repo, string $id)
  */
 PHP_FUNCTION(git_commit_lookup)
