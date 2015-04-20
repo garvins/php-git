@@ -171,7 +171,7 @@ int php_git2_call_function_v(
 		params = emalloc(sizeof(zval*) * param_count);
 		va_start(ap, param_count);
 		for (i = 0; i < param_count; i++) {
-			params[i] = va_arg(ap, zval**);
+			params[i] = va_arg(ap, zval*);
 		}
 		va_end(ap);
 	} else {
@@ -179,7 +179,7 @@ int php_git2_call_function_v(
 	}
 
 	if (ZEND_FCI_INITIALIZED(*fci)) {
-		fci->params         = params;
+		fci->params         = &params;
 		fci->retval_ptr_ptr = retval_ptr_ptr;
 		fci->param_count    = param_count;
 		fci->no_separation  = 1;
@@ -187,7 +187,7 @@ int php_git2_call_function_v(
 		if (zend_call_function(fci, fcc TSRMLS_CC) != SUCCESS) {
 			if (param_count > 0) {
 				for (i = 0; i < param_count; i++) {
-					zval_ptr_dtor(params[i]);
+					zval_ptr_dtor(&params[i]);
 				}
 				efree(params);
 			}
@@ -198,7 +198,7 @@ int php_git2_call_function_v(
 
 	if (param_count > 0) {
 		for (i = 0; i < param_count; i++) {
-			zval_ptr_dtor(params[i]);
+			zval_ptr_dtor(&params[i]);
 		}
 		efree(params);
 	}
@@ -535,7 +535,7 @@ int php_git2_multi_cb_init(php_git2_multi_cb_t **out, void *payload TSRMLS_DC, i
 
 	cb->callbacks = emalloc(sizeof(php_git2_fcall_t) * num_callbacks);
 	memset(cb->callbacks, '\0', sizeof(php_git2_fcall_t) * num_callbacks);
-	va_start(ap, num_callbacks * 2);
+	va_start(ap, (num_callbacks * 2));
 	for (i = 0; i < num_callbacks; i++) {
 		memcpy(&cb->callbacks[i].fci, va_arg(ap, zend_fcall_info*), sizeof(zend_fcall_info));
 		memcpy(&cb->callbacks[i].fcc, va_arg(ap, zend_fcall_info_cache*), sizeof(zend_fcall_info_cache));

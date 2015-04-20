@@ -62,7 +62,7 @@ PHP_FUNCTION(git_transport_register)
 {
 	int result = 0, prefix_len = 0;
 	char *prefix = NULL;
-	long priority = NULL;
+	long priority = 0;
 	zval *param = NULL;
 	zend_fcall_info fci = empty_fcall_info;
 	zend_fcall_info_cache fcc = empty_fcall_info_cache;

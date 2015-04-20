@@ -360,7 +360,7 @@ PHP_FUNCTION(git_remote_get_push_refspecs)
 		return;
 	}
 
-	php_git2_strarray_to_array(&_array, array TSRMLS_CC);
+	php_git2_strarray_to_array(&_array, &array TSRMLS_CC);
 	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	error = git_remote_get_push_refspecs(&_array, PHP_GIT2_V(_remote, remote));
 	git_strarray_free(&_array);
@@ -384,7 +384,7 @@ PHP_FUNCTION(git_remote_set_push_refspecs)
 		return;
 	}
 
-	php_git2_strarray_to_array(&_array, array TSRMLS_CC);
+	php_git2_strarray_to_array(&_array, &array TSRMLS_CC);
 	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_remote_set_push_refspecs(PHP_GIT2_V(_remote, remote), &_array);
 	git_strarray_free(&_array);
@@ -496,7 +496,7 @@ static void php_git2_git_remote_head_to_array(git_remote_head *head, zval **out 
  */
 PHP_FUNCTION(git_remote_ls)
 {
-	git_remote_head **out = NULL;
+	const git_remote_head **out = NULL;
 	size_t size = 0;
 	zval *remote = NULL, *retval = NULL, *container = NULL;
 	php_git2_t *_remote = NULL;
@@ -842,7 +842,7 @@ PHP_FUNCTION(git_remote_set_callbacks)
 	if (credentials_cb != NULL) {
 		char *is_callable_error;
 
-		if(zend_fcall_info_init(credentials_cb, 0, &(_payload->callbacks[0].fci), &(_payload->callbacks[0].fci), NULL, &is_callable_error TSRMLS_CC) == SUCCESS) {
+		if(zend_fcall_info_init(credentials_cb, 0, &(_payload->callbacks[0].fci), &(_payload->callbacks[0].fcc) TSRMLS_CC, NULL, &is_callable_error TSRMLS_CC) == SUCCESS) {
 			if (is_callable_error) {
 				efree(is_callable_error);
 			}
