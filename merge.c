@@ -183,16 +183,20 @@ PHP_FUNCTION(git_merge_trees)
 	zval *repo = NULL, *ancestor_tree = NULL, *our_tree = NULL, *their_tree = NULL, *opts = NULL;
 	int error = 0;
 	
+    /*<git_merge_tree_opts>*/
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"rrrr<git_merge_tree_opts>", &repo, &ancestor_tree, &our_tree, &their_tree, &opts) == FAILURE) {
+        "rr!rr", &repo, &ancestor_tree, &our_tree, &their_tree, &opts) == FAILURE) {
 		return;
 	}
 	
 	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-	ZEND_FETCH_RESOURCE(_ancestor_tree, php_git2_t*, &ancestor_tree, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+    if (ancestor_tree != NULL)
+    {
+        ZEND_FETCH_RESOURCE(_ancestor_tree, php_git2_t*, &ancestor_tree, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+    }
 	ZEND_FETCH_RESOURCE(_our_tree, php_git2_t*, &our_tree, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	ZEND_FETCH_RESOURCE(_their_tree, php_git2_t*, &their_tree, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-	error = git_merge_trees(&out, PHP_GIT2_V(_repo, repository), PHP_GIT2_V(_ancestor_tree, tree), PHP_GIT2_V(_our_tree, tree), PHP_GIT2_V(_their_tree, tree), opts);
+	error = git_merge_trees(&out, PHP_GIT2_V(_repo, repository), PHP_GIT2_V_N(_ancestor_tree, tree), PHP_GIT2_V(_our_tree, tree), PHP_GIT2_V(_their_tree, tree), NULL);
 	if (php_git2_check_error(error, "git_merge_trees" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
