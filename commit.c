@@ -163,7 +163,7 @@ PHP_FUNCTION(git_commit_owner)
 
 	ZEND_FETCH_RESOURCE(_commit, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_commit_owner(PHP_GIT2_V(_commit, commit));
-	if (php_git2_make_resource(&__result, PHP_GIT2_TYPE_COMMIT, result, 1 TSRMLS_CC)) {
+	if (php_git2_make_resource(&__result, PHP_GIT2_TYPE_REPOSITORY, result, 1 TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
 	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(__result));
