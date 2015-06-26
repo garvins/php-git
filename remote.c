@@ -835,16 +835,20 @@ PHP_FUNCTION(git_remote_set_callbacks)
 	credentials_cb = php_git2_read_arrval(callbacks, ZEND_STRS("credentials") TSRMLS_CC);
 
 	/* TODO(chobie): can we free payload? */
-	_payload = emalloc(sizeof(php_git2_remote_cb_t));
+	_payload = ecalloc(1, sizeof(php_git2_remote_cb_t));
 	MAKE_STD_ZVAL(_payload->payload);
 	GIT2_TSRMLS_SET2(_payload, TSRMLS_C);
 
 	if (credentials_cb != NULL) {
 		char *is_callable_error;
 
-		if(zend_fcall_info_init(credentials_cb, 0, &(_payload->callbacks[0].fci), &(_payload->callbacks[0].fci), NULL, &is_callable_error TSRMLS_CC) == SUCCESS) {
+		if(zend_fcall_info_init(credentials_cb, 0, &(_payload->callbacks[0].fci), &(_payload->callbacks[0].fcc), NULL, &is_callable_error TSRMLS_CC) == SUCCESS) {
 			if (is_callable_error) {
 				efree(is_callable_error);
+			}
+			Z_ADDREF_P(_payload->callbacks[0].fci.function_name);
+			if (_payload->callbacks[0].fci.object_ptr) {
+				Z_ADDREF_P(_payload->callbacks[0].fci.object_ptr);
 			}
 		}
 		Z_ADDREF_P(credentials_cb);
