@@ -799,7 +799,7 @@ static int cred_cb(git_cred **cred, const char *url, const char *username_from_u
 		}
 		ZVAL_LONG(param_allowed_types, allowed_types);
 		Z_ADDREF_P(cb->payload);
-		SEPARATE_ZVAL_TO_MAKE_IS_REF(&cb->payload);
+		//SEPARATE_ZVAL_TO_MAKE_IS_REF(&cb->payload);
 
 		if (php_git2_call_function_v(&cb->callbacks[0].fci, &cb->callbacks[0].fcc TSRMLS_CC, &retval_ptr, 4,
 			&param_url, &param_username_from_url, &param_allowed_types, &cb->payload)) {
