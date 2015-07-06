@@ -496,7 +496,7 @@ static void php_git2_git_remote_head_to_array(git_remote_head *head, zval **out 
  */
 PHP_FUNCTION(git_remote_ls)
 {
-	const git_remote_head **out = NULL;
+	git_remote_head **out = NULL;
 	size_t size = 0;
 	zval *remote = NULL, *retval = NULL, *container = NULL;
 	php_git2_t *_remote = NULL;
@@ -799,7 +799,7 @@ static int cred_cb(git_cred **cred, const char *url, const char *username_from_u
 		}
 		ZVAL_LONG(param_allowed_types, allowed_types);
 		Z_ADDREF_P(cb->payload);
-		SEPARATE_ZVAL_TO_MAKE_IS_REF(&cb->payload);
+		//SEPARATE_ZVAL_TO_MAKE_IS_REF(&cb->payload);
 
 		if (php_git2_call_function_v(&cb->callbacks[0].fci, &cb->callbacks[0].fcc TSRMLS_CC, &retval_ptr, 4,
 			&param_url, &param_username_from_url, &param_allowed_types, &cb->payload)) {
@@ -835,16 +835,20 @@ PHP_FUNCTION(git_remote_set_callbacks)
 	credentials_cb = php_git2_read_arrval(callbacks, ZEND_STRS("credentials") TSRMLS_CC);
 
 	/* TODO(chobie): can we free payload? */
-	_payload = emalloc(sizeof(php_git2_remote_cb_t));
+	_payload = ecalloc(1, sizeof(php_git2_remote_cb_t));
 	MAKE_STD_ZVAL(_payload->payload);
 	GIT2_TSRMLS_SET2(_payload, TSRMLS_C);
 
 	if (credentials_cb != NULL) {
 		char *is_callable_error;
 
-		if(zend_fcall_info_init(credentials_cb, 0, &(_payload->callbacks[0].fci), &(_payload->callbacks[0].fcc) TSRMLS_CC, NULL, &is_callable_error TSRMLS_CC) == SUCCESS) {
+		if(zend_fcall_info_init(credentials_cb, 0, &(_payload->callbacks[0].fci), &(_payload->callbacks[0].fcc), NULL, &is_callable_error TSRMLS_CC) == SUCCESS) {
 			if (is_callable_error) {
 				efree(is_callable_error);
+			}
+			Z_ADDREF_P(_payload->callbacks[0].fci.function_name);
+			if (_payload->callbacks[0].fci.object_ptr) {
+				Z_ADDREF_P(_payload->callbacks[0].fci.object_ptr);
 			}
 		}
 		Z_ADDREF_P(credentials_cb);
