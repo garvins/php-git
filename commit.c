@@ -17,6 +17,7 @@ PHP_FUNCTION(git_commit_free)
     ZEND_FETCH_RESOURCE(_commit, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
     if (_commit->should_free_v) {
         git_commit_free(PHP_GIT2_V(_commit, commit));
+        _commit->should_free_v = 0;
     };
     zval_ptr_dtor(&commit);
 }
