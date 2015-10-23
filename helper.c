@@ -689,7 +689,7 @@ void php_git2_array_to_git_diff_options(git_diff_options *options, zval *array T
 
 void php_git2_git_diff_options_free(git_diff_options *options)
 {
-	if (options->pathspec.count > 0) {
+	if (options != NULL && options->pathspec.count > 0) {
 		efree(options->pathspec.strings);
 	}
 }

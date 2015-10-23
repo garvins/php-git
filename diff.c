@@ -171,7 +171,7 @@ PHP_FUNCTION(git_diff_tree_to_workdir_with_index)
 	}
 	php_git2_array_to_git_diff_options(options, opts TSRMLS_CC);
 	result = git_diff_tree_to_workdir_with_index(&diff, PHP_GIT2_V(_repo, repository), PHP_GIT2_V(_old_tree, tree), options);
-	php_git2_git_diff_options_free(&options);
+	php_git2_git_diff_options_free(options);
 	if (php_git2_make_resource(&_diff, PHP_GIT2_TYPE_DIFF, diff, 0 TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
