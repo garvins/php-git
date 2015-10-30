@@ -17,7 +17,7 @@ https://docs.google.com/spreadsheet/ccc?key=0AjvShWAWqvfHdDRneEtIUF9GRUZMNVVVR1h
 
 ## How to build
 
-```
+``` shell
 # build libgit2.a
 ## For 32bit systems
 git submodule init && git submodule update
@@ -30,7 +30,7 @@ cmake --build .
 git submodule init && git submodule update
 mkdir libgit2/build
 cd libgit2/build
-cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF -DBUILD_CLAR=OFF 
+cmake -DCMAKE_BUILD_TYPE=Debug -DBUILD_SHARED_LIBS=OFF -DBUILD_CLAR=OFF \
 -DCMAKE_C_FLAGS=-fPIC ..
 cmake --build .
 
