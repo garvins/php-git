@@ -6,10 +6,10 @@
  */
 PHP_FUNCTION(git_object_lookup)
 {
-	int result = 0, id_len = 0;
+	int error = 0, id_len = 0;
 	git_object *object = NULL;
 	zval *repo = NULL;
-	php_git2_t *_repo = NULL;
+	php_git2_t *_repo = NULL, *result = NULL;
 	char *id = NULL;
 	git_oid __id = {0};
 	long type = 0;
@@ -23,8 +23,15 @@ PHP_FUNCTION(git_object_lookup)
 	if (git_oid_fromstrn(&__id, id, id_len)) {
 		RETURN_FALSE;
 	}
-	result = git_object_lookup(&object, PHP_GIT2_V(_repo, repository), &__id, type);
-	RETURN_LONG(result);
+	error = git_object_lookup(&object, PHP_GIT2_V(_repo, repository), &__id, type);
+    
+    if (php_git2_check_error(error, "git_object_lookup_prefix" TSRMLS_CC)) {
+        RETURN_FALSE;
+    }
+    if (php_git2_make_resource(&result, PHP_GIT2_TYPE_OBJECT, object, 1 TSRMLS_CC)) {
+        RETURN_FALSE;
+    }
+    ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
 }
 /* }}} */
 
