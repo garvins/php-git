@@ -416,27 +416,43 @@ PHP_FUNCTION(git_diff_blobs)
 	zend_fcall_info_cache hunk_fcc = empty_fcall_info_cache;
 	zend_fcall_info line_fci = empty_fcall_info;
 	zend_fcall_info_cache line_fcc = empty_fcall_info_cache;
-	php_git2_cb_t *cb = NULL;
+    php_git2_multi_cb_t *cb = NULL;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"rsrsafffz", &old_blob, &old_as_path, &old_as_path_len, &new_blob, &new_as_path, &new_as_path_len, &options,
+		"r!sr!sa!f!f!f!z", &old_blob, &old_as_path, &old_as_path_len, &new_blob, &new_as_path, &new_as_path_len, &options,
 		  &file_fci, &file_fcc, &hunk_fci, &hunk_fcc, &line_fci, &line_fcc, &payload) == FAILURE) {
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_old_blob, php_git2_t*, &old_blob, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-	ZEND_FETCH_RESOURCE(_new_blob, php_git2_t*, &new_blob, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-	php_git2_multi_cb_init(&cb, payload TSRMLS_CC, 3,
-		&file_fci, &file_fcc,
-		&hunk_fci, &hunk_fcc,
-		&line_fci, &line_fcc
-	);
-	result = git_diff_blobs(
-		PHP_GIT2_V(_old_blob, blob), old_as_path,
-		PHP_GIT2_V(_new_blob, blob), new_as_path, NULL,
-		php_git2_git_diff_file_cb, php_git2_git_diff_hunk_cb, php_git2_git_diff_line_cb, cb);
-	php_git2_multi_cb_free(cb);
-	RETURN_LONG(result);
+    if (old_blob) {
+        ZEND_FETCH_RESOURCE(_old_blob, php_git2_t*, &old_blob, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+    }
+    if (new_blob) {
+        ZEND_FETCH_RESOURCE(_new_blob, php_git2_t*, &new_blob, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+    }
+    
+    php_git2_multi_cb_init(&cb, payload TSRMLS_CC, 3,
+    	&file_fci, &file_fcc,
+    	&hunk_fci, &hunk_fcc,
+    	&line_fci, &line_fcc
+    );
+    
+    result = git_diff_blobs(
+        PHP_GIT2_V_N(_old_blob, blob), old_as_path,
+        PHP_GIT2_V_N(_new_blob, blob), new_as_path, NULL,
+        (ZEND_FCI_INITIALIZED(file_fci) ? php_git2_git_diff_file_cb : NULL),
+        (ZEND_FCI_INITIALIZED(hunk_fci) ? php_git2_git_diff_hunk_cb : NULL),
+        (ZEND_FCI_INITIALIZED(line_fci) ? php_git2_git_diff_line_cb : NULL),
+        cb);
+    php_git2_multi_cb_free(cb);
+    if(!ZEND_FCI_INITIALIZED(file_fci)){
+        RETURN_LONG(5);
+    } else
+    {
+        
+        RETURN_LONG(result);
+    }
+    
 }
 /* }}} */
 
