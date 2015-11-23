@@ -30,8 +30,8 @@ PHP_FUNCTION(git_diff_tree_to_tree)
 	int result = 0;
 	git_diff *diff = NULL;
     zval *repo = NULL, *old_tree = NULL, *new_tree = NULL, *opts = NULL;
-	php_git2_t *_repo = NULL, *_old_tree = NULL, *_new_tree = NULL, *_diff = NULL;
-	git_diff_options options = {0};
+    php_git2_t *_repo = NULL, *_old_tree = NULL, *_new_tree = NULL, *_diff = NULL;
+    git_diff_options *options = NULL;
 
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r|rra", &repo, &old_tree, &new_tree, &opts) == FAILURE) {
@@ -45,9 +45,9 @@ PHP_FUNCTION(git_diff_tree_to_tree)
     if (new_tree) {
         ZEND_FETCH_RESOURCE(_new_tree, php_git2_t*, &new_tree, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
     }
-	php_git2_array_to_git_diff_options(&options, opts TSRMLS_CC);
-	result = git_diff_tree_to_tree(&diff, PHP_GIT2_V(_repo, repository), PHP_GIT2_V(_old_tree, tree), PHP_GIT2_V(_new_tree, tree), &options);
-    php_git2_git_diff_options_free(&options);
+	php_git2_array_to_git_diff_options(options, opts TSRMLS_CC);
+	result = git_diff_tree_to_tree(&diff, PHP_GIT2_V(_repo, repository), PHP_GIT2_V_N(_old_tree, tree), PHP_GIT2_V_N(_new_tree, tree), options);
+    php_git2_git_diff_options_free(options);
     if (php_git2_make_resource(&_diff, PHP_GIT2_TYPE_DIFF, diff, 0 TSRMLS_CC)) {
         RETURN_FALSE;
     }
