@@ -451,9 +451,16 @@ class Fashion
 
         foreach ($f->getArguments() as $arg) {
             /** @var Arg $arg */
-            if ($i == 0 && $f->isResourceCreator()) {
-                $i++;
-                continue;
+            
+            
+            if ($f->isResourceCreator()) {
+                if ($i == 0 ||
+                    ($i == 1
+                     && preg_match("/buffer/", $arg->getName())
+                     && preg_match("/long/", $arg->getZendType()))) {
+                        $i++;
+                        continue;
+                    }
             }
             if ($arg->shouldWrite()) {
                 $i++;
@@ -649,10 +656,17 @@ class Fashion
             $printer->put('"');
             foreach ($f->getArguments() as $arg) {
                 /** @var Arg $arg */
-                if ($i == 0 && $f->isResourceCreator()) {
-                    $i++;
-                    continue;
+                        
+                if ($f->isResourceCreator()) {
+                    if ($i == 0 ||
+                        ($i == 1
+                         && preg_match("/buffer/", $arg->getName())
+                         && preg_match("/long/", $arg->getZendType()))) {
+                        $i++;
+                        continue;
+                    }
                 }
+                        
                 if ($arg->shouldWrite()) {
                     $i++;
                     continue;
@@ -660,7 +674,7 @@ class Fashion
 
                 if (preg_match("/char/", $arg->getZendType())) {
                     $printer->put("s");
-                } else if (preg_match("/long/", $arg->getZendType())) {
+                } else if (preg_match("/long/", $arg->getZendType()) || $arg->isStruct) {
                     $printer->put("l");
                 } else if (preg_match("/git_signature/", $arg->getType())) {
                     $printer->put("a");
@@ -1150,18 +1164,40 @@ class Header extends Fashion
 
     public function generateArgInfo(Printer $printer, Func $f)
     {
-        $printer->put("ZEND_BEGIN_ARG_INFO_EX(arginfo_`name`, `a`, `b`, `c`)\n",
-            "name", $f->getName(),
-            "a", 0,
-            "b", 0,
-            "c", count($f->getArguments())
-        );
+        $i = 0;
+        $numOfArgs = count($f->getArguments());
+        $args = array();
+        
         foreach ($f->getArguments() as $arg) {
             /** @var Arg $arg */
-            $printer->put("\tZEND_ARG_INFO(`is_ref`, `name`)\n",
-                "is_ref", 0,
-                "name", $arg->getName());
+            
+            if ($f->isResourceCreator()) {
+                if ($i == 0 ||
+                    ($i == 1
+                     && preg_match("/buffer/", $arg->getName())
+                     && preg_match("/long/", $arg->getZendType()))) {
+                        $i++;
+                        $numOfArgs--;
+                        continue;
+                    }
+            }
+            
+            $args[] = $arg;
+            $i++;
         }
+        
+        $printer->put("ZEND_BEGIN_ARG_INFO_EX(arginfo_`name`, `a`, `b`, `c`)\n",
+                      "name", $f->getName(),
+                      "a", 0,
+                      "b", 0,
+                      "c", $numOfArgs);
+        
+        foreach ($args as $arg) {
+            $printer->put("\tZEND_ARG_INFO(`is_ref`, `name`)\n",
+				"is_ref", 0,
+				"name", $arg->getName());
+        }
+        
         $printer->put("ZEND_END_ARG_INFO()\n");
         $printer->put("\n");
     }
@@ -1183,20 +1219,7 @@ class Header2 extends Header
 {
     public function generateArgInfo(Printer $printer, Func $f)
     {
-        $printer->put("ZEND_BEGIN_ARG_INFO_EX(arginfo_`name`, `a`, `b`, `c`)\n",
-            "name", $f->getName(),
-            "a", 0,
-            "b", 0,
-            "c", count($f->getArguments())
-        );
-        foreach ($f->getArguments() as $arg) {
-            /** @var Arg $arg */
-            $printer->put("\tZEND_ARG_INFO(`is_ref`, `name`)\n",
-                "is_ref", 0,
-                "name", $arg->getName());
-        }
-        $printer->put("ZEND_END_ARG_INFO()\n");
-        $printer->put("\n");
+        parent::generateArgInfo($printer, $f);
     }
 
     public function out(Func $f)
