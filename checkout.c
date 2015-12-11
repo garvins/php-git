@@ -86,14 +86,7 @@ PHP_FUNCTION(git_checkout_tree)
             RETURN_FALSE;
         }
         should_free = 1;
-    } else {
-        //memset(&options, '\0', sizeof(git_checkout_opts));
     }
-
-	if (treeish != NULL) {
-		ZEND_FETCH_RESOURCE(_treeish, php_git2_t*, &treeish, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-		treeish = PHP_GIT2_V(_treeish, object);
-	}
 
 	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	ZEND_FETCH_RESOURCE(_treeish, php_git2_t*, &treeish, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
