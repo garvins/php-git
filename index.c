@@ -723,10 +723,10 @@ PHP_FUNCTION(git_index_conflict_get)
 	php_git2_index_entry_to_array(our_out, &our TSRMLS_CC);
 	php_git2_index_entry_to_array(their_out, &their TSRMLS_CC);
 	MAKE_STD_ZVAL(container);
-	array_init(container);
-	add_next_index_zval(container, ancestor);
-	add_next_index_zval(container, our);
-	add_next_index_zval(container, their);
+    array_init(container);
+    add_assoc_zval_ex(container, ZEND_STRS("ancestor"), ancestor);
+    add_assoc_zval_ex(container, ZEND_STRS("our"), our);
+    add_assoc_zval_ex(container, ZEND_STRS("their"), their);
 	RETURN_ZVAL(container, 0, 1);
 }
 /* }}} */
@@ -827,7 +827,9 @@ PHP_FUNCTION(git_index_conflict_next)
 
 	ZEND_FETCH_RESOURCE(_iterator, php_git2_t*, &iterator, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	error = git_index_conflict_next(&ancestor_out, &our_out, &their_out, PHP_GIT2_V(_iterator, index_conflict_iterator));
-	if (php_git2_check_error(error, "git_index_conflict_next" TSRMLS_CC)) {
+    if (error == GIT_ITEROVER) {
+        RETURN_NULL();
+    } else if (php_git2_check_error(error, "git_index_conflict_next" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
 
@@ -836,11 +838,10 @@ PHP_FUNCTION(git_index_conflict_next)
 	php_git2_index_entry_to_array(their_out, &their TSRMLS_CC);
 	MAKE_STD_ZVAL(container);
 	array_init(container);
-	add_next_index_zval(container, ancestor);
-	add_next_index_zval(container, our);
-	add_next_index_zval(container, their);
+    add_assoc_zval_ex(container, ZEND_STRS("ancestor"), ancestor);
+    add_assoc_zval_ex(container, ZEND_STRS("our"), our);
+    add_assoc_zval_ex(container, ZEND_STRS("their"), their);
 	RETURN_ZVAL(container, 0, 1);
-
 }
 /* }}} */
 
