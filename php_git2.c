@@ -100,13 +100,16 @@ void static destruct_git2(zend_rsrc_list_entry *rsrc TSRMLS_DC)
 				break;
 			case PHP_GIT2_TYPE_REFERENCE:
 				git_reference_free(PHP_GIT2_V(resource, reference));
-				break;
+                break;
+            case PHP_GIT2_TYPE_REMOTE:
+                git_remote_free(PHP_GIT2_V(resource, remote));
+                break;
 			case PHP_GIT2_TYPE_CONFIG:
 				git_config_free(PHP_GIT2_V(resource, config));
 				break;
 			case PHP_GIT2_TYPE_OBJECT:
 				git_object_free(PHP_GIT2_V(resource, object));
-				break;
+                break;
 			case PHP_GIT2_TYPE_FILTER:
 			{
 				php_git2_filter *filter = (php_git2_filter*)PHP_GIT2_V(resource, filter);
