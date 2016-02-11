@@ -217,35 +217,6 @@ int php_git2_cb_init(php_git2_cb_t **out, zend_fcall_info *fci, zend_fcall_info_
 	cb->payload = payload;
 	cb->fci = fci;
 	cb->fcc = fcc;
-	cb->is_copy = 0;
-	GIT2_TSRMLS_SET2(cb, TSRMLS_C);
-
-	*out = cb;
-	return 0;
-}
-
-int php_git2_cb_init_copy(php_git2_cb_t **out, zend_fcall_info *fci, zend_fcall_info_cache *fcc, void *payload TSRMLS_DC)
-{
-	php_git2_cb_t *cb;
-
-	cb = (struct php_git2_cb_t*)emalloc(sizeof(php_git2_cb_t));
-	if (cb == NULL) {
-		return 1;
-	}
-
-	cb->payload = payload;
-	// use fci->size instead of sizeof?
-	cb->fci = (zend_fcall_info*)emalloc(sizeof(zend_fcall_info));
-	cb->fcc = (zend_fcall_info_cache*)emalloc(sizeof(zend_fcall_info_cache));
-	memcpy(cb->fci, fci, sizeof(zend_fcall_info));
-	memcpy(cb->fcc, fcc, sizeof(zend_fcall_info_cache));
-	Z_ADDREF_P(cb->fci->function_name);
-#if PHP_VERSION_ID >= 50300
-	if (cb->fci->object_ptr) {
-		Z_ADDREF_P(cb->fci->object_ptr);
-	}
-#endif
-	cb->is_copy = 1;
 	GIT2_TSRMLS_SET2(cb, TSRMLS_C);
 
 	*out = cb;
@@ -254,14 +225,6 @@ int php_git2_cb_init_copy(php_git2_cb_t **out, zend_fcall_info *fci, zend_fcall_
 
 void php_git2_cb_free(php_git2_cb_t *target)
 {
-	if (target->is_copy) {
-		Z_DELREF_P(target->fci->function_name);
-#if PHP_VERSION_ID >= 50300
-		if (target->fci->object_ptr) {
-			Z_DELREF_P(target->fci->object_ptr);
-		}
-#endif
-	}
 	efree(target);
 }
 
@@ -274,9 +237,11 @@ void php_git2_array_to_strarray(git_strarray *out, zval *array TSRMLS_DC)
 	if (array == NULL) {
 		return;
 	}
+    
 	if (Z_TYPE_P(array) != IS_ARRAY){
 		return;
 	}
+    
 	if (zend_hash_num_elements(Z_ARRVAL_P(array)) == 0) {
 		return;
 	}
@@ -572,11 +537,21 @@ int php_git2_multi_cb_init(php_git2_multi_cb_t **out, void *payload TSRMLS_DC, i
 
 	cb->callbacks = emalloc(sizeof(php_git2_fcall_t) * num_callbacks);
 	memset(cb->callbacks, '\0', sizeof(php_git2_fcall_t) * num_callbacks);
-	va_start(ap, (num_callbacks * 2));
-	for (i = 0; i < num_callbacks; i++) {
-		memcpy(&cb->callbacks[i].fci, va_arg(ap, zend_fcall_info*), sizeof(zend_fcall_info));
-		memcpy(&cb->callbacks[i].fcc, va_arg(ap, zend_fcall_info_cache*), sizeof(zend_fcall_info_cache));
-	}
+    va_start(ap, (num_callbacks * 2));
+    for (i = 0; i < num_callbacks; i++) {
+        zend_fcall_info* fci = va_arg(ap, zend_fcall_info*);
+        zend_fcall_info_cache* fcc = va_arg(ap, zend_fcall_info_cache*);
+        
+        if (!fci) {
+            fci = &empty_fcall_info;
+        }
+        if (!fcc) {
+            fcc = &empty_fcall_info_cache;
+        }
+        
+        memcpy(&cb->callbacks[i].fci, fci, sizeof(zend_fcall_info));
+        memcpy(&cb->callbacks[i].fcc, fcc, sizeof(zend_fcall_info_cache));
+    }
 	va_end(ap);
 
 	*out = cb;

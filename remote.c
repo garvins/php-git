@@ -616,8 +616,9 @@ PHP_FUNCTION(git_remote_free)
 	}
 
 	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-	if (_remote->should_free_v) {
-		git_remote_free(PHP_GIT2_V(_remote, remote));
+	if (GIT2_SHOULD_FREE(_remote)) {
+        git_remote_free(PHP_GIT2_V(_remote, remote));
+        GIT2_SHOULD_FREE(_remote) = 0;
 	};
 	zval_ptr_dtor(&remote);
 }
@@ -799,7 +800,7 @@ static int cred_cb(git_cred **cred, const char *url, const char *username_from_u
 		}
 		ZVAL_LONG(param_allowed_types, allowed_types);
 		Z_ADDREF_P(cb->payload);
-		//SEPARATE_ZVAL_TO_MAKE_IS_REF(&cb->payload);
+		SEPARATE_ZVAL_TO_MAKE_IS_REF(&cb->payload);
 
 		if (php_git2_call_function_v(&cb->callbacks[0].fci, &cb->callbacks[0].fcc TSRMLS_CC, &retval_ptr, 4,
 			&param_url, &param_username_from_url, &param_allowed_types, &cb->payload)) {
@@ -845,10 +846,6 @@ PHP_FUNCTION(git_remote_set_callbacks)
 		if(zend_fcall_info_init(credentials_cb, 0, &(_payload->callbacks[0].fci), &(_payload->callbacks[0].fcc), NULL, &is_callable_error TSRMLS_CC) == SUCCESS) {
 			if (is_callable_error) {
 				efree(is_callable_error);
-			}
-			Z_ADDREF_P(_payload->callbacks[0].fci.function_name);
-			if (_payload->callbacks[0].fci.object_ptr) {
-				Z_ADDREF_P(_payload->callbacks[0].fci.object_ptr);
 			}
 		}
 		Z_ADDREF_P(credentials_cb);

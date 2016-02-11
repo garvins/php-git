@@ -49,7 +49,6 @@ int php_git2_call_function_v(
 
 int php_git2_cb_init(php_git2_cb_t **out, zend_fcall_info *fci, zend_fcall_info_cache *fcc, void *payload TSRMLS_DC);
 
-int php_git2_cb_init_copy(php_git2_cb_t **out, zend_fcall_info *fci, zend_fcall_info_cache *fcc, void *payload TSRMLS_DC);
 
 void php_git2_cb_free(php_git2_cb_t *target);
 
