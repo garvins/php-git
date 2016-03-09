@@ -363,7 +363,7 @@ PHP_FUNCTION(git_repository_free)
 		git_repository_free(PHP_GIT2_V(_repo, repository));
 		GIT2_SHOULD_FREE(_repo) = 0;
 	};
-	zval_ptr_dtor(&repo);
+	//zval_ptr_dtor(&repo);
 }
 /* }}} */
 

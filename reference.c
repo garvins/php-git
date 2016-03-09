@@ -541,7 +541,7 @@ PHP_FUNCTION(git_reference_free)
 		git_reference_free(PHP_GIT2_V(_ref, reference));
 		GIT2_SHOULD_FREE(_ref) = 0;
 	};
-	zval_ptr_dtor(&ref);
+	//zval_ptr_dtor(&ref);
 }
 /* }}} */
 
