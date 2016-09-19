@@ -28,13 +28,8 @@
 
 extern int git2_resource_handle;
 
-#if PHP_VERSION_ID>=50399
 #define PHP_GIT2_LIST_INSERT(type, handle) zend_list_insert(type, handle TSRMLS_CC)
-#else
-#define PHP_GIT2_LIST_INSERT(type, handle) zend_list_insert(type, handle)
-#endif
 
-#  if ZEND_MODULE_API_NO >= 20100525
 #  define PHP_GIT2_STD_CREATE_OBJECT(STRUCT_NAME) \
         STRUCT_NAME *object;\
         \
@@ -47,21 +42,6 @@ extern int git2_resource_handle;
                 (zend_objects_free_object_storage_t) STRUCT_NAME##_free_storage ,\
         NULL TSRMLS_CC);\
         retval.handlers = zend_get_std_object_handlers();
-#  else
-#  define PHP_GIT2_STD_CREATE_OBJECT(STRUCT_NAME) \
-        STRUCT_NAME *object;\
-        zval *tmp = NULL;\
-        \
-        object = (STRUCT_NAME*)ecalloc(1, sizeof(*object));\
-        zend_object_std_init(&object->zo, ce TSRMLS_CC);\
-        zend_hash_copy(object->zo.properties, &ce->default_properties, (copy_ctor_func_t)zval_add_ref, (void *)&tmp, sizeof(zval *)); \
-        \
-        retval.handle = zend_objects_store_put(object,\
-                (zend_objects_store_dtor_t)zend_objects_destroy_object,\
-                (zend_objects_free_object_storage_t) STRUCT_NAME##_free_storage ,\
-        NULL TSRMLS_CC);\
-        retval.handlers = zend_get_std_object_handlers();
-#  endif
 
 #define PHP_GIT2_V(git2, type) git2->v.type
 #define PHP_GIT2_V_N(git2, type) (git2 && git2->v.type) ? git2->v.type : NULL
