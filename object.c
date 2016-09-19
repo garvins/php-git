@@ -111,7 +111,7 @@ PHP_FUNCTION(git_object_id)
 	ZEND_FETCH_RESOURCE(_obj, php_git2_t*, &obj, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	id = git_object_id(PHP_GIT2_V(_obj, object));
 	git_oid_fmt(buf, id);
-	RETURN_STRING(buf, 1);
+	RETURN_STRING(buf);
 }
 /* }}} */
 
@@ -190,7 +190,7 @@ PHP_FUNCTION(git_object_type2string)
 	}
 
 	result = git_object_type2string(type);
-	RETURN_STRING(result, 1);
+	RETURN_STRING(result);
 }
 /* }}} */
 

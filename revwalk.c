@@ -249,7 +249,7 @@ PHP_FUNCTION(git_revwalk_next)
 	}
 
 	git_oid_fmt(out, &id);
-	RETURN_STRING(out, 1);
+	RETURN_STRING(out);
 }
 
 /* {{{ proto void git_revwalk_sorting(walk, sort_mode)

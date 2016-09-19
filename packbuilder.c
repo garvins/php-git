@@ -43,7 +43,7 @@ static int php_git2_git_packbuilder_foreach_cb(void *buf, size_t size, void *pay
 	Z_ADDREF_P(p->payload);
 	MAKE_STD_ZVAL(param_buf);
 	MAKE_STD_ZVAL(param_size);
-	ZVAL_STRINGL(param_buf, buf, size, 1);
+	ZVAL_STRINGL(param_buf, buf, size);
 	ZVAL_LONG(param_size, size);
 
 	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, &retval_ptr, 3,
@@ -245,7 +245,7 @@ PHP_FUNCTION(git_packbuilder_hash)
 	ZEND_FETCH_RESOURCE(_pb, php_git2_t*, &pb, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_packbuilder_hash(PHP_GIT2_V(_pb, packbuilder));
 	git_oid_fmt(__result, result);
-	RETURN_STRING(__result, 1);
+	RETURN_STRING(__result);
 }
 /* }}} */
 

@@ -250,7 +250,7 @@ PHP_FUNCTION(git_treebuilder_write)
 	}
 
 	git_oid_fmt(out, &id);
-	RETURN_STRING(out, 1);
+	RETURN_STRING(out);
 
 }
 

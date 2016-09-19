@@ -244,7 +244,7 @@ PHP_FUNCTION(git_pathspec_match_list_entry)
 
 	ZEND_FETCH_RESOURCE(_m, php_git2_t*, &m, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_pathspec_match_list_entry(PHP_GIT2_V(_m, pathspec_match_list), pos);
-	RETURN_STRING(result, 1);
+	RETURN_STRING(result);
 }
 /* }}} */
 
@@ -310,7 +310,7 @@ PHP_FUNCTION(git_pathspec_match_list_failed_entry)
 
 	ZEND_FETCH_RESOURCE(_m, php_git2_t*, &m, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_pathspec_match_list_failed_entry(PHP_GIT2_V(_m, pathspec_match_list), pos);
-	RETURN_STRING(result, 1);
+	RETURN_STRING(result);
 }
 /* }}} */
 

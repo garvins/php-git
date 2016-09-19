@@ -17,10 +17,10 @@ static int php_git2_push_status_foreach_cb(const char *ref, const char *msg, voi
 	ZVAL_NULL(param_msg);
 
 	if (ref != NULL) {
-		ZVAL_STRING(param_ref, ref, 1);
+		ZVAL_STRING(param_ref, ref);
 	}
 	if (msg != NULL) {
-		ZVAL_STRING(param_msg, msg, 1);
+		ZVAL_STRING(param_msg, msg);
 	}
 
 	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, &retval_ptr, 3, &param_ref, &param_msg, &p->payload)) {

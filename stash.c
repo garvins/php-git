@@ -20,8 +20,8 @@ static int php_git2_stash_cb(size_t index,
 	MAKE_STD_ZVAL(param_message);
 	MAKE_STD_ZVAL(param_stash_id);
 	ZVAL_LONG(param_index, index);
-	ZVAL_STRING(param_message, message, 1);
-	ZVAL_STRING(param_stash_id, _oid, 1);
+	ZVAL_STRING(param_message, message);
+	ZVAL_STRING(param_stash_id, _oid);
 
 	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, &retval_ptr, 4, &param_index, &param_message, &param_stash_id, &p->payload)) {
 		return GIT_EUSER;
@@ -55,7 +55,7 @@ PHP_FUNCTION(git_stash_save)
 		RETURN_FALSE;
 	}
 	git_oid_fmt(buf, &out);
-	RETURN_STRING(buf, 1);
+	RETURN_STRING(buf);
 }
 /* }}} */
 

@@ -391,7 +391,7 @@ void php_git2_git_checkout_progress_cb(const char *path,
 	MAKE_STD_ZVAL(param_total_steps);
 	ZVAL_NULL(param_path);
 	if (path != NULL) {
-		ZVAL_STRING(param_path, path, 1);
+		ZVAL_STRING(param_path, path);
 	}
 	ZVAL_LONG(param_completed_steps, completed_steps);
 	ZVAL_LONG(param_total_steps, total_steps);

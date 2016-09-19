@@ -17,7 +17,7 @@ PHP_FUNCTION(git_refspec_src)
 	
 	ZEND_FETCH_RESOURCE(_refspec, php_git2_t*, &refspec, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_refspec_src(PHP_GIT2_V(_refspec, refspec));
-	RETURN_STRING(result, 1);
+	RETURN_STRING(result);
 }
 /* }}} */
 
@@ -36,7 +36,7 @@ PHP_FUNCTION(git_refspec_dst)
 	
 	ZEND_FETCH_RESOURCE(_refspec, php_git2_t*, &refspec, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_refspec_dst(PHP_GIT2_V(_refspec, refspec));
-	RETURN_STRING(result, 1);
+	RETURN_STRING(result);
 }
 /* }}} */
 
@@ -55,7 +55,7 @@ PHP_FUNCTION(git_refspec_string)
 	
 	ZEND_FETCH_RESOURCE(_refspec, php_git2_t*, &refspec, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_refspec_string(PHP_GIT2_V(_refspec, refspec));
-	RETURN_STRING(result, 1);
+	RETURN_STRING(result);
 }
 /* }}} */
 
@@ -158,7 +158,7 @@ PHP_FUNCTION(git_refspec_transform)
 	if (php_git2_check_error(error, "git_refspec_transform" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	RETURN_STRING(out, 1);
+	RETURN_STRING(out);
 }
 /* }}} */
 
@@ -183,7 +183,7 @@ PHP_FUNCTION(git_refspec_rtransform)
 	if (php_git2_check_error(error, "git_refspec_rtransform" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	RETURN_STRING(out, 1);
+	RETURN_STRING(out);
 }
 /* }}} */
 

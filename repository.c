@@ -82,9 +82,9 @@ static int php_git2_repository_fetchhead_foreach_cb(const char *ref_name,
 	MAKE_STD_ZVAL(param_remote_url);
 	MAKE_STD_ZVAL(param_oid);
 	MAKE_STD_ZVAL(param_is_merge);
-	ZVAL_STRING(param_ref_name, ref_name, 1);
-	ZVAL_STRING(param_remote_url, remote_url, 1);
-	ZVAL_STRING(param_oid, _oid, 1);
+	ZVAL_STRING(param_ref_name, ref_name);
+	ZVAL_STRING(param_remote_url, remote_url);
+	ZVAL_STRING(param_oid, _oid);
 	ZVAL_BOOL(param_is_merge, is_merge);
 
 	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, &retval_ptr, 5,
@@ -114,7 +114,7 @@ static int php_git2_repository_mergehead_foreach_cb(const git_oid *oid,
 
 	Z_ADDREF_P(p->payload);
 	MAKE_STD_ZVAL(param_oid);
-	ZVAL_STRING(param_oid, _oid, 1);
+	ZVAL_STRING(param_oid, _oid);
 
 	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, &retval_ptr, 2, &param_oid, &p->payload)) {
 		return GIT_EUSER;
@@ -233,7 +233,7 @@ PHP_FUNCTION(git_repository_get_namespace)
 	ZEND_FETCH_RESOURCE(git2, php_git2_t*, &repository, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	ns = git_repository_get_namespace(PHP_GIT2_V(git2, repository));
 	if (ns != NULL) {
-		RETURN_STRING(ns, 1);
+		RETURN_STRING(ns);
 	} else {
 		RETURN_STRING("", 1);
 	}
@@ -256,7 +256,7 @@ PHP_FUNCTION(git_repository_workdir)
 	ZEND_FETCH_RESOURCE(git2, php_git2_t*, &repository, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	workdir = git_repository_workdir(PHP_GIT2_V(git2, repository));
 	if (workdir != NULL) {
-		RETURN_STRING(workdir, 1);
+		RETURN_STRING(workdir);
 	} else {
 		RETURN_STRING("", 1);
 	}
@@ -314,7 +314,7 @@ PHP_FUNCTION(git_repository_discover)
 		RETURN_FALSE
 	}
 
-	RETURN_STRING(buffer, 1);
+	RETURN_STRING(buffer);
 }
 
 /* {{{ proto resource git_repository_open_ext(string $path, long $flags, string $ceiling_dirs)
@@ -498,7 +498,7 @@ PHP_FUNCTION(git_repository_path)
 
 	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_repository_path(PHP_GIT2_V(_repo, repository));
-	RETURN_STRING(result, 1);
+	RETURN_STRING(result);
 }
 /* }}} */
 
@@ -673,7 +673,7 @@ PHP_FUNCTION(git_repository_message)
 	if (php_git2_check_error(error, "git_repository_message" TSRMLS_CC)) {
 		RETURN_FALSE
 	}
-	RETURN_STRING(buffer, 1);
+	RETURN_STRING(buffer);
 }
 /* }}} */
 
@@ -791,7 +791,7 @@ PHP_FUNCTION(git_repository_hashfile)
 		RETURN_FALSE;
 	}
 	git_oid_fmt(buf, &out);
-	RETURN_STRING(buf, 1);
+	RETURN_STRING(buf);
 }
 /* }}} */
 

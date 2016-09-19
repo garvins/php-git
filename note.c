@@ -116,7 +116,7 @@ PHP_FUNCTION(git_note_message)
 	
 	ZEND_FETCH_RESOURCE(_note, php_git2_t*, &note, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_note_message(PHP_GIT2_V(_note, note));
-	RETURN_STRING(result, 1);
+	RETURN_STRING(result);
 }
 /* }}} */
 
@@ -137,7 +137,7 @@ PHP_FUNCTION(git_note_oid)
 	ZEND_FETCH_RESOURCE(_note, php_git2_t*, &note, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_note_oid(PHP_GIT2_V(_note, note));
 	git_oid_fmt(__result, result);
-	RETURN_STRING(__result, 1);
+	RETURN_STRING(__result);
 }
 /* }}} */
 
@@ -167,7 +167,7 @@ PHP_FUNCTION(git_note_create)
 		RETURN_FALSE;
 	}
 	git_oid_fmt(buf, &out);
-	RETURN_STRING(buf, 1);
+	RETURN_STRING(buf);
 }
 /* }}} */
 
@@ -235,7 +235,7 @@ PHP_FUNCTION(git_note_default_ref)
 	if (php_git2_check_error(error, "git_note_default_ref" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	RETURN_STRING(out, 1);
+	RETURN_STRING(out);
 }
 /* }}} */
 

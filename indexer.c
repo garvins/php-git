@@ -85,7 +85,7 @@ PHP_FUNCTION(git_indexer_hash)
 	ZEND_FETCH_RESOURCE(_idx, php_git2_t*, &idx, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_indexer_hash(PHP_GIT2_V(_idx, indexer));
 	git_oid_fmt(__result, result);
-	RETURN_STRING(__result, 1);
+	RETURN_STRING(__result);
 }
 /* }}} */
 

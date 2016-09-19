@@ -204,7 +204,7 @@ PHP_FUNCTION(git_branch_name)
 	if (php_git2_check_error(error, "git_branch_name" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	RETURN_STRING(out, 1);
+	RETURN_STRING(out);
 }
 /* }}} */
 
@@ -277,7 +277,7 @@ PHP_FUNCTION(git_branch_upstream_name)
 	if (php_git2_check_error(error, "git_branch_upstream_name" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	RETURN_STRING(tracking_branch_name_out, 1);
+	RETURN_STRING(tracking_branch_name_out);
 }
 /* }}} */
 
@@ -322,6 +322,6 @@ PHP_FUNCTION(git_branch_remote_name)
 	if (php_git2_check_error(error, "git_branch_remote_name" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	RETURN_STRING(remote_name_out, 1);
+	RETURN_STRING(remote_name_out);
 }
 /* }}} */

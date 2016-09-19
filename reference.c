@@ -38,7 +38,7 @@ static int php_git2_reference_foreach_name_cb(const char *name, void *payload)
 
 	Z_ADDREF_P(p->payload);
 	MAKE_STD_ZVAL(param_name);
-	ZVAL_STRING(param_name, name, 1);
+	ZVAL_STRING(param_name, name);
 
 	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, &retval_ptr, 2, &param_name, &p->payload)) {
 		zval_ptr_dtor(&retval_ptr);
@@ -104,7 +104,7 @@ PHP_FUNCTION(git_reference_name_to_id)
 	}
 
 	git_oid_fmt(out, &id);
-	RETURN_STRING(out, 1);
+	RETURN_STRING(out);
 }
 
 /* {{{ proto resource git_reference_dwim(resource $repo, string $shorthand)
@@ -212,7 +212,7 @@ PHP_FUNCTION(git_reference_target)
 	ZEND_FETCH_RESOURCE(_ref, php_git2_t*, &ref, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_reference_target(PHP_GIT2_V(_ref, reference));
 	git_oid_fmt(__result, result);
-	RETURN_STRING(__result, 1);
+	RETURN_STRING(__result);
 }
 /* }}} */
 
@@ -233,7 +233,7 @@ PHP_FUNCTION(git_reference_target_peel)
 	oid = git_reference_target_peel(PHP_GIT2_V(_ref, reference));
 
 	git_oid_fmt(out, oid);
-	RETURN_STRING(out, 1);
+	RETURN_STRING(out);
 }
 
 /* {{{ proto string git_reference_symbolic_target(resource $ref)
@@ -251,7 +251,7 @@ PHP_FUNCTION(git_reference_symbolic_target)
 
 	ZEND_FETCH_RESOURCE(_ref, php_git2_t*, &ref, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_reference_symbolic_target(PHP_GIT2_V(_ref, reference));
-	RETURN_STRING(result, 1);
+	RETURN_STRING(result);
 }
 /* }}} */
 
@@ -289,7 +289,7 @@ PHP_FUNCTION(git_reference_name)
 
 	ZEND_FETCH_RESOURCE(_ref, php_git2_t*, &ref, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_reference_name(PHP_GIT2_V(_ref, reference));
-	RETURN_STRING(result, 1);
+	RETURN_STRING(result);
 }
 /* }}} */
 
@@ -666,7 +666,7 @@ PHP_FUNCTION(git_reference_next_name)
 	if (php_git2_check_error(error, "git_reference_next_name" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	RETURN_STRING(out, 1);
+	RETURN_STRING(out);
 }
 /* }}} */
 
@@ -809,7 +809,7 @@ PHP_FUNCTION(git_reference_normalize_name)
 	if (php_git2_check_error(error, "git_reference_normalize_name" TSRMLS_CC)) {
 		RETURN_FALSE
 	}
-	RETURN_STRING(buffer, 1);
+	RETURN_STRING(buffer);
 }
 
 /* {{{ proto resource git_reference_peel(resource $ref,  $type)
@@ -869,6 +869,6 @@ PHP_FUNCTION(git_reference_shorthand)
 	}
 	ZEND_FETCH_RESOURCE(_ref, php_git2_t*, &ref, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	name = git_reference_shorthand(PHP_GIT2_V(_ref, reference));
-	RETURN_STRING(name, 1);
+	RETURN_STRING(name);
 }
 

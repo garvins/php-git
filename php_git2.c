@@ -353,7 +353,7 @@ PHP_FUNCTION(git_libgit2_version)
 	git_libgit2_version(&major, &minor, &rev);
 	snprintf(buf, 32, "%d.%d.%d", major, minor, rev);
 
-	RETURN_STRING(buf, 1);
+	RETURN_STRING(buf);
 }
 
 static zend_function_entry php_git2_functions[] = {

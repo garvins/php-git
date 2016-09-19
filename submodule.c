@@ -19,7 +19,7 @@ static int php_git2_git_submodule_foreach_cb(git_submodule *sm, const char *name
 	}
 	ZVAL_RESOURCE(param_sm, GIT2_RVAL_P(submodule));
 
-	ZVAL_STRING(param_name, name, 1);
+	ZVAL_STRING(param_name, name);
 	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, &retval_ptr, 3,
 		&param_sm, &param_name, &p->payload)) {
 		return GIT_EUSER;
@@ -199,7 +199,7 @@ PHP_FUNCTION(git_submodule_name)
 	
 	ZEND_FETCH_RESOURCE(_submodule, php_git2_t*, &submodule, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_submodule_name(PHP_GIT2_V(_submodule, submodule));
-	RETURN_STRING(result, 1);
+	RETURN_STRING(result);
 }
 /* }}} */
 
@@ -218,7 +218,7 @@ PHP_FUNCTION(git_submodule_path)
 	
 	ZEND_FETCH_RESOURCE(_submodule, php_git2_t*, &submodule, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_submodule_path(PHP_GIT2_V(_submodule, submodule));
-	RETURN_STRING(result, 1);
+	RETURN_STRING(result);
 }
 /* }}} */
 
@@ -237,7 +237,7 @@ PHP_FUNCTION(git_submodule_url)
 	
 	ZEND_FETCH_RESOURCE(_submodule, php_git2_t*, &submodule, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_submodule_url(PHP_GIT2_V(_submodule, submodule));
-	RETURN_STRING(result, 1);
+	RETURN_STRING(result);
 }
 /* }}} */
 
@@ -278,7 +278,7 @@ PHP_FUNCTION(git_submodule_index_id)
 	ZEND_FETCH_RESOURCE(_submodule, php_git2_t*, &submodule, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_submodule_index_id(PHP_GIT2_V(_submodule, submodule));
 	git_oid_fmt(__result, result);
-	RETURN_STRING(__result, 1);
+	RETURN_STRING(__result);
 }
 /* }}} */
 
@@ -299,7 +299,7 @@ PHP_FUNCTION(git_submodule_head_id)
 	ZEND_FETCH_RESOURCE(_submodule, php_git2_t*, &submodule, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_submodule_head_id(PHP_GIT2_V(_submodule, submodule));
 	git_oid_fmt(__result, result);
-	RETURN_STRING(__result, 1);
+	RETURN_STRING(__result);
 }
 /* }}} */
 
@@ -320,7 +320,7 @@ PHP_FUNCTION(git_submodule_wd_id)
 	ZEND_FETCH_RESOURCE(_submodule, php_git2_t*, &submodule, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_submodule_wd_id(PHP_GIT2_V(_submodule, submodule));
 	git_oid_fmt(__result, result);
-	RETURN_STRING(__result, 1);
+	RETURN_STRING(__result);
 }
 /* }}} */
 

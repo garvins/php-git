@@ -14,7 +14,7 @@ static int php_git2_git_odb_foreach_cb(const git_oid *id, void *payload)
 	MAKE_STD_ZVAL(param_oid);
 
 	git_oid_fmt(buf, id);
-	ZVAL_STRING(param_oid, buf, 1);
+	ZVAL_STRING(param_oid, buf);
 
 	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, &retval_ptr, 2, &param_oid, &p->payload)) {
 		return GIT_EUSER;
@@ -297,7 +297,7 @@ PHP_FUNCTION(git_odb_write)
 		RETURN_FALSE;
 	}
 	git_oid_fmt(buf, &out);
-	RETURN_STRING(buf, 1);
+	RETURN_STRING(buf);
 }
 /* }}} */
 
@@ -369,7 +369,7 @@ PHP_FUNCTION(git_odb_stream_finalize_write)
 		RETURN_FALSE;
 	}
 	git_oid_fmt(buf, &out);
-	RETURN_STRING(buf, 1);
+	RETURN_STRING(buf);
 }
 /* }}} */
 
@@ -497,7 +497,7 @@ PHP_FUNCTION(git_odb_hash)
 		RETURN_FALSE;
 	}
 	git_oid_fmt(buf, &out);
-	RETURN_STRING(buf, 1);
+	RETURN_STRING(buf);
 }
 /* }}} */
 
@@ -520,7 +520,7 @@ PHP_FUNCTION(git_odb_hashfile)
 		RETURN_FALSE;
 	}
 	git_oid_fmt(buf, &out);
-	RETURN_STRING(buf, 1);
+	RETURN_STRING(buf);
 }
 /* }}} */
 
@@ -582,7 +582,7 @@ PHP_FUNCTION(git_odb_object_id)
 	ZEND_FETCH_RESOURCE(_object, php_git2_t*, &object, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_odb_object_id(PHP_GIT2_V(_object, odb_object));
 	git_oid_fmt(__result, result);
-	RETURN_STRING(__result, 1);
+	RETURN_STRING(__result);
 }
 /* }}} */
 
@@ -742,7 +742,7 @@ static int php_git2_odb_backend_read(void **buffer, size_t *size, git_otype *typ
 
 	git_oid_fmt(buf, oid);
 	MAKE_STD_ZVAL(param_oid);
-	ZVAL_STRING(param_oid, buf, 1);
+	ZVAL_STRING(param_oid, buf);
 
 	if (php_git2_call_function_v(&p->callbacks[0].fci, &p->callbacks[0].fcc TSRMLS_CC, &retval_ptr, 1, &param_oid)) {
 		return GIT_EUSER;
@@ -787,8 +787,8 @@ static int php_git2_odb_backend_write(git_odb_backend *backend, const git_oid *o
 	MAKE_STD_ZVAL(param_buffer);
 	MAKE_STD_ZVAL(param_otype);
 
-	ZVAL_STRING(param_oid, buf, 1);
-	ZVAL_STRINGL(param_buffer, buffer, size, 1);
+	ZVAL_STRING(param_oid, buf);
+	ZVAL_STRINGL(param_buffer, buffer, size);
 	ZVAL_LONG(param_otype, type);
 
 	if (php_git2_call_function_v(&p->callbacks[1].fci, &p->callbacks[1].fcc TSRMLS_CC, &retval_ptr, 3,
@@ -817,7 +817,7 @@ static int php_git2_odb_backend_read_prefix(git_oid *out_oid,
 
 	git_oid_nfmt(buf, len, short_oid);
 	MAKE_STD_ZVAL(param_short_oid);
-	ZVAL_STRING(param_short_oid, buf, 1);
+	ZVAL_STRING(param_short_oid, buf);
 
 	if (php_git2_call_function_v(&p->callbacks[2].fci, &p->callbacks[2].fcc TSRMLS_CC, &retval_ptr, 1, &param_short_oid)) {
 		return GIT_EUSER;
@@ -867,7 +867,7 @@ static int php_git2_odb_backend_read_header(size_t *len_p, git_otype *type_p, gi
 
 	git_oid_fmt(buf, oid);
 	MAKE_STD_ZVAL(param_oid);
-	ZVAL_STRING(param_oid, buf, 1);
+	ZVAL_STRING(param_oid, buf);
 
 	if (php_git2_call_function_v(&p->callbacks[3].fci, &p->callbacks[3].fcc TSRMLS_CC, &retval_ptr, 1, &param_oid)) {
 		return GIT_EUSER;
@@ -906,7 +906,7 @@ static int php_git2_odb_backend_exists(git_odb_backend *backend, const git_oid *
 
 	git_oid_fmt(buf, oid);
 	MAKE_STD_ZVAL(param_oid);
-	ZVAL_STRING(param_oid, buf, 1);
+	ZVAL_STRING(param_oid, buf);
 
 	if (php_git2_call_function_v(&p->callbacks[5].fci, &p->callbacks[5].fcc TSRMLS_CC, &retval_ptr, 1,
 		&param_oid)) {

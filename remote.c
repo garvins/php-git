@@ -168,7 +168,7 @@ PHP_FUNCTION(git_remote_name)
 
 	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_remote_name(PHP_GIT2_V(_remote, remote));
-	RETURN_STRING(result, 1);
+	RETURN_STRING(result);
 }
 /* }}} */
 
@@ -187,7 +187,7 @@ PHP_FUNCTION(git_remote_url)
 
 	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_remote_url(PHP_GIT2_V(_remote, remote));
-	RETURN_STRING(result, 1);
+	RETURN_STRING(result);
 }
 /* }}} */
 
@@ -206,7 +206,7 @@ PHP_FUNCTION(git_remote_pushurl)
 
 	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_remote_pushurl(PHP_GIT2_V(_remote, remote));
-	RETURN_STRING(result, 1);
+	RETURN_STRING(result);
 }
 /* }}} */
 
@@ -793,10 +793,10 @@ static int cred_cb(git_cred **cred, const char *url, const char *username_from_u
 		ZVAL_NULL(param_username_from_url);
 
 		if (url != NULL) {
-			ZVAL_STRING(param_url, url, 1);
+			ZVAL_STRING(param_url, url);
 		}
 		if (username_from_url != NULL) {
-			ZVAL_STRING(param_username_from_url, username_from_url, 1);
+			ZVAL_STRING(param_username_from_url, username_from_url);
 		}
 		ZVAL_LONG(param_allowed_types, allowed_types);
 		Z_ADDREF_P(cb->payload);

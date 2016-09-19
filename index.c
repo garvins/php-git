@@ -12,8 +12,8 @@ static int php_git2_index_matched_path_cb(const char *path, const char *matched_
 	Z_ADDREF_P(p->payload);
 	MAKE_STD_ZVAL(param_path);
 	MAKE_STD_ZVAL(param_matched_pathspec);
-	ZVAL_STRING(param_path, path, 1);
-	ZVAL_STRING(param_matched_pathspec, matched_pathspec, 1);
+	ZVAL_STRING(param_path, path);
+	ZVAL_STRING(param_matched_pathspec, matched_pathspec);
 
 	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, &retval_ptr, 3, &param_path, &param_matched_pathspec, &p->payload)) {
 		zval_ptr_dtor(&param_path);
@@ -275,7 +275,7 @@ PHP_FUNCTION(git_index_path)
 	}
 	ZEND_FETCH_RESOURCE(_index, php_git2_t*, &index, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	path = git_index_path(PHP_GIT2_V(_index, index));
-	RETURN_STRING(path, 1);
+	RETURN_STRING(path);
 }
 
 /* {{{ proto long git_index_read_tree(index, tree)
@@ -321,7 +321,7 @@ PHP_FUNCTION(git_index_write_tree)
 		RETURN_FALSE
 	}
 	git_oid_fmt(out, &id);
-	RETURN_STRING(out, 1);
+	RETURN_STRING(out);
 }
 
 /* {{{ proto resource git_index_write_tree_to(index, repo)

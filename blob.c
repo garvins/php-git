@@ -26,7 +26,7 @@ PHP_FUNCTION(git_blob_create_frombuffer)
 	}
 
 	git_oid_fmt(out, &id);
-	RETURN_STRING(out, 1);
+	RETURN_STRING(out);
 }
 /* }}} */
 
@@ -88,7 +88,7 @@ PHP_FUNCTION(git_blob_create_fromdisk)
 	}
 
 	git_oid_fmt(out, &id);
-	RETURN_STRING(out, 1);
+	RETURN_STRING(out);
 }
 /* }}} */
 
@@ -117,7 +117,7 @@ PHP_FUNCTION(git_blob_create_fromworkdir)
 	}
 
 	git_oid_fmt(out, &id);
-	RETURN_STRING(out, 1);
+	RETURN_STRING(out);
 }
 /* }}} */
 
@@ -188,7 +188,7 @@ PHP_FUNCTION(git_blob_id)
 	id = git_blob_id(PHP_GIT2_V(git2, blob));
 
 	git_oid_fmt(out, id);
-	RETURN_STRING(out, 1);
+	RETURN_STRING(out);
 }
 /* }}} */
 

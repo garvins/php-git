@@ -66,7 +66,7 @@ static int php_git2_git_status_cb(
 	Z_ADDREF_P(p->payload);
 	MAKE_STD_ZVAL(param_path);
 	MAKE_STD_ZVAL(param_status_flags);
-	ZVAL_STRING(param_path, path, 1);
+	ZVAL_STRING(param_path, path);
 	ZVAL_LONG(param_status_flags, status_flags);
 
 	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, &retval_ptr, 3,

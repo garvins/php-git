@@ -18,7 +18,8 @@ PHP_FUNCTION(git_message_prettify)
 	out_size = git_message_prettify(NULL, NULL, message, strip_comments);
 	out = (char*)emalloc(sizeof(char) * out_size);
 	error = git_message_prettify(out, out_size, message, strip_comments);
-	RETURN_STRING(out, 0);
+	RETURN_STRING(out);
+	efree(out);
 }
 /* }}} */
 

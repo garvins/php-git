@@ -29,7 +29,7 @@ PHP_FUNCTION(git_merge_base)
 		RETURN_FALSE;
 	}
 	git_oid_fmt(oid, &out);
-	RETURN_STRING(oid, 1);
+	RETURN_STRING(oid);
 }
 /* }}} */
 
@@ -297,7 +297,7 @@ PHP_FUNCTION(git_merge_result_fastforward_oid)
 		RETURN_FALSE;
 	}
 	git_oid_fmt(buf, &out);
-	RETURN_STRING(buf, 1);
+	RETURN_STRING(buf);
 }
 /* }}} */
 

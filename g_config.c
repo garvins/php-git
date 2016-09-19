@@ -57,7 +57,7 @@ static void php_git2_config_get_with(INTERNAL_FUNCTION_PARAMETERS, enum php_git2
 			if (php_git2_check_error(error, "git_config_get_string" TSRMLS_CC)) {
 				RETURN_FALSE
 			}
-			RETURN_STRING(ptr, 1);
+			RETURN_STRING(ptr);
 			break;
 		}
 		case PHP_GIT2_CONFIG_BOOL: {
@@ -211,7 +211,7 @@ PHP_FUNCTION(git_config_find_global)
 	if (php_git2_check_error(error, "git_config_find_global" TSRMLS_CC)) {
 		RETURN_FALSE
 	}
-	RETURN_STRING(buffer, 1);
+	RETURN_STRING(buffer);
 }
 
 /* {{{ proto resource git_config_find_xdg(length)
@@ -241,7 +241,7 @@ PHP_FUNCTION(git_config_find_system)
 	if (php_git2_check_error(error, "git_config_find_system" TSRMLS_CC)) {
 		RETURN_FALSE
 	}
-	RETURN_STRING(buffer, 1);
+	RETURN_STRING(buffer);
 }
 
 /* {{{ proto resource git_config_open_default()

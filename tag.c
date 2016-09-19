@@ -16,8 +16,8 @@ static int php_git2_tag_foreach_cb(const char *name, git_oid *oid, void *payload
 	Z_ADDREF_P(p->payload);
 	MAKE_STD_ZVAL(param_name);
 	MAKE_STD_ZVAL(param_oid);
-	ZVAL_STRING(param_name, name, 1);
-	ZVAL_STRING(param_oid, buffer, 1);
+	ZVAL_STRING(param_name, name);
+	ZVAL_STRING(param_oid, buffer);
 
 	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, &retval_ptr, 3, &param_name, &param_oid, &p->payload)) {
 		zval_ptr_dtor(&retval_ptr);
@@ -135,7 +135,7 @@ PHP_FUNCTION(git_tag_id)
 	ZEND_FETCH_RESOURCE(_tag, php_git2_t*, &tag, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_tag_id(PHP_GIT2_V(_tag, tag));
 	git_oid_fmt(__result, result);
-	RETURN_STRING(__result, 1);
+	RETURN_STRING(__result);
 }
 /* }}} */
 
@@ -207,7 +207,7 @@ PHP_FUNCTION(git_tag_target_id)
 	ZEND_FETCH_RESOURCE(_tag, php_git2_t*, &tag, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_tag_target_id(PHP_GIT2_V(_tag, tag));
 	git_oid_fmt(__result, result);
-	RETURN_STRING(__result, 1);
+	RETURN_STRING(__result);
 }
 /* }}} */
 
@@ -245,7 +245,7 @@ PHP_FUNCTION(git_tag_name)
 
 	ZEND_FETCH_RESOURCE(_tag, php_git2_t*, &tag, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_tag_name(PHP_GIT2_V(_tag, tag));
-	RETURN_STRING(result, 1);
+	RETURN_STRING(result);
 }
 /* }}} */
 
@@ -285,7 +285,7 @@ PHP_FUNCTION(git_tag_message)
 
 	ZEND_FETCH_RESOURCE(_tag, php_git2_t*, &tag, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_tag_message(PHP_GIT2_V(_tag, tag));
-	RETURN_STRING(result, 1);
+	RETURN_STRING(result);
 }
 /* }}} */
 
@@ -319,7 +319,7 @@ PHP_FUNCTION(git_tag_create)
 		RETURN_FALSE
 	}
 	git_oid_fmt(buffer, &__oid);
-	RETURN_STRING(buffer, 1);
+	RETURN_STRING(buffer);
 
 }
 /* }}} */
@@ -354,7 +354,7 @@ PHP_FUNCTION(git_tag_annotation_create)
 		RETURN_FALSE
 	}
 	git_oid_fmt(buffer, &__oid);
-	RETURN_STRING(buffer, 1);
+	RETURN_STRING(buffer);
 
 }
 /* }}} */
@@ -383,7 +383,7 @@ PHP_FUNCTION(git_tag_create_frombuffer)
 		RETURN_FALSE
 	}
 	git_oid_fmt(oid, &__oid);
-	RETURN_STRING(oid, 1);
+	RETURN_STRING(oid);
 }
 /* }}} */
 
@@ -415,7 +415,7 @@ PHP_FUNCTION(git_tag_create_lightweight)
 		RETURN_FALSE
 	}
 	git_oid_fmt(oid, &__oid);
-	RETURN_STRING(oid, 1);
+	RETURN_STRING(oid);
 }
 /* }}} */
 

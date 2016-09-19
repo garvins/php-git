@@ -889,7 +889,7 @@ class Fashion
             $printer->put(");\n");
             if (preg_match("/git_oid/", $f->getReturnType())) {
                 $printer->put("git_oid_fmt(__result, `name`);\n", "name", "result");
-                $printer->put("RETURN_STRING(__result, 1);\n");
+                $printer->put("RETURN_STRING(__result);\n");
             } else if (preg_match("/_owner$/", $f->getName())) {
                 $this->generateMakeResourceIfNeeded($printer, $f, "__result", 1);
             } else if (preg_match("/_type/", $f->getName())) {

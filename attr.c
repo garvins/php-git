@@ -40,7 +40,7 @@ PHP_FUNCTION(git_attr_get)
 	if (php_git2_check_error(error, "git_attr_get" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	RETURN_STRING(value_out, 1);
+	RETURN_STRING(value_out);
 }
 /* }}} */
 
@@ -66,7 +66,7 @@ PHP_FUNCTION(git_attr_get_many)
 	if (php_git2_check_error(error, "git_attr_get_many" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	RETURN_STRING(values_out, 1);
+	RETURN_STRING(values_out);
 }
 /* }}} */
 

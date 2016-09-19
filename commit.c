@@ -145,7 +145,7 @@ PHP_FUNCTION(git_commit_id)
 	ZEND_FETCH_RESOURCE(_commit, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_commit_id(PHP_GIT2_V(_commit, commit));
 	git_oid_fmt(__result, result);
-	RETURN_STRING(__result, 1);
+	RETURN_STRING(__result);
 }
 /* }}} */
 
@@ -186,7 +186,7 @@ PHP_FUNCTION(git_commit_message_encoding)
 	}
 	ZEND_FETCH_RESOURCE(_commit, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	encoding = git_commit_message_encoding(PHP_GIT2_V(_commit, commit));
-	RETURN_STRING(encoding, 1);
+	RETURN_STRING(encoding);
 }
 /* }}} */
 
@@ -204,7 +204,7 @@ PHP_FUNCTION(git_commit_message)
 	}
 	ZEND_FETCH_RESOURCE(_commit, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	message = git_commit_message(PHP_GIT2_V(_commit, commit));
-	RETURN_STRING(message, 1);
+	RETURN_STRING(message);
 }
 /* }}} */
 
@@ -223,7 +223,7 @@ PHP_FUNCTION(git_commit_message_raw)
 
 	ZEND_FETCH_RESOURCE(_commit, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	message = git_commit_message_raw(PHP_GIT2_V(_commit, commit));
-	RETURN_STRING(message, 1);
+	RETURN_STRING(message);
 }
 /* }}} */
 
@@ -301,7 +301,7 @@ PHP_FUNCTION(git_commit_raw_header)
 	ZEND_FETCH_RESOURCE(_commit, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	header = git_commit_raw_header(PHP_GIT2_V(_commit, commit));
 
-	RETURN_STRING(header, 1);
+	RETURN_STRING(header);
 }
 /* }}} */
 
@@ -322,7 +322,7 @@ PHP_FUNCTION(git_commit_tree_id)
 	id = git_commit_tree_id(PHP_GIT2_V(_commit, commit));
 
 	git_oid_fmt(out, id);
-	RETURN_STRING(out, 1);
+	RETURN_STRING(out);
 }
 /* }}} */
 
@@ -393,7 +393,7 @@ PHP_FUNCTION(git_commit_parent_id)
 	oid = git_commit_parent_id(PHP_GIT2_V(_commit, commit), n);
 	git_oid_fmt(out, oid);
 
-	RETURN_STRING(out, 1);
+	RETURN_STRING(out);
 }
 /* }}} */
 
@@ -506,5 +506,5 @@ PHP_FUNCTION(git_commit_create)
 	}
 
 	git_oid_fmt(out, &oid);
-	RETURN_STRING(out, 1);
+	RETURN_STRING(out);
 }

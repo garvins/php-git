@@ -215,7 +215,7 @@ PHP_FUNCTION(git_reflog_entry_id_old)
 	ZEND_FETCH_RESOURCE(_entry, php_git2_t*, &entry, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_reflog_entry_id_old(PHP_GIT2_V(_entry, reflog_entry));
 	git_oid_fmt(__result, result);
-	RETURN_STRING(__result, 1);
+	RETURN_STRING(__result);
 }
 /* }}} */
 
@@ -236,7 +236,7 @@ PHP_FUNCTION(git_reflog_entry_id_new)
 	ZEND_FETCH_RESOURCE(_entry, php_git2_t*, &entry, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_reflog_entry_id_new(PHP_GIT2_V(_entry, reflog_entry));
 	git_oid_fmt(__result, result);
-	RETURN_STRING(__result, 1);
+	RETURN_STRING(__result);
 }
 /* }}} */
 
@@ -275,7 +275,7 @@ PHP_FUNCTION(git_reflog_entry_message)
 	
 	ZEND_FETCH_RESOURCE(_entry, php_git2_t*, &entry, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	result = git_reflog_entry_message(PHP_GIT2_V(_entry, reflog_entry));
-	RETURN_STRING(result, 1);
+	RETURN_STRING(result);
 }
 /* }}} */
 

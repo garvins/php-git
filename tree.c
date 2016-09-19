@@ -20,7 +20,7 @@ static int tree_walk_cb(const char *root, const git_tree_entry *entry, void *pay
 	MAKE_STD_ZVAL(param_root);
 	MAKE_STD_ZVAL(param_rsrc);
 
-	ZVAL_STRING(param_root, root, 1);
+	ZVAL_STRING(param_root, root);
 	php_git2_make_resource(&result, PHP_GIT2_TYPE_TREE_ENTRY, entry, 0 TSRMLS_CC);
 	zend_list_addref(result->resource_id);
 	ZVAL_RESOURCE(param_rsrc, result->resource_id);
@@ -194,7 +194,7 @@ PHP_FUNCTION(git_tree_entry_id)
 	ZEND_FETCH_RESOURCE(git2, php_git2_t*, &tree_entry, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	id = git_tree_entry_id(PHP_GIT2_V(git2, tree_entry));
 	git_oid_fmt(out, id);
-	RETURN_STRING(out, 1);
+	RETURN_STRING(out);
 }
 
 
@@ -231,7 +231,7 @@ PHP_FUNCTION(git_tree_entry_name)
 
 	ZEND_FETCH_RESOURCE(git2, php_git2_t*, &tree_entry, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	name = git_tree_entry_name(PHP_GIT2_V(git2, tree_entry));
-	RETURN_STRING(name, 1);
+	RETURN_STRING(name);
 }
 
 /* {{{ proto long git_tree_entry_count(resource $tree)
@@ -392,7 +392,7 @@ PHP_FUNCTION(git_tree_id)
 	ZEND_FETCH_RESOURCE(git2, php_git2_t*, &tree, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
 	id = git_tree_id(PHP_GIT2_V(git2, tree));
 	git_oid_fmt(out, id);
-	RETURN_STRING(out, 1);
+	RETURN_STRING(out);
 }
 
 
