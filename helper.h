@@ -45,7 +45,7 @@ void php_git2_signature_to_array(const git_signature *signature, zval **out TSRM
 void php_git2_strarray_to_array(git_strarray *array, zval **out TSRMLS_DC);
 
 int php_git2_call_function_v(
-	zend_fcall_info *fci, zend_fcall_info_cache *fcc TSRMLS_DC, zval **retval_ptr_ptr, zend_uint param_count, ...);
+	zend_fcall_info *fci, zend_fcall_info_cache *fcc TSRMLS_DC, zval **retval_ptr_ptr, uint32_t param_count, ...);
 
 int php_git2_cb_init(php_git2_cb_t **out, zend_fcall_info *fci, zend_fcall_info_cache *fcc, void *payload TSRMLS_DC);
 
