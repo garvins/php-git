@@ -72,7 +72,7 @@ int git2_resource_handle;
 
 zend_class_entry *php_git2_odb_backend_foreach_callback_class_entry;
 
-void static destruct_git2(zend_rsrc_list_entry *rsrc TSRMLS_DC)
+void static destruct_git2(zend_resource *rsrc TSRMLS_DC)
 {
 	php_git2_t *resource = (php_git2_t *)rsrc->ptr;
 	if (resource->should_free_v) {
