@@ -98,7 +98,8 @@ if (preg_match_all("/GIT_EXTERN\((.+?)\)\s*([a-zA-Z0-9_-]+)\((.+?)\);/s", $data,
 if ($_SERVER['argv'][2] == "1") {
     $buffer .= '#include "php_git2.h"' . "\n";
     $buffer .= '#include "php_git2_priv.h"' . "\n";
-    $buffer .= '#include ".h"' . "\n";
+    $path = explode('/', $_SERVER['argv'][1]);
+    $buffer .= '#include "' . array_pop($path) . '"' . "\n\n";
 }
 
 
@@ -107,12 +108,12 @@ foreach ($table as $func) {
 
     $t = array();
     foreach ($func['args'] as $a) {
-        $t[] = $a['name'];
+        $t[] = getReturnType($a['type']) . " $" . $a['name'];
     }
     $sig = join(", ", $t);
 
     $buffer .= "/* {{{ proto $ret {$func['name']}($sig)\n";
-    $buffer .= "*/\n";
+    $buffer .= " */\n";
 
     if ($_SERVER['argv'][2] == "0") {
         $buffer .= "PHP_FUNCTION({$func['name']});\n";
@@ -215,6 +216,7 @@ function getReturnType($name)
 {
     switch($name) {
         case "int":
+        case "size_t":
             return "long";
         case "void":
             return "void";
