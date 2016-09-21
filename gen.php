@@ -165,20 +165,33 @@ function hasResource($func)
 function getDeclarations($func)
 {
     $result = array();
+
+    if (preg_match("/resource/", $func['retval'])) {
+        $result[] = "\tphp_git2_t * result = NULL;";
+    } else {
+        $result[] = "\t{$func['retval']} result;";
+    }
+
     foreach ($func['args'] as $arg) {
         if (preg_match("/char/", $arg['type'])) {
-            $result[] = "\tchar *{$arg['name']} = {0};";
-            $result[] = "\tint {$arg['name']}_len;";
+            $result[] = "\tchar *{$arg['name']} = NULL;";
+            $result[] = "\tint {$arg['name']}_len = 0;";
         } else if (preg_match("/int/", $arg['type'])) {
             $result[] = "\tlong {$arg['name']};";
         } else if (preg_match("/git_oid/", $arg['type'])) {
-            $result[] = "\tchar *{$arg['name']} = {0};";
-            $result[] = "\tint {$arg['name']}_len;";
+            $result[] = "\tchar *{$arg['name']} = NULL;";
+            $result[] = "\tint {$arg['name']}_len = 0;";
         } else if (preg_match("/git_/", $arg['type'])) {
             $result[] = "\tzval *{$arg['name']} = NULL;";
             $result[] = "\tphp_git2_t *_{$arg['name']} = NULL;";
         }
     }
+
+    if (preg_match("/resource/", $func['retval']))
+    {
+        $result[] = "\tint error = 0;";
+    }
+
     $result[] = "";
     $result[] = "";
 
@@ -193,7 +206,7 @@ function getParseStr($func)
             $result[] = "s";
         } else if (preg_match("/git_oid/", $arg['type'])) {
                 $result[] = "s";
-        } else if (preg_match("/int/", $arg['type'])) {
+        } else if (preg_match("/(int|size_t)/", $arg['type'])) {
             $result[] = "l";
         } else if (preg_match("/git_/", $arg['type'])) {
             $result[] = "r";
@@ -226,6 +239,11 @@ function getReturnType($name)
             return "long";
         case "void":
             return "void";
+        case "const git_oid":
+        case "const char":
+            return "string";
+        case "const git_signature":
+            return "array";
         default:
             return "resource";
     }
