@@ -21,7 +21,10 @@ PHP_FUNCTION(git_indexer_new)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_odb, php_git2_t*, &odb, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_odb = (php_git2_t *) zend_fetch_resource(Z_RES_P(odb), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	if (php_git2_cb_init(&cb, &fci, &fcc, progress_cb_payload TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
@@ -46,7 +49,10 @@ PHP_FUNCTION(git_indexer_append)
 //		return;
 //	}
 //
-//	ZEND_FETCH_RESOURCE(_idx, php_git2_t*, &idx, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+//	if ((_idx = (php_git2_t *) zend_fetch_resource(Z_RES_P(idx), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+//		RETURN_FALSE;
+//	}
+//
 //	result = git_indexer_append(PHP_GIT2_V(_idx, indexer), data, size, stats);
 //	RETURN_LONG(result);
 }
@@ -62,7 +68,10 @@ PHP_FUNCTION(git_indexer_commit)
 //		return;
 //	}
 //
-//	ZEND_FETCH_RESOURCE(_idx, php_git2_t*, &idx, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+//	if ((_idx = (php_git2_t *) zend_fetch_resource(Z_RES_P(idx), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+//		RETURN_FALSE;
+//	}
+//
 //	result = git_indexer_commit(PHP_GIT2_V(_idx, indexer), stats);
 //	RETURN_LONG(result);
 }
@@ -82,7 +91,10 @@ PHP_FUNCTION(git_indexer_hash)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_idx, php_git2_t*, &idx, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_idx = (php_git2_t *) zend_fetch_resource(Z_RES_P(idx), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_indexer_hash(PHP_GIT2_V(_idx, indexer));
 	git_oid_fmt(__result, result);
 	RETURN_STRING(__result);
@@ -101,7 +113,10 @@ PHP_FUNCTION(git_indexer_free)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_idx, php_git2_t*, &idx, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_idx = (php_git2_t *) zend_fetch_resource(Z_RES_P(idx), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	if (GIT2_SHOULD_FREE(_idx)) {
 		git_indexer_free(PHP_GIT2_V(_idx, indexer));
 		GIT2_SHOULD_FREE(_idx) = 0;

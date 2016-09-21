@@ -65,7 +65,10 @@ PHP_FUNCTION(git_signature_default)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_signature_default(&out, PHP_GIT2_V(_repo, repository));
 	if (php_git2_check_error(error, "git_signature_default" TSRMLS_CC)) {
 		RETURN_FALSE;

@@ -15,7 +15,10 @@ PHP_FUNCTION(git_refspec_src)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_refspec, php_git2_t*, &refspec, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_refspec = (php_git2_t *) zend_fetch_resource(Z_RES_P(refspec), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_refspec_src(PHP_GIT2_V(_refspec, refspec));
 	RETURN_STRING(result);
 }
@@ -34,7 +37,10 @@ PHP_FUNCTION(git_refspec_dst)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_refspec, php_git2_t*, &refspec, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_refspec = (php_git2_t *) zend_fetch_resource(Z_RES_P(refspec), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_refspec_dst(PHP_GIT2_V(_refspec, refspec));
 	RETURN_STRING(result);
 }
@@ -53,7 +59,10 @@ PHP_FUNCTION(git_refspec_string)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_refspec, php_git2_t*, &refspec, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_refspec = (php_git2_t *) zend_fetch_resource(Z_RES_P(refspec), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_refspec_string(PHP_GIT2_V(_refspec, refspec));
 	RETURN_STRING(result);
 }
@@ -72,7 +81,10 @@ PHP_FUNCTION(git_refspec_force)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_refspec, php_git2_t*, &refspec, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_refspec = (php_git2_t *) zend_fetch_resource(Z_RES_P(refspec), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_refspec_force(PHP_GIT2_V(_refspec, refspec));
 	RETURN_LONG(result);
 }
@@ -91,7 +103,10 @@ PHP_FUNCTION(git_refspec_direction)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_spec, php_git2_t*, &spec, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_spec = (php_git2_t *) zend_fetch_resource(Z_RES_P(spec), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_refspec_direction(PHP_GIT2_V(_spec, refspec));
 	RETURN_LONG(result);
 }
@@ -111,7 +126,10 @@ PHP_FUNCTION(git_refspec_src_matches)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_refspec, php_git2_t*, &refspec, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_refspec = (php_git2_t *) zend_fetch_resource(Z_RES_P(refspec), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_refspec_src_matches(PHP_GIT2_V(_refspec, refspec), refname);
 	RETURN_LONG(result);
 }
@@ -131,7 +149,10 @@ PHP_FUNCTION(git_refspec_dst_matches)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_refspec, php_git2_t*, &refspec, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_refspec = (php_git2_t *) zend_fetch_resource(Z_RES_P(refspec), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_refspec_dst_matches(PHP_GIT2_V(_refspec, refspec), refname);
 	RETURN_LONG(result);
 }
@@ -153,7 +174,10 @@ PHP_FUNCTION(git_refspec_transform)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_spec, php_git2_t*, &spec, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_spec = (php_git2_t *) zend_fetch_resource(Z_RES_P(spec), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_refspec_transform(&out, outlen, PHP_GIT2_V(_spec, refspec), name);
 	if (php_git2_check_error(error, "git_refspec_transform" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -178,7 +202,10 @@ PHP_FUNCTION(git_refspec_rtransform)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_spec, php_git2_t*, &spec, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_spec = (php_git2_t *) zend_fetch_resource(Z_RES_P(spec), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_refspec_rtransform(&out, outlen, PHP_GIT2_V(_spec, refspec), name);
 	if (php_git2_check_error(error, "git_refspec_rtransform" TSRMLS_CC)) {
 		RETURN_FALSE;

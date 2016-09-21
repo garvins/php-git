@@ -25,7 +25,10 @@ PHP_FUNCTION(git_checkout_head)
 		//memset(&options, '\0', sizeof(git_checkout_opts));
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	result = git_checkout_head(PHP_GIT2_V(_repo, repository), options);
 	if (should_free) {
 		php_git_git_checkout_opts_free(options TSRMLS_CC);
@@ -56,8 +59,14 @@ PHP_FUNCTION(git_checkout_index)
         should_free = 1;
     }
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-	ZEND_FETCH_RESOURCE(_index, php_git2_t*, &index, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
+	if ((_index = (php_git2_t *) zend_fetch_resource(Z_RES_P(index), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
     result = git_checkout_index(PHP_GIT2_V(_repo, repository), PHP_GIT2_V(_index, index), options);
     if (should_free) {
         php_git_git_checkout_opts_free(options TSRMLS_CC);
@@ -88,8 +97,14 @@ PHP_FUNCTION(git_checkout_tree)
         should_free = 1;
     }
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-	ZEND_FETCH_RESOURCE(_treeish, php_git2_t*, &treeish, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
+	if ((_treeish = (php_git2_t *) zend_fetch_resource(Z_RES_P(treeish), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
     result = git_checkout_tree(PHP_GIT2_V(_repo, repository), PHP_GIT2_V(_treeish, object), options);
     if (should_free) {
         php_git_git_checkout_opts_free(options TSRMLS_CC);

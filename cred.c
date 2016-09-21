@@ -15,7 +15,10 @@ PHP_FUNCTION(git_cred_has_username)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_cred, php_git2_t*, &cred, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_cred = (php_git2_t *) zend_fetch_resource(Z_RES_P(cred), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	result = git_cred_has_username(PHP_GIT2_V(_cred, cred));
 	RETURN_BOOL(result);
 }
@@ -87,7 +90,7 @@ PHP_FUNCTION(git_cred_ssh_custom_new)
 //		"ssr", &username, &username_len, &publickey, &publickey_len, &publickey_len, &sign_fn, &sign_data) == FAILURE) {
 //		return;
 //	}
-//	ZEND_FETCH_RESOURCE(_username, php_git2_t*, &username, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+//	if ((_username = (php_git2_t *) zend_fetch_resource(Z_RES_P(username), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) { 		RETURN_FALSE;     };
 }
 
 /* {{{ proto resource git_cred_default_new()

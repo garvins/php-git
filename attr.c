@@ -35,7 +35,10 @@ PHP_FUNCTION(git_attr_get)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	error = git_attr_get(&value_out, PHP_GIT2_V(_repo, repository), flags, path, name);
 	if (php_git2_check_error(error, "git_attr_get" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -60,7 +63,10 @@ PHP_FUNCTION(git_attr_get_many)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	/* TODO(chobie): emalloc values_out */
 	error = git_attr_get_many(&values_out, PHP_GIT2_V(_repo, repository), flags, path, num_attr, names);
 	if (php_git2_check_error(error, "git_attr_get_many" TSRMLS_CC)) {
@@ -88,7 +94,10 @@ PHP_FUNCTION(git_attr_foreach)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	if (php_git2_cb_init(&cb, &fci, &fcc, payload TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
@@ -110,8 +119,11 @@ PHP_FUNCTION(git_attr_cache_flush)
 		"r", &repo) == FAILURE) {
 		return;
 	}
-	
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	git_attr_cache_flush(PHP_GIT2_V(_repo, repository));
 }
 /* }}} */
@@ -129,8 +141,11 @@ PHP_FUNCTION(git_attr_add_macro)
 		"rss", &repo, &name, &name_len, &values, &values_len) == FAILURE) {
 		return;
 	}
-	
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	result = git_attr_add_macro(PHP_GIT2_V(_repo, repository), name, values);
 	RETURN_LONG(result);
 }

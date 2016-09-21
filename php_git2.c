@@ -325,7 +325,10 @@ PHP_FUNCTION(git_resource_type)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_resource, php_git2_t*, &resource, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+    if ((_resource = (php_git2_t *) zend_fetch_resource(Z_RES_P(resource), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+    }
+
 	RETURN_LONG(_resource->type);
 }
 /* }}} */

@@ -17,7 +17,10 @@ PHP_FUNCTION(git_remote_create)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_remote_create(&out, PHP_GIT2_V(_repo, repository), name, url);
 	if (php_git2_check_error(error, "git_remote_create" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -45,7 +48,10 @@ PHP_FUNCTION(git_remote_create_with_fetchspec)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_remote_create_with_fetchspec(&out, PHP_GIT2_V(_repo, repository), name, url, fetch);
 	if (php_git2_check_error(error, "git_remote_create_with_fetchspec" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -72,7 +78,10 @@ PHP_FUNCTION(git_remote_create_inmemory)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_remote_create_inmemory(&out, PHP_GIT2_V(_repo, repository), fetch, url);
 	if (php_git2_check_error(error, "git_remote_create_inmemory" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -99,7 +108,10 @@ PHP_FUNCTION(git_remote_load)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_remote_load(&out, PHP_GIT2_V(_repo, repository), name);
 	if (php_git2_check_error(error, "git_remote_load" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -125,7 +137,10 @@ PHP_FUNCTION(git_remote_save)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_remote_save(PHP_GIT2_V(_remote, remote));
 	RETURN_BOOL(result);
 }
@@ -144,7 +159,10 @@ PHP_FUNCTION(git_remote_owner)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_remote_owner(PHP_GIT2_V(_remote, remote));
 	if (php_git2_make_resource(&__result, PHP_GIT2_TYPE_REMOTE, result, 1 TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -166,7 +184,10 @@ PHP_FUNCTION(git_remote_name)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_remote_name(PHP_GIT2_V(_remote, remote));
 	RETURN_STRING(result);
 }
@@ -185,7 +206,10 @@ PHP_FUNCTION(git_remote_url)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_remote_url(PHP_GIT2_V(_remote, remote));
 	RETURN_STRING(result);
 }
@@ -204,7 +228,10 @@ PHP_FUNCTION(git_remote_pushurl)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_remote_pushurl(PHP_GIT2_V(_remote, remote));
 	RETURN_STRING(result);
 }
@@ -225,7 +252,10 @@ PHP_FUNCTION(git_remote_set_url)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_remote_set_url(PHP_GIT2_V(_remote, remote), url);
 	RETURN_BOOL(result);
 }
@@ -246,7 +276,10 @@ PHP_FUNCTION(git_remote_set_pushurl)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_remote_set_pushurl(PHP_GIT2_V(_remote, remote), url);
 	RETURN_BOOL(result);
 }
@@ -268,7 +301,10 @@ PHP_FUNCTION(git_remote_add_fetch)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_remote_add_fetch(PHP_GIT2_V(_remote, remote), refspec);
 	RETURN_BOOL(result);
 }
@@ -290,7 +326,10 @@ PHP_FUNCTION(git_remote_get_fetch_refspecs)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_remote_get_fetch_refspecs(&array, PHP_GIT2_V(_remote, remote));
 	php_git2_strarray_to_array(&array, &result TSRMLS_CC);
 	git_strarray_free(&array);
@@ -317,7 +356,10 @@ PHP_FUNCTION(git_remote_set_fetch_refspecs)
 
 	php_git2_array_to_strarray(&out, array TSRMLS_CC);
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_remote_set_fetch_refspecs(PHP_GIT2_V(_remote, remote), &out);
 	php_git2_strarray_free(&out);
 	RETURN_LONG(result);
@@ -340,7 +382,10 @@ PHP_FUNCTION(git_remote_add_push)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_remote_add_push(PHP_GIT2_V(_remote, remote), refspec);
 	RETURN_LONG(result);
 }
@@ -361,7 +406,10 @@ PHP_FUNCTION(git_remote_get_push_refspecs)
 	}
 
 	php_git2_strarray_to_array(&_array, &array TSRMLS_CC);
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_remote_get_push_refspecs(&_array, PHP_GIT2_V(_remote, remote));
 	git_strarray_free(&_array);
 
@@ -385,7 +433,10 @@ PHP_FUNCTION(git_remote_set_push_refspecs)
 	}
 
 	php_git2_strarray_to_array(&_array, &array TSRMLS_CC);
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_remote_set_push_refspecs(PHP_GIT2_V(_remote, remote), &_array);
 	git_strarray_free(&_array);
 	RETURN_LONG(result);
@@ -405,7 +456,10 @@ PHP_FUNCTION(git_remote_clear_refspecs)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	git_remote_clear_refspecs(PHP_GIT2_V(_remote, remote));
 }
 /* }}} */
@@ -424,7 +478,10 @@ PHP_FUNCTION(git_remote_refspec_count)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_remote_refspec_count(PHP_GIT2_V(_remote, remote));
 	RETURN_LONG(result);
 }
@@ -444,7 +501,10 @@ PHP_FUNCTION(git_remote_get_refspec)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_remote_get_refspec(PHP_GIT2_V(_remote, remote), n);
 	if (php_git2_make_resource(&out, PHP_GIT2_TYPE_REFSPEC, result, 0 TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -467,7 +527,10 @@ PHP_FUNCTION(git_remote_connect)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_remote_connect(PHP_GIT2_V(_remote, remote), direction);
 	RETURN_BOOL(result);
 }
@@ -507,7 +570,10 @@ PHP_FUNCTION(git_remote_ls)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 
 	if (git_remote_connected(PHP_GIT2_V(_remote, remote)) == 0) {
 		php_error_docref(NULL TSRMLS_CC, E_WARNING, "passed git_remote hasn't been connected");
@@ -542,7 +608,10 @@ PHP_FUNCTION(git_remote_download)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_remote_download(PHP_GIT2_V(_remote, remote));
 	RETURN_LONG(result);
 }
@@ -562,7 +631,10 @@ PHP_FUNCTION(git_remote_connected)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_remote_connected(PHP_GIT2_V(_remote, remote));
 	RETURN_LONG(result);
 }
@@ -580,7 +652,10 @@ PHP_FUNCTION(git_remote_stop)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	git_remote_stop(PHP_GIT2_V(_remote, remote));
 }
 /* }}} */
@@ -597,7 +672,10 @@ PHP_FUNCTION(git_remote_disconnect)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	git_remote_disconnect(PHP_GIT2_V(_remote, remote));
 }
 /* }}} */
@@ -615,7 +693,10 @@ PHP_FUNCTION(git_remote_free)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	if (GIT2_SHOULD_FREE(_remote)) {
         git_remote_free(PHP_GIT2_V(_remote, remote));
         GIT2_SHOULD_FREE(_remote) = 0;
@@ -638,7 +719,10 @@ PHP_FUNCTION(git_remote_update_tips)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_remote_update_tips(PHP_GIT2_V(_remote, remote));
 	RETURN_LONG(result);
 }
@@ -658,7 +742,10 @@ PHP_FUNCTION(git_remote_fetch)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_remote_fetch(PHP_GIT2_V(_remote, remote));
 	RETURN_LONG(result);
 }
@@ -716,7 +803,10 @@ PHP_FUNCTION(git_remote_list)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_remote_list(&out, PHP_GIT2_V(_repo, repository));
 	if (php_git2_check_error(error, "git_remote_list" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -743,7 +833,10 @@ PHP_FUNCTION(git_remote_check_cert)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	git_remote_check_cert(PHP_GIT2_V(_remote, remote), check);
 }
 /* }}} */
@@ -764,8 +857,14 @@ PHP_FUNCTION(git_remote_set_transport)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-	ZEND_FETCH_RESOURCE(_transport, php_git2_t*, &transport, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
+	if ((_transport = (php_git2_t *) zend_fetch_resource(Z_RES_P(transport), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_remote_set_transport(PHP_GIT2_V(_remote, remote), PHP_GIT2_V(_transport, transport));
 	RETURN_LONG(result);
 }
@@ -852,7 +951,10 @@ PHP_FUNCTION(git_remote_set_callbacks)
 	}
 	cb.payload = _payload;
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	git_remote_set_callbacks(PHP_GIT2_V(_remote, remote), &cb);
 }
 
@@ -869,7 +971,10 @@ PHP_FUNCTION(git_remote_stats)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_remote_stats(PHP_GIT2_V(_remote, remote));
 	php_git2_git_transfer_progress_to_array(result, &retval TSRMLS_CC);
 	RETURN_ZVAL(retval, 0, 1);
@@ -890,7 +995,10 @@ PHP_FUNCTION(git_remote_autotag)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_remote_autotag(PHP_GIT2_V(_remote, remote));
 	RETURN_LONG(result);
 }
@@ -908,7 +1016,10 @@ PHP_FUNCTION(git_remote_set_autotag)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	git_remote_set_autotag(PHP_GIT2_V(_remote, remote), Z_LVAL_P(value));
 }
 /* }}} */
@@ -937,7 +1048,10 @@ PHP_FUNCTION(git_remote_rename)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	if (php_git2_cb_init(&cb, &fci, &fcc, payload TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
@@ -961,7 +1075,10 @@ PHP_FUNCTION(git_remote_update_fetchhead)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_remote_update_fetchhead(PHP_GIT2_V(_remote, remote));
 	RETURN_LONG(result);
 }
@@ -980,7 +1097,10 @@ PHP_FUNCTION(git_remote_set_update_fetchhead)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_remote, php_git2_t*, &remote, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_remote = (php_git2_t *) zend_fetch_resource(Z_RES_P(remote), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	git_remote_set_update_fetchhead(PHP_GIT2_V(_remote, remote), value);
 }
 /* }}} */

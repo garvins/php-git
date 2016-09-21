@@ -17,7 +17,10 @@ PHP_FUNCTION(git_revparse_single)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_revparse_single(&out, PHP_GIT2_V(_repo, repository), spec);
 	if (php_git2_check_error(error, "git_revparse_single" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -49,7 +52,10 @@ PHP_FUNCTION(git_revparse_ext)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_revparse_ext(&object_out, &reference_out, PHP_GIT2_V(_repo, repository), spec);
 	if (php_git2_check_error(error, "git_revparse_ext" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -93,7 +99,10 @@ PHP_FUNCTION(git_revparse)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 
 	memset(&revspec, '\0', sizeof(revspec));
 	error = git_revparse(&revspec, PHP_GIT2_V(_repo, repository), spec);

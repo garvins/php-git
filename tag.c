@@ -48,7 +48,10 @@ PHP_FUNCTION(git_tag_lookup)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	if (git_oid_fromstrn(&__id, id, id_len)) {
 		RETURN_FALSE;
 	}
@@ -81,7 +84,10 @@ PHP_FUNCTION(git_tag_lookup_prefix)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	if (git_oid_fromstrn(&__id, id, id_len)) {
 		RETURN_FALSE;
 	}
@@ -110,7 +116,10 @@ PHP_FUNCTION(git_tag_free)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_tag, php_git2_t*, &tag, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_tag = (php_git2_t *) zend_fetch_resource(Z_RES_P(tag), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	if (_tag->should_free_v) {
 		git_tag_free(PHP_GIT2_V(_tag, tag));
 	};
@@ -132,7 +141,10 @@ PHP_FUNCTION(git_tag_id)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_tag, php_git2_t*, &tag, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_tag = (php_git2_t *) zend_fetch_resource(Z_RES_P(tag), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_tag_id(PHP_GIT2_V(_tag, tag));
 	git_oid_fmt(__result, result);
 	RETURN_STRING(__result);
@@ -152,7 +164,10 @@ PHP_FUNCTION(git_tag_owner)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_tag, php_git2_t*, &tag, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_tag = (php_git2_t *) zend_fetch_resource(Z_RES_P(tag), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_tag_owner(PHP_GIT2_V(_tag, tag));
 	if (php_git2_make_resource(&__result, PHP_GIT2_TYPE_TAG, result, 1 TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -176,7 +191,10 @@ PHP_FUNCTION(git_tag_target)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_tag, php_git2_t*, &tag, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_tag = (php_git2_t *) zend_fetch_resource(Z_RES_P(tag), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_tag_target(&target_out, PHP_GIT2_V(_tag, tag));
 	if (php_git2_check_error(error, "git_tag_target" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -204,7 +222,10 @@ PHP_FUNCTION(git_tag_target_id)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_tag, php_git2_t*, &tag, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_tag = (php_git2_t *) zend_fetch_resource(Z_RES_P(tag), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_tag_target_id(PHP_GIT2_V(_tag, tag));
 	git_oid_fmt(__result, result);
 	RETURN_STRING(__result);
@@ -224,7 +245,10 @@ PHP_FUNCTION(git_tag_target_type)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_tag, php_git2_t*, &tag, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_tag = (php_git2_t *) zend_fetch_resource(Z_RES_P(tag), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_tag_target_type(PHP_GIT2_V(_tag, tag));
 	RETURN_LONG(result);
 }
@@ -243,7 +267,10 @@ PHP_FUNCTION(git_tag_name)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_tag, php_git2_t*, &tag, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_tag = (php_git2_t *) zend_fetch_resource(Z_RES_P(tag), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_tag_name(PHP_GIT2_V(_tag, tag));
 	RETURN_STRING(result);
 }
@@ -263,7 +290,10 @@ PHP_FUNCTION(git_tag_tagger)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_tag, php_git2_t*, &tag, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_tag = (php_git2_t *) zend_fetch_resource(Z_RES_P(tag), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_tag_tagger(PHP_GIT2_V(_tag, tag));
 	php_git2_signature_to_array(result, &__result TSRMLS_CC);
 	RETURN_ZVAL(__result, 0, 1);
@@ -283,7 +313,10 @@ PHP_FUNCTION(git_tag_message)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_tag, php_git2_t*, &tag, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_tag = (php_git2_t *) zend_fetch_resource(Z_RES_P(tag), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_tag_message(PHP_GIT2_V(_tag, tag));
 	RETURN_STRING(result);
 }
@@ -312,8 +345,14 @@ PHP_FUNCTION(git_tag_create)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-	ZEND_FETCH_RESOURCE(_target, php_git2_t*, &target, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
+	if ((_target = (php_git2_t *) zend_fetch_resource(Z_RES_P(target), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_tag_create(&__oid, PHP_GIT2_V(_repo, repository), tag_name, PHP_GIT2_V(_target, object), tagger, message, force);
 	if (php_git2_check_error(result, "git_tag_create" TSRMLS_CC)) {
 		RETURN_FALSE
@@ -347,8 +386,14 @@ PHP_FUNCTION(git_tag_annotation_create)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-	ZEND_FETCH_RESOURCE(_target, php_git2_t*, &target, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
+	if ((_target = (php_git2_t *) zend_fetch_resource(Z_RES_P(target), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_tag_annotation_create(&__oid, PHP_GIT2_V(_repo, repository), tag_name, PHP_GIT2_V(_target, object), tagger, message);
 	if (php_git2_check_error(result, "git_tag_annotation_create" TSRMLS_CC)) {
 		RETURN_FALSE
@@ -377,7 +422,10 @@ PHP_FUNCTION(git_tag_create_frombuffer)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_tag_create_frombuffer(&__oid, PHP_GIT2_V(_repo, repository), buffer, force);
 	if (php_git2_check_error(result, "git_tag_create_frombuffer" TSRMLS_CC)) {
 		RETURN_FALSE
@@ -408,8 +456,14 @@ PHP_FUNCTION(git_tag_create_lightweight)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-	ZEND_FETCH_RESOURCE(_target, php_git2_t*, &target, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
+	if ((_target = (php_git2_t *) zend_fetch_resource(Z_RES_P(target), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_tag_create_lightweight(&__oid, PHP_GIT2_V(_repo, repository), tag_name, PHP_GIT2_V(_target, object), force);
 	if (php_git2_check_error(result, "git_tag_create_lightweight" TSRMLS_CC)) {
 		RETURN_FALSE
@@ -434,7 +488,10 @@ PHP_FUNCTION(git_tag_delete)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_tag_delete(PHP_GIT2_V(_repo, repository), tag_name);
 	RETURN_LONG(result);
 }
@@ -456,7 +513,10 @@ PHP_FUNCTION(git_tag_list)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_tag_list(&tag_names, PHP_GIT2_V(_repo, repository));
 	if (php_git2_check_error(error, "git_tag_list" TSRMLS_CC)) {
 		RETURN_FALSE
@@ -485,7 +545,10 @@ PHP_FUNCTION(git_tag_list_match)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_tag_list_match(&tag_names, pattern, PHP_GIT2_V(_repo, repository));
 	if (php_git2_check_error(error, "git_tag_list_match" TSRMLS_CC)) {
 		RETURN_FALSE
@@ -515,7 +578,10 @@ PHP_FUNCTION(git_tag_foreach)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	if (php_git2_cb_init(&cb, &fci, &fcc, payload TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
@@ -540,7 +606,10 @@ PHP_FUNCTION(git_tag_peel)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_tag, php_git2_t*, &tag, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_tag = (php_git2_t *) zend_fetch_resource(Z_RES_P(tag), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_tag_peel(&tag_target_out, PHP_GIT2_V(_tag, tag));
 	if (php_git2_check_error(error, "git_tag_peel" TSRMLS_CC)) {
 		RETURN_FALSE;

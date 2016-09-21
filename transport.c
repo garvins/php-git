@@ -44,7 +44,10 @@ PHP_FUNCTION(git_transport_new)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_owner, php_git2_t*, &owner, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_owner = (php_git2_t *) zend_fetch_resource(Z_RES_P(owner), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_transport_new(&out, PHP_GIT2_V(_owner, remote), url);
 	if (php_git2_check_error(error, "git_transport_new" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -116,7 +119,10 @@ PHP_FUNCTION(git_transport_dummy)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_owner, php_git2_t*, &owner, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_owner = (php_git2_t *) zend_fetch_resource(Z_RES_P(owner), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_transport_dummy(&out, PHP_GIT2_V(_owner, remote), NULL);
 	if (php_git2_check_error(error, "git_transport_dummy" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -143,7 +149,10 @@ PHP_FUNCTION(git_transport_local)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_owner, php_git2_t*, &owner, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_owner = (php_git2_t *) zend_fetch_resource(Z_RES_P(owner), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_transport_local(&out, PHP_GIT2_V(_owner, remote), NULL);
 	if (php_git2_check_error(error, "git_transport_local" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -170,7 +179,10 @@ PHP_FUNCTION(git_transport_smart)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_owner, php_git2_t*, &owner, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_owner = (php_git2_t *) zend_fetch_resource(Z_RES_P(owner), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_transport_smart(&out, PHP_GIT2_V(_owner, remote), payload);
 	if (php_git2_check_error(error, "git_transport_smart" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -197,7 +209,10 @@ PHP_FUNCTION(git_smart_subtransport_http)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_owner, php_git2_t*, &owner, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_owner = (php_git2_t *) zend_fetch_resource(Z_RES_P(owner), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_smart_subtransport_http(&out, PHP_GIT2_V(_owner, transport));
 	if (php_git2_check_error(error, "git_smart_subtransport_http" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -224,7 +239,10 @@ PHP_FUNCTION(git_smart_subtransport_git)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_owner, php_git2_t*, &owner, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_owner = (php_git2_t *) zend_fetch_resource(Z_RES_P(owner), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_smart_subtransport_git(&out, PHP_GIT2_V(_owner, transport));
 	if (php_git2_check_error(error, "git_smart_subtransport_git" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -250,7 +268,10 @@ PHP_FUNCTION(git_smart_subtransport_ssh)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_owner, php_git2_t*, &owner, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_owner = (php_git2_t *) zend_fetch_resource(Z_RES_P(owner), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_smart_subtransport_ssh(&out, PHP_GIT2_V(_owner, transport));
 	if (php_git2_check_error(error, "git_smart_subtransport_ssh" TSRMLS_CC)) {
 		RETURN_FALSE;

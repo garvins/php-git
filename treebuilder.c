@@ -48,8 +48,12 @@ PHP_FUNCTION(git_treebuilder_create)
 		"|r", &source) == FAILURE) {
 		return;
 	}
+
 	if (source != NULL) {
-        ZEND_FETCH_RESOURCE(_source, php_git2_t*, &source, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+        if ((_source = (php_git2_t *) zend_fetch_resource(Z_RES_P(source), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		    RETURN_FALSE;
+	    }
+
 		tree = PHP_GIT2_V(_source, tree);
 	}
 
@@ -76,7 +80,11 @@ PHP_FUNCTION(git_treebuilder_clear)
 		"r", &bld) == FAILURE) {
 		return;
 	}
-	ZEND_FETCH_RESOURCE(_bld, php_git2_t*, &bld, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_bld = (php_git2_t *) zend_fetch_resource(Z_RES_P(bld), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	git_treebuilder_clear(PHP_GIT2_V(_bld, treebuilder));
 }
 
@@ -92,7 +100,11 @@ PHP_FUNCTION(git_treebuilder_entrycount)
 		"r", &bld) == FAILURE) {
 		return;
 	}
-	ZEND_FETCH_RESOURCE(_bld, php_git2_t*, &bld, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_bld = (php_git2_t *) zend_fetch_resource(Z_RES_P(bld), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	count = git_treebuilder_entrycount(PHP_GIT2_V(_bld, treebuilder));
 	RETURN_LONG(count);
 }
@@ -108,7 +120,11 @@ PHP_FUNCTION(git_treebuilder_free)
 		"r", &bld) == FAILURE) {
 		return;
 	}
-	ZEND_FETCH_RESOURCE(_bld, php_git2_t*, &bld, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_bld = (php_git2_t *) zend_fetch_resource(Z_RES_P(bld), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 
 	git_treebuilder_free(PHP_GIT2_V(_bld, treebuilder));
 }
@@ -128,7 +144,10 @@ PHP_FUNCTION(git_treebuilder_get)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_bld, php_git2_t*, &bld, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_bld = (php_git2_t *) zend_fetch_resource(Z_RES_P(bld), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	entry = git_treebuilder_get(PHP_GIT2_V(_bld, treebuilder), filename);
 	if (entry != NULL) {
 		if (php_git2_make_resource(&result, PHP_GIT2_TYPE_TREE_ENTRY, entry, 0 TSRMLS_CC)) {
@@ -157,7 +176,10 @@ PHP_FUNCTION(git_treebuilder_insert)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_bld, php_git2_t*, &bld, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_bld = (php_git2_t *) zend_fetch_resource(Z_RES_P(bld), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	if (git_oid_fromstrn(&__id, id, id_len)) {
 		RETURN_FALSE;
 	}
@@ -187,7 +209,11 @@ PHP_FUNCTION(git_treebuilder_remove)
 		"rs", &bld, &filename, &filename_len) == FAILURE) {
 		return;
 	}
-	ZEND_FETCH_RESOURCE(_bld, php_git2_t*, &bld, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_bld = (php_git2_t *) zend_fetch_resource(Z_RES_P(bld), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 
 	error = git_treebuilder_remove(PHP_GIT2_V(_bld, treebuilder), filename);
 
@@ -214,7 +240,10 @@ PHP_FUNCTION(git_treebuilder_filter)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_bld, php_git2_t*, &bld, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_bld = (php_git2_t *) zend_fetch_resource(Z_RES_P(bld), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	if (php_git2_cb_init(&cb, &fci, &fcc, payload TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
@@ -241,8 +270,14 @@ PHP_FUNCTION(git_treebuilder_write)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-	ZEND_FETCH_RESOURCE(_bld, php_git2_t*, &bld, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
+	if ((_bld = (php_git2_t *) zend_fetch_resource(Z_RES_P(bld), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 
 	error = git_treebuilder_write(&id, PHP_GIT2_V(_repo, repository), PHP_GIT2_V(_bld, treebuilder));
 	if (php_git2_check_error(error, "git_treebuilder_write" TSRMLS_CC)) {

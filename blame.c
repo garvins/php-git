@@ -114,7 +114,10 @@ PHP_FUNCTION(git_blame_get_hunk_count)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_blame, php_git2_t*, &blame, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_blame = (php_git2_t *) zend_fetch_resource(Z_RES_P(blame), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	result = git_blame_get_hunk_count(PHP_GIT2_V(_blame, blame));
 	RETURN_LONG(result);
 }
@@ -134,7 +137,10 @@ PHP_FUNCTION(git_blame_get_hunk_byindex)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_blame, php_git2_t*, &blame, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_blame = (php_git2_t *) zend_fetch_resource(Z_RES_P(blame), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	result = git_blame_get_hunk_byindex(PHP_GIT2_V(_blame, blame), index);
 	if (result == NULL) {
 		RETURN_FALSE;
@@ -158,7 +164,10 @@ PHP_FUNCTION(git_blame_get_hunk_byline)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_blame, php_git2_t*, &blame, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_blame = (php_git2_t *) zend_fetch_resource(Z_RES_P(blame), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	result = git_blame_get_hunk_byline(PHP_GIT2_V(_blame, blame), lineno);
 	if (result == NULL) {
 		RETURN_FALSE;
@@ -184,7 +193,10 @@ PHP_FUNCTION(git_blame_file)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	php_git2_array_to_git_blame_options(&opts, options TSRMLS_CC);
 	error = git_blame_file(&out, PHP_GIT2_V(_repo, repository), path, &opts);
 	if (php_git2_check_error(error, "git_blame_file" TSRMLS_CC)) {
@@ -212,7 +224,10 @@ PHP_FUNCTION(git_blame_buffer)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_reference, php_git2_t*, &reference, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_reference = (php_git2_t *) zend_fetch_resource(Z_RES_P(reference), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	error = git_blame_buffer(&out, PHP_GIT2_V(_reference, blame), buffer, buffer_len);
 	if (php_git2_check_error(error, "git_blame_buffer" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -236,7 +251,10 @@ PHP_FUNCTION(git_blame_free)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_blame, php_git2_t*, &blame, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_blame = (php_git2_t *) zend_fetch_resource(Z_RES_P(blame), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	if (GIT2_SHOULD_FREE(_blame)) {
 		git_blame_free(PHP_GIT2_V(_blame, blame));
 		GIT2_SHOULD_FREE(_blame) = 0;

@@ -14,7 +14,10 @@ PHP_FUNCTION(git_commit_free)
         return;
     }
     
-    ZEND_FETCH_RESOURCE(_commit, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_commit = (php_git2_t *) zend_fetch_resource(Z_RES_P(commit), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
     if (_commit->should_free_v) {
         git_commit_free(PHP_GIT2_V(_commit, commit));
         _commit->should_free_v = 0;
@@ -38,8 +41,11 @@ PHP_FUNCTION(git_commit_lookup)
 		"rs", &repo, &id, &id_len) == FAILURE) {
 		return;
 	}
-	
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	if (git_oid_fromstrn(&__id, id, id_len)) {
 		RETURN_FALSE;
 	}
@@ -65,7 +71,9 @@ PHP_FUNCTION(git_commit_author)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(git2, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((git2 = (php_git2_t *) zend_fetch_resource(Z_RES_P(commit), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
 
 	author = git_commit_author(PHP_GIT2_V(git2, commit));
 	php_git2_signature_to_array(author, &result TSRMLS_CC);
@@ -87,7 +95,10 @@ PHP_FUNCTION(git_commit_tree)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_commit, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_commit = (php_git2_t *) zend_fetch_resource(Z_RES_P(commit), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	error = git_commit_tree(&tree_out, PHP_GIT2_V(_commit, commit));
 	if (php_git2_check_error(error, "git_commit_tree" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -116,7 +127,10 @@ PHP_FUNCTION(git_commit_lookup_prefix)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	if (git_oid_fromstrn(&__id, id, id_len)) {
 		RETURN_FALSE;
 	}
@@ -142,7 +156,10 @@ PHP_FUNCTION(git_commit_id)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_commit, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_commit = (php_git2_t *) zend_fetch_resource(Z_RES_P(commit), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	result = git_commit_id(PHP_GIT2_V(_commit, commit));
 	git_oid_fmt(__result, result);
 	RETURN_STRING(__result);
@@ -162,7 +179,10 @@ PHP_FUNCTION(git_commit_owner)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_commit, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_commit = (php_git2_t *) zend_fetch_resource(Z_RES_P(commit), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	result = git_commit_owner(PHP_GIT2_V(_commit, commit));
 	if (php_git2_make_resource(&__result, PHP_GIT2_TYPE_REPOSITORY, result, 1 TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -184,7 +204,11 @@ PHP_FUNCTION(git_commit_message_encoding)
 		"r", &commit) == FAILURE) {
 		return;
 	}
-	ZEND_FETCH_RESOURCE(_commit, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_commit = (php_git2_t *) zend_fetch_resource(Z_RES_P(commit), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	encoding = git_commit_message_encoding(PHP_GIT2_V(_commit, commit));
 	RETURN_STRING(encoding);
 }
@@ -202,7 +226,11 @@ PHP_FUNCTION(git_commit_message)
 		"r", &commit) == FAILURE) {
 		return;
 	}
-	ZEND_FETCH_RESOURCE(_commit, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_commit = (php_git2_t *) zend_fetch_resource(Z_RES_P(commit), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	message = git_commit_message(PHP_GIT2_V(_commit, commit));
 	RETURN_STRING(message);
 }
@@ -221,7 +249,10 @@ PHP_FUNCTION(git_commit_message_raw)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_commit, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_commit = (php_git2_t *) zend_fetch_resource(Z_RES_P(commit), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	message = git_commit_message_raw(PHP_GIT2_V(_commit, commit));
 	RETURN_STRING(message);
 }
@@ -239,7 +270,11 @@ PHP_FUNCTION(git_commit_time)
 		"r", &commit) == FAILURE) {
 		return;
 	}
-	ZEND_FETCH_RESOURCE(_commit, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_commit = (php_git2_t *) zend_fetch_resource(Z_RES_P(commit), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	time = git_commit_time(PHP_GIT2_V(_commit, commit));
 
 	/* NOTE(chobie) should this return as a string? */
@@ -259,7 +294,11 @@ PHP_FUNCTION(git_commit_time_offset)
 		"r", &commit) == FAILURE) {
 		return;
 	}
-	ZEND_FETCH_RESOURCE(_commit, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_commit = (php_git2_t *) zend_fetch_resource(Z_RES_P(commit), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	result = git_commit_time_offset(PHP_GIT2_V(_commit, commit));
 	RETURN_LONG(result);
 }
@@ -279,7 +318,10 @@ PHP_FUNCTION(git_commit_committer)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(git2, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((git2 = (php_git2_t *) zend_fetch_resource(Z_RES_P(commit), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	committer = git_commit_committer(PHP_GIT2_V(git2, commit));
 	php_git2_signature_to_array(committer, &result TSRMLS_CC);
 	RETURN_ZVAL(result, 0, 1);
@@ -298,7 +340,11 @@ PHP_FUNCTION(git_commit_raw_header)
 		"r", &commit) == FAILURE) {
 		return;
 	}
-	ZEND_FETCH_RESOURCE(_commit, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_commit = (php_git2_t *) zend_fetch_resource(Z_RES_P(commit), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	header = git_commit_raw_header(PHP_GIT2_V(_commit, commit));
 
 	RETURN_STRING(header);
@@ -318,7 +364,11 @@ PHP_FUNCTION(git_commit_tree_id)
 		"r", &commit) == FAILURE) {
 		return;
 	}
-	ZEND_FETCH_RESOURCE(_commit, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_commit = (php_git2_t *) zend_fetch_resource(Z_RES_P(commit), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	id = git_commit_tree_id(PHP_GIT2_V(_commit, commit));
 
 	git_oid_fmt(out, id);
@@ -338,7 +388,10 @@ PHP_FUNCTION(git_commit_parentcount)
 		"r", &commit) == FAILURE) {
 		return;
 	}
-	ZEND_FETCH_RESOURCE(_commit, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_commit = (php_git2_t *) zend_fetch_resource(Z_RES_P(commit), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
 
 	count = git_commit_parentcount(PHP_GIT2_V(_commit, commit));
 	RETURN_LONG(count);
@@ -359,7 +412,11 @@ PHP_FUNCTION(git_commit_parent)
 		"rl", &commit, &n) == FAILURE) {
 		return;
 	}
-	ZEND_FETCH_RESOURCE(_commit, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_commit = (php_git2_t *) zend_fetch_resource(Z_RES_P(commit), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	error = git_commit_parent(&parent, PHP_GIT2_V(_commit, commit), n);
 	if (php_git2_check_error(error, "git_commit_parent" TSRMLS_CC)) {
 		RETURN_FALSE
@@ -389,7 +446,11 @@ PHP_FUNCTION(git_commit_parent_id)
 		"rl", &commit, &n) == FAILURE) {
 		return;
 	}
-	ZEND_FETCH_RESOURCE(_commit, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_commit = (php_git2_t *) zend_fetch_resource(Z_RES_P(commit), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
 	oid = git_commit_parent_id(PHP_GIT2_V(_commit, commit), n);
 	git_oid_fmt(out, oid);
 
@@ -411,7 +472,10 @@ PHP_FUNCTION(git_commit_nth_gen_ancestor)
 		"rl", &commit, &n) == FAILURE) {
 		return;
 	}
-	ZEND_FETCH_RESOURCE(_commit, php_git2_t*, &commit, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_commit = (php_git2_t *) zend_fetch_resource(Z_RES_P(commit), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
 
 	error = git_commit_nth_gen_ancestor(&ancestor, PHP_GIT2_V(_commit, commit), n);
 	if (php_git2_check_error(error, "git_commit_nth_gen_ancestor" TSRMLS_CC)) {
@@ -462,8 +526,14 @@ PHP_FUNCTION(git_commit_create)
 	php_git2_array_to_signature(&__author, author TSRMLS_CC);
 	php_git2_array_to_signature(&__committer, committer TSRMLS_CC);
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
-	ZEND_FETCH_RESOURCE(_tree, php_git2_t*, &tree, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
+
+	if ((_tree = (php_git2_t *) zend_fetch_resource(Z_RES_P(tree), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	    RETURN_FALSE;
+	}
 
 	parent_count = zend_hash_num_elements(Z_ARRVAL_P(parents));
 	__parents = emalloc(parent_count * sizeof(void *));

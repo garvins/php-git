@@ -230,7 +230,10 @@ PHP_FUNCTION(git_repository_get_namespace)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(git2, php_git2_t*, &repository, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((git2 = (php_git2_t *) zend_fetch_resource(Z_RES_P(repository), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	ns = git_repository_get_namespace(PHP_GIT2_V(git2, repository));
 	if (ns != NULL) {
 		RETURN_STRING(ns);
@@ -253,7 +256,10 @@ PHP_FUNCTION(git_repository_workdir)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(git2, php_git2_t*, &repository, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((git2 = (php_git2_t *) zend_fetch_resource(Z_RES_P(repository), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	workdir = git_repository_workdir(PHP_GIT2_V(git2, repository));
 	if (workdir != NULL) {
 		RETURN_STRING(workdir);
@@ -278,7 +284,10 @@ PHP_FUNCTION(git_repository_wrap_odb)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_odb, php_git2_t*, &odb, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_odb = (php_git2_t *) zend_fetch_resource(Z_RES_P(odb), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_repository_wrap_odb(&out, PHP_GIT2_V(_odb, odb));
 	if (php_git2_check_error(error, "git_repository_wrap_odb" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -358,7 +367,11 @@ PHP_FUNCTION(git_repository_free)
 		"r", &repo) == FAILURE) {
 		return;
 	}
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	if (GIT2_SHOULD_FREE(_repo)) {
 		git_repository_free(PHP_GIT2_V(_repo, repository));
 		GIT2_SHOULD_FREE(_repo) = 0;
@@ -411,7 +424,10 @@ PHP_FUNCTION(git_repository_head)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_repository_head(&out, PHP_GIT2_V(_repo, repository));
 	if (php_git2_check_error(error, "git_repository_head" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -437,7 +453,10 @@ PHP_FUNCTION(git_repository_head_detached)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_repository_head_detached(PHP_GIT2_V(_repo, repository));
 	RETURN_LONG(result);
 }
@@ -456,7 +475,10 @@ PHP_FUNCTION(git_repository_head_unborn)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_repository_head_unborn(PHP_GIT2_V(_repo, repository));
 	RETURN_LONG(result);
 }
@@ -476,7 +498,10 @@ PHP_FUNCTION(git_repository_is_empty)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_repository_is_empty(PHP_GIT2_V(_repo, repository));
 	RETURN_BOOL(result);
 }
@@ -496,7 +521,10 @@ PHP_FUNCTION(git_repository_path)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_repository_path(PHP_GIT2_V(_repo, repository));
 	RETURN_STRING(result);
 }
@@ -519,7 +547,10 @@ PHP_FUNCTION(git_repository_set_workdir)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_repository_set_workdir(PHP_GIT2_V(_repo, repository), workdir, update_gitlink);
 	RETURN_LONG(result);
 }
@@ -538,7 +569,10 @@ PHP_FUNCTION(git_repository_is_bare)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_repository_is_bare(PHP_GIT2_V(_repo, repository));
 	RETURN_BOOL(result);
 }
@@ -559,7 +593,10 @@ PHP_FUNCTION(git_repository_config)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_repository_config(&out, PHP_GIT2_V(_repo, repository));
 	if (php_git2_check_error(error, "git_repository_config" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -587,7 +624,10 @@ PHP_FUNCTION(git_repository_odb)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_repository_odb(&out, PHP_GIT2_V(_repo, repository));
 	if (php_git2_check_error(error, "git_repository_odb" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -615,7 +655,10 @@ PHP_FUNCTION(git_repository_refdb)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_repository_refdb(&out, PHP_GIT2_V(_repo, repository));
 	if (php_git2_check_error(error, "git_repository_refdb" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -642,7 +685,10 @@ PHP_FUNCTION(git_repository_index)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_repository_index(&out, PHP_GIT2_V(_repo, repository));
 	if (php_git2_check_error(error, "git_repository_index" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -668,7 +714,11 @@ PHP_FUNCTION(git_repository_message)
 		"r", &repo) == FAILURE) {
 		return;
 	}
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_repository_message(buffer, buffer_len, PHP_GIT2_V(_repo, repository));
 	if (php_git2_check_error(error, "git_repository_message" TSRMLS_CC)) {
 		RETURN_FALSE
@@ -691,7 +741,10 @@ PHP_FUNCTION(git_repository_message_remove)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_repository_message_remove(PHP_GIT2_V(_repo, repository));
 	RETURN_LONG(result);
 }
@@ -710,7 +763,10 @@ PHP_FUNCTION(git_repository_merge_cleanup)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_repository_merge_cleanup(PHP_GIT2_V(_repo, repository));
 	RETURN_LONG(result);
 }
@@ -732,7 +788,10 @@ PHP_FUNCTION(git_repository_fetchhead_foreach)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	if (php_git2_cb_init(&cb, &fci, &fcc, payload TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
@@ -758,7 +817,10 @@ PHP_FUNCTION(git_repository_mergehead_foreach)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	if (php_git2_cb_init(&cb, &fci, &fcc, payload TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
@@ -785,7 +847,10 @@ PHP_FUNCTION(git_repository_hashfile)
 		return;
 	}
 
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_repository_hashfile(&out, PHP_GIT2_V(_repo, repository), path, type, as_path);
 	if (php_git2_check_error(error, "git_repository_hashfile" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -809,7 +874,11 @@ PHP_FUNCTION(git_repository_set_head)
 		"rs", &repo, &refname, &refname_len) == FAILURE) {
 		return;
 	}
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_repository_set_head(PHP_GIT2_V(_repo, repository), refname);
 	if (php_git2_check_error(error, "git_repository_set_head" TSRMLS_CC)) {
 		RETURN_FALSE
@@ -833,7 +902,11 @@ PHP_FUNCTION(git_repository_set_head_detached)
 		"rs", &repo, &commitish, &commitish_len) == FAILURE) {
 		return;
 	}
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	if (git_oid_fromstrn(&id, commitish, commitish_len) != GIT_OK) {
 		return;
 	}
@@ -858,7 +931,11 @@ PHP_FUNCTION(git_repository_detach_head)
 		"r", &repo) == FAILURE) {
 		return;
 	}
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_repository_detach_head(PHP_GIT2_V(_repo, repository));
 	if (php_git2_check_error(error, "git_repository_detach_head" TSRMLS_CC)) {
 		RETURN_FALSE
@@ -879,7 +956,11 @@ PHP_FUNCTION(git_repository_state)
 		"r", &repo) == FAILURE) {
 		return;
 	}
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	state = git_repository_state(PHP_GIT2_V(_repo, repository));
 
 	RETURN_LONG(state);
@@ -900,7 +981,11 @@ PHP_FUNCTION(git_repository_set_namespace)
 		"rs", &repo, &nmspace, &nmspace_len) == FAILURE) {
 		return;
 	}
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	error = git_repository_set_namespace(PHP_GIT2_V(_repo, repository), nmspace);
 	if (php_git2_check_error(error, "git_repository_set_namespace" TSRMLS_CC)) {
 		RETURN_FALSE
@@ -921,7 +1006,11 @@ PHP_FUNCTION(git_repository_is_shallow)
 		"r", &repo) == FAILURE) {
 		return;
 	}
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	is_shallow = git_repository_is_shallow(PHP_GIT2_V(_repo, repository));
 	RETURN_LONG(is_shallow);
 }

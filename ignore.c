@@ -16,7 +16,10 @@ PHP_FUNCTION(git_ignore_add_rule)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_ignore_add_rule(PHP_GIT2_V(_repo, repository), rules);
 	RETURN_LONG(result);
 }
@@ -35,7 +38,10 @@ PHP_FUNCTION(git_ignore_clear_internal_rules)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_ignore_clear_internal_rules(PHP_GIT2_V(_repo, repository));
 	RETURN_LONG(result);
 }
@@ -56,7 +62,10 @@ PHP_FUNCTION(git_ignore_path_is_ignored)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_ignore_path_is_ignored(ignored, PHP_GIT2_V(_repo, repository), path);
 	RETURN_BOOL(result);
 }

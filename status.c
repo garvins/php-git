@@ -95,7 +95,10 @@ PHP_FUNCTION(git_status_foreach)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	if (php_git2_cb_init(&cb, &fci, &fcc, payload TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
@@ -122,7 +125,10 @@ PHP_FUNCTION(git_status_foreach_ext)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	php_git2_array_to_git_status_options(&options, opts TSRMLS_CC);
 	if (php_git2_cb_init(&cb, &fci, &fcc, payload TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -151,7 +157,10 @@ PHP_FUNCTION(git_status_file)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_status_file(&status_flags, PHP_GIT2_V(_repo, repository), path);
 	RETURN_LONG(result);
 }
@@ -172,7 +181,10 @@ PHP_FUNCTION(git_status_list_new)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	php_git2_array_to_git_status_options(&options, opts TSRMLS_CC);
 	error = git_status_list_new(&out, PHP_GIT2_V(_repo, repository), &options);
 	if (options.pathspec.count > 0) {
@@ -201,7 +213,10 @@ PHP_FUNCTION(git_status_list_entrycount)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_statuslist, php_git2_t*, &statuslist, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_statuslist = (php_git2_t *) zend_fetch_resource(Z_RES_P(statuslist), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_status_list_entrycount(PHP_GIT2_V(_statuslist, status_list));
 	RETURN_LONG(result);
 }
@@ -221,7 +236,10 @@ PHP_FUNCTION(git_status_byindex)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_statuslist, php_git2_t*, &statuslist, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_statuslist = (php_git2_t *) zend_fetch_resource(Z_RES_P(statuslist), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_status_byindex(PHP_GIT2_V(_statuslist, status_list), idx);
 	if (result == NULL) {
 		RETURN_FALSE;
@@ -243,7 +261,10 @@ PHP_FUNCTION(git_status_list_free)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_statuslist, php_git2_t*, &statuslist, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_statuslist = (php_git2_t *) zend_fetch_resource(Z_RES_P(statuslist), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	if (GIT2_SHOULD_FREE(_statuslist)) {
 		git_status_list_free(PHP_GIT2_V(_statuslist, status_list));
 		GIT2_SHOULD_FREE(_statuslist) = 0;
@@ -267,7 +288,10 @@ PHP_FUNCTION(git_status_should_ignore)
 		return;
 	}
 	
-	ZEND_FETCH_RESOURCE(_repo, php_git2_t*, &repo, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);
+	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
 	result = git_status_should_ignore(ignored, PHP_GIT2_V(_repo, repository), path);
 	RETURN_LONG(result);
 }
