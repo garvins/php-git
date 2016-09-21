@@ -130,10 +130,12 @@ foreach ($table as $func) {
         $buffer .= "\tif (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,\n";
         $buffer .= "\t\t" . sprintf('"%s", %s) == FAILURE) {%s', getParseStr($func), getParseStr2($func), "\n");
         $buffer .= "\t\treturn;\n";
-        $buffer .= "\t}\n";
+        $buffer .= "\t}\n\n";
         if (hasResource($func)) {
             $t = $func['args'][0];
-            $buffer .= "\tZEND_FETCH_RESOURCE(_{$t['name']}, php_git2_t*, &{$t['name']}, -1, PHP_GIT2_RESOURCE_NAME, git2_resource_handle);\n";
+            $buffer .= "\tif ((_" . $t['name'] . " = (php_git2_t *) zend_fetch_resource(Z_RES_P(" . $t['name'] . ", PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {\n";
+            $buffer .= "\t\tRETURN_FALSE;\n";
+            $buffer .= "\t}\n";
         }
         $buffer .= "}\n";
         $buffer .= "\n";
