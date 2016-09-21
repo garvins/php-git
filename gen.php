@@ -108,11 +108,12 @@ foreach ($table as $func) {
 
     $t = array();
     foreach ($func['args'] as $a) {
-        $t[] = getReturnType($a['type']) . " $" . $a['name'];
+        $t[] = getReturnType($a['type']) . " \${$a['name']}";
     }
+
     $sig = join(", ", $t);
 
-    $buffer .= "/* {{{ proto $ret {$func['name']}($sig)\n";
+    $buffer .= "\n/* {{{ proto $ret {$func['name']}($sig)\n";
     $buffer .= " */\n";
 
     if ($_SERVER['argv'][2] == "0") {
@@ -124,22 +125,25 @@ foreach ($table as $func) {
         $buffer .= getDeclarations($func);
 
         $buffer .= "\t/* TODO(chobie): implement this */\n";
-        $buffer .= "\tphp_error_docref(NULL TSRMLS_CC, E_WARNING, " . '"' . "{$func['name']} not implemented yet" . '"' . ");\n";
+        $buffer .= "\tphp_error_docref(NULL TSRMLS_CC, E_WARNING, \"{$func['name']} not implemented yet\");\n";
         $buffer .= "\treturn;\n\n";
 
         $buffer .= "\tif (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,\n";
         $buffer .= "\t\t" . sprintf('"%s", %s) == FAILURE) {%s', getParseStr($func), getParseStr2($func), "\n");
         $buffer .= "\t\treturn;\n";
         $buffer .= "\t}\n\n";
+
         if (hasResource($func)) {
             $t = $func['args'][0];
-            $buffer .= "\tif ((_" . $t['name'] . " = (php_git2_t *) zend_fetch_resource(Z_RES_P(" . $t['name'] . ", PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {\n";
+            $buffer .= "\tif ((_{$t['name']} = (php_git2_t *) zend_fetch_resource(Z_RES_P({$t['name']}, PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {\n";
             $buffer .= "\t\tRETURN_FALSE;\n";
             $buffer .= "\t}\n";
         }
+
         $buffer .= "}\n";
-        $buffer .= "\n";
     }
+
+    $buffer .= "/* }}} */\n";
 }
 
 echo $buffer;
@@ -163,16 +167,16 @@ function getDeclarations($func)
     $result = array();
     foreach ($func['args'] as $arg) {
         if (preg_match("/char/", $arg['type'])) {
-            $result[] = "\tchar *" . $arg['name'] . " = {0};";
-            $result[] = "\tint " . $arg['name'] . "_len;";
+            $result[] = "\tchar *{$arg['name']} = {0};";
+            $result[] = "\tint {$arg['name']}_len;";
         } else if (preg_match("/int/", $arg['type'])) {
-            $result[] = "\tlong " . $arg['name'] . ";";
+            $result[] = "\tlong {$arg['name']};";
         } else if (preg_match("/git_oid/", $arg['type'])) {
-            $result[] = "\tchar *" . $arg['name'] . " = {0};";
-            $result[] = "\tint " . $arg['name'] . "_len;";
+            $result[] = "\tchar *{$arg['name']} = {0};";
+            $result[] = "\tint {$arg['name']}_len;";
         } else if (preg_match("/git_/", $arg['type'])) {
-            $result[] = "\tzval *" . $arg['name'] . ";";
-            $result[] = "\tphp_git2_t *_" . $arg['name'] . ";";
+            $result[] = "\tzval *{$arg['name']} = NULL;";
+            $result[] = "\tphp_git2_t *_{$arg['name']} = NULL;";
         }
     }
     $result[] = "";
@@ -203,11 +207,11 @@ function getParseStr2($func)
 {
     $result = array();
     foreach ($func['args'] as $arg) {
-        $result[] = "&" . $arg['name'];
+        $result[] = "&{$arg['name']}";
         if (preg_match("/char/", $arg['type'])) {
-            $result[] = "&" . $arg['name'] . "_len";
+            $result[] = "&{$arg['name']}_len";
         } else if (preg_match("/git_oid/", $arg['type'])) {
-            $result[] = "&" . $arg['name'] . "_len";
+            $result[] = "&{$arg['name']}_len";
         }
     }
 
