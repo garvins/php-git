@@ -36,7 +36,6 @@ if (preg_match_all("/GIT_EXTERN\((.+?)\)\s*([a-zA-Z0-9_-]+)\((.+?)\);/s", $data,
             $d--;
         }
 
-
         if (isset($_SERVER['argv'][3])) {
             if ($_SERVER['argv'][3][0] == "-") {
                 $_SERVER['argv'][3] = substr($_SERVER['argv'][3][0], 1);
@@ -44,6 +43,7 @@ if (preg_match_all("/GIT_EXTERN\((.+?)\)\s*([a-zA-Z0-9_-]+)\((.+?)\);/s", $data,
             } else {
                 $flag = false;
             }
+
             if (preg_match("/{$_SERVER['argv'][3]}/", $match[2][$i]) == $flag) {
                 continue;
             }
@@ -67,7 +67,7 @@ if (preg_match_all("/GIT_EXTERN\((.+?)\)\s*([a-zA-Z0-9_-]+)\((.+?)\);/s", $data,
             if ($o == 0 && (preg_match("/(\*\*|out)/", $l) || preg_match("/(write|create|new)/", $match[2][$i]))) {
                 $w = 1;
                 $tmp['retval'] = "resource";
-            }else {
+            } else {
                 $w = 0;
             }
 
@@ -77,6 +77,7 @@ if (preg_match_all("/GIT_EXTERN\((.+?)\)\s*([a-zA-Z0-9_-]+)\((.+?)\);/s", $data,
                     "name" => $n,
                     "type" => $type,
                 );
+
                 if ($_SERVER['argv'][2] == "0") {
                     $buffer .= "\tZEND_ARG_INFO(0, $n)\n";
                 }
@@ -88,7 +89,6 @@ if (preg_match_all("/GIT_EXTERN\((.+?)\)\s*([a-zA-Z0-9_-]+)\((.+?)\);/s", $data,
         if ($_SERVER['argv'][2] == "0") {
             $buffer .= "ZEND_END_ARG_INFO()\n";
             $buffer .= "\n";
-
         }
 
         $table[] = $tmp;
@@ -123,10 +123,6 @@ foreach ($table as $func) {
         $buffer .= "PHP_FUNCTION({$func['name']})\n";
         $buffer .= "{\n";
         $buffer .= getDeclarations($func);
-
-        $buffer .= "\t/* TODO(chobie): implement this */\n";
-        $buffer .= "\tphp_error_docref(NULL TSRMLS_CC, E_WARNING, \"{$func['name']} not implemented yet\");\n";
-        $buffer .= "\treturn;\n\n";
 
         $buffer .= "\tif (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,\n";
         $buffer .= "\t\t" . sprintf('"%s", %s) == FAILURE) {%s', getParseStr($func), getParseStr2($func), "\n");
