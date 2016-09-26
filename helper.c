@@ -899,3 +899,24 @@ void php_git2_git_blame_hunk_to_array(git_blame_hunk *hunk, zval **out TSRMLS_DC
 
 	*out = result;
 }
+
+void php_git2_git_clone_options_to_array(git_clone_options *options, zval **out TSRMLS_DC)
+{
+    zval *result, *pathspec;
+
+    MAKE_STD_ZVAL(result);
+    array_init(result);
+
+    add_assoc_long_ex(result, ZEND_STRS("version"), options->version);
+    add_assoc_long_ex(result, ZEND_STRS("bare"), options->bare);
+    add_assoc_long_ex(result, ZEND_STRS("ignore_cert_errors"), options->ignore_cert_errors);
+    /* TODO: make other options available */
+    *out = result;
+}
+
+void php_git2_array_to_git_clone_options(git_clone_options *options, zval *array TSRMLS_DC)
+{
+    options->version = php_git2_read_arrval_long2(array, ZEND_STRS("version"), 1 TSRMLS_CC);
+    options->bare = php_git2_read_arrval_long2(array, ZEND_STRS("bare"), 0 TSRMLS_CC);
+    options->ignore_cert_errors = php_git2_read_arrval_long2(array, ZEND_STRS("ignore_cert_errors"), 0 TSRMLS_CC);
+}

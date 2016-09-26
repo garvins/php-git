@@ -107,4 +107,8 @@ void php_git2_git_blame_options_to_array(git_blame_options *options, zval **out 
 
 void php_git2_git_blame_hunk_to_array(git_blame_hunk *hunk, zval **out TSRMLS_DC);
 
+void php_git2_git_clone_options_to_array(git_clone_options *options, zval **out TSRMLS_DC);
+
+void php_git2_array_to_git_clone_options(git_clone_options *options, zval *array TSRMLS_DC);
+
 #endif
