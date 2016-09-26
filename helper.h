@@ -101,4 +101,10 @@ void php_git2_fcall_info_wrapper(zval *target, zend_fcall_info **out_fci, zend_f
 
 void php_git2_fcall_info_wrapper2(zval *target, zend_fcall_info *fci, zend_fcall_info_cache *fcc TSRMLS_DC);
 
+void php_git2_array_to_git_blame_options(git_blame_options *options, zval *array TSRMLS_DC);
+
+void php_git2_git_blame_options_to_array(git_blame_options *options, zval **out TSRMLS_DC);
+
+void php_git2_git_blame_hunk_to_array(git_blame_hunk *hunk, zval **out TSRMLS_DC);
+
 #endif
