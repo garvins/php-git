@@ -49,10 +49,6 @@ if (is_dir($_SERVER['argv'][1])) {
     printFile(parseFile($_SERVER['argv'][1]), $newFile);
 }
 
-function cleanArgs () {
-
-}
-
 function parseFile($path){
     $data = file_get_contents($path);
 
