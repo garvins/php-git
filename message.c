@@ -2,24 +2,27 @@
 #include "php_git2_priv.h"
 #include "message.h"
 
-/* {{{ proto resource git_message_prettify(string $message, long $strip_comments)
+/* {{{ proto string git_message_prettify(string $message, long $strip_comments)
  */
 PHP_FUNCTION(git_message_prettify)
 {
-	char *out = NULL, *message = NULL;
-	long out_size = 0, strip_comments = 0;
-	int message_len = 0, error = 0;
-
+	char out[GIT2_BUFFER_SIZE] = {0}, *message = NULL;
+	size_t out_size = GIT2_BUFFER_SIZE, message_len;
+	zend_long strip_comments;
+	int error = 0;
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"sl", &message, &message_len, &strip_comments) == FAILURE) {
 		return;
 	}
 
-	out_size = git_message_prettify(NULL, NULL, message, strip_comments);
-	out = (char*)emalloc(sizeof(char) * out_size);
-	error = git_message_prettify(out, out_size, message, strip_comments);
-	RETURN_STRING(out);
-	efree(out);
+	error = git_message_prettify(&out, out_size, message, strip_comments);
+
+	if (php_git2_check_error(error, "git_message_prettify" TSRMLS_CC)) {
+		RETURN_FALSE;
+	}
+
+	RETURN_STRING(&out);
 }
 /* }}} */
 

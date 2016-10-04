@@ -11,12 +11,15 @@ PHP_FUNCTION(git_odb_new)
 	int error = 0;
 	
 	error = git_odb_new(&out);
+
 	if (php_git2_check_error(error, "git_odb_new" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
+
 	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_ODB, out, 1 TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
+
 	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
 }
 /* }}} */
@@ -28,20 +31,24 @@ PHP_FUNCTION(git_odb_open)
 	php_git2_t *result = NULL;
 	git_odb *out = NULL;
 	char *objects_dir = NULL;
-	int objects_dir_len = 0, error = 0;
+	size_t objects_dir_len;
+	int error = 0;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"s", &objects_dir, &objects_dir_len) == FAILURE) {
 		return;
 	}
-	
+
 	error = git_odb_open(&out, objects_dir);
+
 	if (php_git2_check_error(error, "git_odb_open" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
+
 	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_ODB, out, 1 TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
+
 	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
 }
 /* }}} */
@@ -50,21 +57,23 @@ PHP_FUNCTION(git_odb_open)
  */
 PHP_FUNCTION(git_odb_add_disk_alternate)
 {
-	int result = 0, path_len = 0;
+	int result;
 	zval *odb = NULL;
 	php_git2_t *_odb = NULL;
 	char *path = NULL;
+	size_t path_len;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &odb, &path, &path_len) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_odb = (php_git2_t *) zend_fetch_resource(Z_RES_P(odb), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
 	result = git_odb_add_disk_alternate(PHP_GIT2_V(_odb, odb), path);
+
 	RETURN_LONG(result);
 }
 /* }}} */
@@ -80,7 +89,7 @@ PHP_FUNCTION(git_odb_free)
 		"r", &db) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_db = (php_git2_t *) zend_fetch_resource(Z_RES_P(db), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
@@ -88,7 +97,8 @@ PHP_FUNCTION(git_odb_free)
 	if (GIT2_SHOULD_FREE(_db)) {
 		git_odb_free(PHP_GIT2_V(_db, odb));
 		GIT2_SHOULD_FREE(_db) = 0;
-	};
+	);
+
 	zval_ptr_dtor(&db);
 }
 /* }}} */
@@ -101,14 +111,15 @@ PHP_FUNCTION(git_odb_read)
 	git_odb_object *out = NULL;
 	zval *db = NULL;
 	char *id = NULL;
-	int id_len = 0, error = 0;
+	size_t id_len;
 	git_oid __id = {0};
+	int error = 0;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &db, &id, &id_len) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_db = (php_git2_t *) zend_fetch_resource(Z_RES_P(db), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
@@ -116,18 +127,22 @@ PHP_FUNCTION(git_odb_read)
 	if (git_oid_fromstrn(&__id, id, id_len)) {
 		RETURN_FALSE;
 	}
-	error = git_odb_read(&out, PHP_GIT2_V(_db, odb),&__id);
+
+	error = git_odb_read(&out, PHP_GIT2_V(_db, odb), &__id);
+
 	if (php_git2_check_error(error, "git_odb_read" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
+
 	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_ODB_OBJECT, out, 1 TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
+
 	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
 }
 /* }}} */
 
-/* {{{ proto resource git_odb_read_prefix(resource $db, string $short_id)
+/* {{{ proto resource git_odb_read_prefix(resource $db, string $short_id, long $len)
  */
 PHP_FUNCTION(git_odb_read_prefix)
 {
@@ -135,14 +150,16 @@ PHP_FUNCTION(git_odb_read_prefix)
 	git_odb_object *out = NULL;
 	zval *db = NULL;
 	char *short_id = NULL;
-	int short_id_len = 0, error = 0;
+	size_t short_id_len;
 	git_oid __short_id = {0};
+	zend_long len;
+	int error = 0;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"rs", &db, &short_id, &short_id_len) == FAILURE) {
+		"rsl", &db, &short_id, &short_id_len, &len) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_db = (php_git2_t *) zend_fetch_resource(Z_RES_P(db), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
@@ -150,13 +167,17 @@ PHP_FUNCTION(git_odb_read_prefix)
 	if (git_oid_fromstrn(&__short_id, short_id, short_id_len)) {
 		RETURN_FALSE;
 	}
-	error = git_odb_read_prefix(&out, PHP_GIT2_V(_db, odb), &__short_id, short_id_len);
+
+	error = git_odb_read_prefix(&out, PHP_GIT2_V(_db, odb), &__short_id, len);
+
 	if (php_git2_check_error(error, "git_odb_read_prefix" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
+
 	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_ODB_OBJECT, out, 1 TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
+
 	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
 }
 /* }}} */
@@ -201,17 +222,18 @@ PHP_FUNCTION(git_odb_read_header)
  */
 PHP_FUNCTION(git_odb_exists)
 {
-	int result = 0, id_len = 0;
+	int result;
 	zval *db = NULL;
 	php_git2_t *_db = NULL;
 	char *id = NULL;
+	size_t id_len;
 	git_oid __id = {0};
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &db, &id, &id_len) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_db = (php_git2_t *) zend_fetch_resource(Z_RES_P(db), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
@@ -219,7 +241,9 @@ PHP_FUNCTION(git_odb_exists)
 	if (git_oid_fromstrn(&__id, id, id_len)) {
 		RETURN_FALSE;
 	}
+
 	result = git_odb_exists(PHP_GIT2_V(_db, odb), &__id);
+
 	RETURN_LONG(result);
 }
 /* }}} */
@@ -228,7 +252,7 @@ PHP_FUNCTION(git_odb_exists)
  */
 PHP_FUNCTION(git_odb_refresh)
 {
-	int result = 0;
+	int result;
 	zval *db = NULL;
 	php_git2_t *_db = NULL;
 	
@@ -236,41 +260,44 @@ PHP_FUNCTION(git_odb_refresh)
 		"r", &db) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_db = (php_git2_t *) zend_fetch_resource(Z_RES_P(db), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
 	result = git_odb_refresh(PHP_GIT2_V(_db, odb));
+
 	RETURN_LONG(result);
 }
 /* }}} */
 
-/* {{{ proto long git_odb_foreach(resource $db, Callable $cb,  $payload)
+/* {{{ proto long git_odb_foreach(resource $db, Callable $cb, void $payload)
  */
 PHP_FUNCTION(git_odb_foreach)
 {
-	int result = 0;
+	int result;
 	zval *db = NULL, *payload = NULL;
 	php_git2_t *_db = NULL;
-	zend_fcall_info fci = empty_fcall_info;
-	zend_fcall_info_cache fcc = empty_fcall_info_cache;
-	php_git2_cb_t *cb = NULL;
+	zend_fcall_info cb_fci = empty_fcall_info;
+	zend_fcall_info_cache cb_fcc = empty_fcall_info_cache;
+	php_git2_cb_t *cb_cb = NULL;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"rfz", &db, &fci, &fcc, &payload) == FAILURE) {
+		"rfz", &db, &cb_fci, &cb_fcc, &payload) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_db = (php_git2_t *) zend_fetch_resource(Z_RES_P(db), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
-	if (php_git2_cb_init(&cb, &fci, &fcc, payload TSRMLS_CC)) {
+	if (php_git2_cb_init(&cb_cb, &cb_fci, &cb_fcc, payload TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	result = git_odb_foreach(PHP_GIT2_V(_db, odb), php_git2_git_odb_foreach_cb, cb);
-	php_git2_cb_free(cb);
+
+	result = git_odb_foreach(PHP_GIT2_V(_db, odb), php_git2_git_odb_foreach_cb, payload_cb);
+	php_git2_cb_free(cb_cb);
+
 	RETURN_LONG(result);
 }
 /* }}} */
@@ -305,32 +332,35 @@ PHP_FUNCTION(git_odb_write)
 }
 /* }}} */
 
-/* {{{ proto resource git_odb_open_wstream(resource $db, long $size,  $type)
+/* {{{ proto resource git_odb_open_wstream(resource $db, long $size, long $type)
  */
 PHP_FUNCTION(git_odb_open_wstream)
 {
 	php_git2_t *result = NULL, *_db = NULL;
 	git_odb_stream *out = NULL;
 	zval *db = NULL;
-	long size = 0, type = 0;
+	zend_long size, type;
 	int error = 0;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rll", &db, &size, &type) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_db = (php_git2_t *) zend_fetch_resource(Z_RES_P(db), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
 	error = git_odb_open_wstream(&out, PHP_GIT2_V(_db, odb), size, type);
+
 	if (php_git2_check_error(error, "git_odb_open_wstream" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
+
 	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_ODB_STREAM, out, 1 TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
+
 	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
 }
 /* }}} */
@@ -358,31 +388,34 @@ PHP_FUNCTION(git_odb_stream_write)
 }
 /* }}} */
 
-/* {{{ proto resource git_odb_stream_finalize_write(resource $stream)
+/* {{{ proto string git_odb_stream_finalize_write(resource $stream)
  */
 PHP_FUNCTION(git_odb_stream_finalize_write)
 {
-	php_git2_t *_stream = NULL;
-	git_oid out = {0};
+	git_oid out;
+	char __out[GIT2_OID_HEXSIZE] = {0};
 	zval *stream = NULL;
+	php_git2_t *_stream = NULL;
 	int error = 0;
-	char buf[GIT2_OID_HEXSIZE] = {0};
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &stream) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_stream = (php_git2_t *) zend_fetch_resource(Z_RES_P(stream), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
 	error = git_odb_stream_finalize_write(&out, PHP_GIT2_V(_stream, odb_stream));
+
 	if (php_git2_check_error(error, "git_odb_stream_finalize_write" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	git_oid_fmt(buf, &out);
-	RETURN_STRING(buf);
+
+	git_oid_fmt(__out, &out);
+
+	RETURN_STRING(__out);
 }
 /* }}} */
 
@@ -400,12 +433,13 @@ PHP_FUNCTION(git_odb_stream_read)
 		"rsl", &stream, &buffer, &buffer_len, &len) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_stream = (php_git2_t *) zend_fetch_resource(Z_RES_P(stream), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
 	result = git_odb_stream_read(PHP_GIT2_V(_stream, odb_stream), buffer, len);
+
 	RETURN_LONG(result);
 }
 /* }}} */
@@ -421,7 +455,7 @@ PHP_FUNCTION(git_odb_stream_free)
 		"r", &stream) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_stream = (php_git2_t *) zend_fetch_resource(Z_RES_P(stream), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
@@ -429,7 +463,8 @@ PHP_FUNCTION(git_odb_stream_free)
 	if (GIT2_SHOULD_FREE(_stream)) {
 		git_odb_stream_free(PHP_GIT2_V(_stream, odb_stream));
 		GIT2_SHOULD_FREE(_stream) = 0;
-	};
+	);
+
 	zval_ptr_dtor(&stream);
 }
 /* }}} */
@@ -442,14 +477,15 @@ PHP_FUNCTION(git_odb_open_rstream)
 	git_odb_stream *out = NULL;
 	zval *db = NULL;
 	char *oid = NULL;
-	int oid_len = 0, error = 0;
+	size_t oid_len;
 	git_oid __oid = {0};
+	int error = 0;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &db, &oid, &oid_len) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_db = (php_git2_t *) zend_fetch_resource(Z_RES_P(db), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
@@ -457,48 +493,57 @@ PHP_FUNCTION(git_odb_open_rstream)
 	if (git_oid_fromstrn(&__oid, oid, oid_len)) {
 		RETURN_FALSE;
 	}
+
 	error = git_odb_open_rstream(&out, PHP_GIT2_V(_db, odb), &__oid);
+
 	if (php_git2_check_error(error, "git_odb_open_rstream" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
+
 	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_ODB_STREAM, out, 1 TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
+
 	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
 }
 /* }}} */
 
-/* {{{ proto resource git_odb_write_pack(resource $db,  $progress_cb,  $progress_payload)
+/* {{{ proto resource git_odb_write_pack(resource $db, Callable $progress_cb, void $progress_payload)
  */
 PHP_FUNCTION(git_odb_write_pack)
 {
 	php_git2_t *result = NULL, *_db = NULL;
 	git_odb_writepack *out = NULL;
-	zval *db = NULL, *progress_cb = NULL, *progress_payload = NULL;
+	zval *db = NULL, *progress_payload = NULL;
+	zend_fcall_info progress_fci = empty_fcall_info;
+	zend_fcall_info_cache progress_fcc = empty_fcall_info_cache;
+	php_git2_cb_t *progress_cb = NULL;
 	int error = 0;
-	zend_fcall_info fci = empty_fcall_info;
-	zend_fcall_info_cache fcc = empty_fcall_info_cache;
-	php_git2_cb_t *cb = NULL;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"r<git_transfer_progress_callback>z", &db, &progress_cb, &progress_payload) == FAILURE) {
+		"rfz", &db, &progress_fci, &progress_fcc, &progress_payload) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_db = (php_git2_t *) zend_fetch_resource(Z_RES_P(db), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
-	if (php_git2_cb_init(&cb, &fci, &fcc, progress_payload TSRMLS_CC)) {
+	if (php_git2_cb_init(&progress_cb, &progress_fci, &progress_fcc, progress_payload TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	error = git_odb_write_pack(&out, PHP_GIT2_V(_db, odb), progress_cb, cb);
+
+	error = git_odb_write_pack(&out, PHP_GIT2_V(_db, odb), php_git2_git_transfer_progress_callback, progress_cb);
+
 	if (php_git2_check_error(error, "git_odb_write_pack" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
+	php_git2_cb_free(progress_cb);
+
 	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_ODB_WRITEPACK, out, 1 TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
+
 	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
 }
 /* }}} */
@@ -507,68 +552,86 @@ PHP_FUNCTION(git_odb_write_pack)
  */
 PHP_FUNCTION(git_odb_hash)
 {
-	git_oid out = {0};
-	zval *data = NULL;
-	int error = 0, data_len = 0;
-	long type = 0;
-	char buf[GIT2_OID_HEXSIZE] = {0};
+	git_oid out;
+	char __out[GIT2_OID_HEXSIZE] = {0};
+	char *data = NULL;
+	zend_long len, type;
+	int error = 0;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"sl", &data, &data_len, &type) == FAILURE) {
+		"sl", &data, &len, &type) == FAILURE) {
 		return;
 	}
-	error = git_odb_hash(&out, data, data_len, type);
+
+	error = git_odb_hash(&out, data, len, type);
+
 	if (php_git2_check_error(error, "git_odb_hash" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	git_oid_fmt(buf, &out);
-	RETURN_STRING(buf);
+
+	git_oid_fmt(__out, &out);
+
+	RETURN_STRING(__out);
 }
 /* }}} */
 
-/* {{{ proto resource git_odb_hashfile(string $path,  $type)
+/* {{{ proto string git_odb_hashfile(string $path, long $type)
  */
 PHP_FUNCTION(git_odb_hashfile)
 {
-	git_oid out = {0};
+	git_oid out;
+	char __out[GIT2_OID_HEXSIZE] = {0};
 	char *path = NULL;
-	int path_len = 0, error = 0;
-	char buf[GIT2_OID_HEXSIZE] = {0};
-	long type = 0;
+	size_t path_len;
+	zend_long type;
+	int error = 0;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"sl", &path, &path_len, &type) == FAILURE) {
 		return;
 	}
+
 	error = git_odb_hashfile(&out, path, type);
+
 	if (php_git2_check_error(error, "git_odb_hashfile" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	git_oid_fmt(buf, &out);
-	RETURN_STRING(buf);
+
+	git_oid_fmt(__out, &out);
+
+	RETURN_STRING(__out);
 }
 /* }}} */
 
-/* {{{ proto long git_odb_object_dup(resource $source)
+/* {{{ proto resource git_odb_object_dup(resource $source)
  */
 PHP_FUNCTION(git_odb_object_dup)
 {
-	int result = 0;
+	php_git2_t *result = NULL, *_source = NULL;
 	git_odb_object *dest = NULL;
 	zval *source = NULL;
-	php_git2_t *_source = NULL;
+	int error = 0;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &source) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_source = (php_git2_t *) zend_fetch_resource(Z_RES_P(source), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
-	result = git_odb_object_dup(&dest, PHP_GIT2_V(_source, odb_object));
-	RETURN_LONG(result);
+	error = git_odb_object_dup(&dest, PHP_GIT2_V(_source, odb_object));
+
+	if (php_git2_check_error(error, "git_odb_object_dup" TSRMLS_CC)) {
+		RETURN_FALSE;
+	}
+
+	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_ODB_OBJECT, dest, 1 TSRMLS_CC)) {
+		RETURN_FALSE;
+	}
+
+	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -583,7 +646,7 @@ PHP_FUNCTION(git_odb_object_free)
 		"r", &object) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_object = (php_git2_t *) zend_fetch_resource(Z_RES_P(object), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
@@ -591,54 +654,58 @@ PHP_FUNCTION(git_odb_object_free)
 	if (GIT2_SHOULD_FREE(_object)) {
 		git_odb_object_free(PHP_GIT2_V(_object, odb_object));
 		GIT2_SHOULD_FREE(_object) = 0;
-	};
+	);
+
 	zval_ptr_dtor(&object);
 }
 /* }}} */
 
-/* {{{ proto resource git_odb_object_id(resource $object)
+/* {{{ proto string git_odb_object_id(resource $object)
  */
 PHP_FUNCTION(git_odb_object_id)
 {
-	const git_oid  *result = NULL;
+	const git_oid *result = NULL;
+	char __result[GIT2_OID_HEXSIZE] = {0};
 	zval *object = NULL;
 	php_git2_t *_object = NULL;
-	char __result[GIT2_OID_HEXSIZE] = {0};
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &object) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_object = (php_git2_t *) zend_fetch_resource(Z_RES_P(object), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
 	result = git_odb_object_id(PHP_GIT2_V(_object, odb_object));
+
 	git_oid_fmt(__result, result);
+
 	RETURN_STRING(__result);
 }
 /* }}} */
 
-/* {{{ proto void git_odb_object_data(resource $object)
+/* {{{ proto string git_odb_object_data(resource $object)
  */
 PHP_FUNCTION(git_odb_object_data)
 {
+	const char *buffer = NULL;
 	zval *object = NULL;
 	php_git2_t *_object = NULL;
-	const char *buffer;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &object) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_object = (php_git2_t *) zend_fetch_resource(Z_RES_P(object), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
 	buffer = git_odb_object_data(PHP_GIT2_V(_object, odb_object));
-	RETURN_STRINGL(buffer, git_odb_object_size(PHP_GIT2_V(_object, odb_object)), 1);
+
+	RETURN_STRINGL(buffer, git_odb_object_size(PHP_GIT2_V(_object, odb_object)));
 }
 /* }}} */
 
@@ -646,7 +713,7 @@ PHP_FUNCTION(git_odb_object_data)
  */
 PHP_FUNCTION(git_odb_object_size)
 {
-	size_t result = 0;
+	size_t result;
 	zval *object = NULL;
 	php_git2_t *_object = NULL;
 	
@@ -654,17 +721,18 @@ PHP_FUNCTION(git_odb_object_size)
 		"r", &object) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_object = (php_git2_t *) zend_fetch_resource(Z_RES_P(object), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
 	result = git_odb_object_size(PHP_GIT2_V(_object, odb_object));
+
 	RETURN_LONG(result);
 }
 /* }}} */
 
-/* {{{ proto resource git_odb_object_type(resource $object)
+/* {{{ proto long git_odb_object_type(resource $object)
  */
 PHP_FUNCTION(git_odb_object_type)
 {
@@ -676,12 +744,13 @@ PHP_FUNCTION(git_odb_object_type)
 		"r", &object) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_object = (php_git2_t *) zend_fetch_resource(Z_RES_P(object), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
 	result = git_odb_object_type(PHP_GIT2_V(_object, odb_object));
+
 	RETURN_LONG(result);
 }
 /* }}} */
@@ -690,16 +759,16 @@ PHP_FUNCTION(git_odb_object_type)
  */
 PHP_FUNCTION(git_odb_add_backend)
 {
-	int result = 0;
+	int result;
 	zval *odb = NULL, *backend = NULL;
 	php_git2_t *_odb = NULL, *_backend = NULL;
-	long priority = 0;
+	zend_long priority;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rrl", &odb, &backend, &priority) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_odb = (php_git2_t *) zend_fetch_resource(Z_RES_P(odb), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
@@ -709,6 +778,7 @@ PHP_FUNCTION(git_odb_add_backend)
 	}
 
 	result = git_odb_add_backend(PHP_GIT2_V(_odb, odb), PHP_GIT2_V(_backend, odb_backend), priority);
+
 	RETURN_LONG(result);
 }
 /* }}} */
@@ -717,16 +787,16 @@ PHP_FUNCTION(git_odb_add_backend)
  */
 PHP_FUNCTION(git_odb_add_alternate)
 {
-	int result = 0;
+	int result;
 	zval *odb = NULL, *backend = NULL;
 	php_git2_t *_odb = NULL, *_backend = NULL;
-	long priority = 0;
+	zend_long priority;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rrl", &odb, &backend, &priority) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_odb = (php_git2_t *) zend_fetch_resource(Z_RES_P(odb), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
@@ -736,6 +806,7 @@ PHP_FUNCTION(git_odb_add_alternate)
 	}
 
 	result = git_odb_add_alternate(PHP_GIT2_V(_odb, odb), PHP_GIT2_V(_backend, odb_backend), priority);
+
 	RETURN_LONG(result);
 }
 /* }}} */
@@ -744,7 +815,7 @@ PHP_FUNCTION(git_odb_add_alternate)
  */
 PHP_FUNCTION(git_odb_num_backends)
 {
-	size_t result = 0;
+	size_t result;
 	zval *odb = NULL;
 	php_git2_t *_odb = NULL;
 	
@@ -752,12 +823,13 @@ PHP_FUNCTION(git_odb_num_backends)
 		"r", &odb) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_odb = (php_git2_t *) zend_fetch_resource(Z_RES_P(odb), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
 	result = git_odb_num_backends(PHP_GIT2_V(_odb, odb));
+
 	RETURN_LONG(result);
 }
 /* }}} */
@@ -769,29 +841,34 @@ PHP_FUNCTION(git_odb_get_backend)
 	php_git2_t *result = NULL, *_odb = NULL;
 	git_odb_backend *out = NULL;
 	zval *odb = NULL;
-	long pos = 0;
+	zend_long pos;
 	int error = 0;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rl", &odb, &pos) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_odb = (php_git2_t *) zend_fetch_resource(Z_RES_P(odb), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
 	error = git_odb_get_backend(&out, PHP_GIT2_V(_odb, odb), pos);
+
 	if (php_git2_check_error(error, "git_odb_get_backend" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
+
 	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_ODB_BACKEND, out, 1 TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
+
 	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
 }
 /* }}} */
 
+/* {{{ proto array git_odb_backend_new()
+ */
 PHP_FUNCTION(git_odb_backend_new)
 {
 	php_git2_odb_backend *backend;
@@ -808,7 +885,6 @@ PHP_FUNCTION(git_odb_backend_new)
 	}
 
 	backend = ecalloc(1, sizeof(php_git2_odb_backend));
-
 	backend->parent.version = GIT_ODB_BACKEND_VERSION;
 	backend->parent.read = &php_git2_odb_backend_read;
 	backend->parent.write = &php_git2_odb_backend_write;
@@ -824,6 +900,7 @@ PHP_FUNCTION(git_odb_backend_new)
 	if (tmp) {
 		php_git2_fcall_info_wrapper2(tmp, &read_fci, &read_fcc TSRMLS_CC);
 	}
+
 	tmp = php_git2_read_arrval(callbacks, ZEND_STRS("write") TSRMLS_CC);
 	if (tmp) {
 		php_git2_fcall_info_wrapper2(tmp, &write_fci, &write_fcc TSRMLS_CC);
@@ -833,22 +910,27 @@ PHP_FUNCTION(git_odb_backend_new)
 	if (tmp) {
 		php_git2_fcall_info_wrapper2(tmp, &read_header_fci, &read_header_fcc TSRMLS_CC);
 	}
+
 	tmp = php_git2_read_arrval(callbacks, ZEND_STRS("read_prefix") TSRMLS_CC);
 	if (tmp) {
 		php_git2_fcall_info_wrapper2(tmp, &read_prefix_fci, &read_prefix_fcc TSRMLS_CC);
 	}
+
 	tmp = php_git2_read_arrval(callbacks, ZEND_STRS("exists") TSRMLS_CC);
 	if (tmp) {
 		php_git2_fcall_info_wrapper2(tmp, &exists_fci, &exists_fcc TSRMLS_CC);
 	}
+
 	tmp = php_git2_read_arrval(callbacks, ZEND_STRS("foreach") TSRMLS_CC);
 	if (tmp) {
 		php_git2_fcall_info_wrapper2(tmp, &foreach_fci, &foreach_fcc TSRMLS_CC);
 	}
+
 	tmp = php_git2_read_arrval(callbacks, ZEND_STRS("free") TSRMLS_CC);
 	if (tmp) {
 		php_git2_fcall_info_wrapper2(tmp, &free_fci, &free_fcc TSRMLS_CC);
 	}
+
 	tmp = php_git2_read_arrval(callbacks, ZEND_STRS("refresh") TSRMLS_CC);
 	if (tmp) {
 		php_git2_fcall_info_wrapper2(tmp, &refresh_fci, &refresh_fcc TSRMLS_CC);
@@ -873,3 +955,5 @@ PHP_FUNCTION(git_odb_backend_new)
 
 	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
 }
+/* }}} */
+

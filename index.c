@@ -2,62 +2,64 @@
 #include "php_git2_priv.h"
 #include "index.h"
 
-/* {{{ proto resource git_index_open(index_path)
-*/
+/* {{{ proto resource git_index_open(string $index_path)
+ */
 PHP_FUNCTION(git_index_open)
 {
-	char *index_path = {0};
-	int index_path_len;
-	git_index *index;
-	php_git2_t *result;
+	php_git2_t *result = NULL;
+	git_index *out = NULL;
+	char *index_path = NULL;
+	size_t index_path_len;
 	int error = 0;
-
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"s", &index_path, &index_path_len) == FAILURE) {
 		return;
 	}
-	error = git_index_open(&index, index_path);
+
+	error = git_index_open(&out, index_path);
+
 	if (php_git2_check_error(error, "git_index_open" TSRMLS_CC)) {
-		RETURN_FALSE
+		RETURN_FALSE;
 	}
 
-	PHP_GIT2_MAKE_RESOURCE(result);
-	PHP_GIT2_V(result, index) = index;
-	result->type = PHP_GIT2_TYPE_INDEX;
-	result->resource_id = PHP_GIT2_LIST_INSERT(result, git2_resource_handle);
-	result->should_free_v = 1;
+	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_INDEX, out, 1 TSRMLS_CC)) {
+		RETURN_FALSE;
+	}
 
-	ZVAL_RESOURCE(return_value, result->resource_id);
+	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
 }
+/* }}} */
 
 /* {{{ proto resource git_index_new()
-*/
+ */
 PHP_FUNCTION(git_index_new)
 {
-	git_index *index;
-	php_git2_t *result;
+	php_git2_t *result = NULL;
+	git_index *out = NULL;
 	int error = 0;
+	
+	error = git_index_new(&out);
 
-	error = git_index_new(&index);
 	if (php_git2_check_error(error, "git_index_new" TSRMLS_CC)) {
-		RETURN_FALSE
+		RETURN_FALSE;
 	}
-	PHP_GIT2_MAKE_RESOURCE(result);
-	PHP_GIT2_V(result, index) = index;
-	result->type = PHP_GIT2_TYPE_INDEX;
-	result->resource_id = PHP_GIT2_LIST_INSERT(result, git2_resource_handle);
-	result->should_free_v = 1;
 
-	ZVAL_RESOURCE(return_value, result->resource_id);
+	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_INDEX, out, 1 TSRMLS_CC)) {
+		RETURN_FALSE;
+	}
+
+	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
 }
+/* }}} */
 
-/* {{{ proto void git_index_free(index)
-*/
+/* {{{ proto void git_index_free(resource $index)
+ */
 PHP_FUNCTION(git_index_free)
 {
-	zval *index;
-	php_git2_t *_index;
-
+	zval *index = NULL;
+	php_git2_t *_index = NULL;
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &index) == FAILURE) {
 		return;
@@ -67,21 +69,23 @@ PHP_FUNCTION(git_index_free)
 		RETURN_FALSE;
 	}
 
-	if (_index->should_free_v) {
+	if (GIT2_SHOULD_FREE(_index)) {
 		git_index_free(PHP_GIT2_V(_index, index));
-		_index->should_free_v = 0;
-	}
+		GIT2_SHOULD_FREE(_index) = 0;
+	);
+
 	zval_ptr_dtor(&index);
 }
+/* }}} */
 
-/* {{{ proto resource git_index_owner(index)
-*/
+/* {{{ proto resource git_index_owner(resource $index)
+ */
 PHP_FUNCTION(git_index_owner)
 {
-	zval *index;
-	php_git2_t *_index, *result;
-	git_repository *repository;
-
+	git_repository *result = NULL;
+	zval *index = NULL;
+	php_git2_t *_index = NULL, *__result = NULL;
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &index) == FAILURE) {
 		return;
@@ -91,24 +95,24 @@ PHP_FUNCTION(git_index_owner)
 		RETURN_FALSE;
 	}
 
-	repository = git_index_owner(PHP_GIT2_V(_index, index));
-	PHP_GIT2_MAKE_RESOURCE(result);
-	PHP_GIT2_V(result, repository) = repository;
-	result->type = PHP_GIT2_TYPE_REPOSITORY;
-	result->resource_id = PHP_GIT2_LIST_INSERT(result, git2_resource_handle);
-	result->should_free_v = 0;
+	result = git_index_owner(PHP_GIT2_V(_index, index));
 
-	ZVAL_RESOURCE(return_value, result->resource_id);
+	if (php_git2_make_resource(&__result, PHP_GIT2_TYPE_REPOSITORY, result, 1 TSRMLS_CC)) {
+		RETURN_FALSE;
+	}
+
+	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(__result));
 }
+/* }}} */
 
-/* {{{ proto resource git_index_caps(index)
-*/
+/* {{{ proto long git_index_caps(resource $index)
+ */
 PHP_FUNCTION(git_index_caps)
 {
-	zval *index;
-	php_git2_t *_index;
-	unsigned int caps;
-
+	unsigned int result;
+	zval *index = NULL;
+	php_git2_t *_index = NULL;
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &index) == FAILURE) {
 		return;
@@ -118,19 +122,21 @@ PHP_FUNCTION(git_index_caps)
 		RETURN_FALSE;
 	}
 
-	caps = git_index_caps(PHP_GIT2_V(_index, index));
-	RETURN_LONG(caps);
-}
+	result = git_index_caps(PHP_GIT2_V(_index, index));
 
-/* {{{ proto long git_index_set_caps(index, caps)
-*/
+	RETURN_LONG(result);
+}
+/* }}} */
+
+/* {{{ proto long git_index_set_caps(resource $index, long $caps)
+ */
 PHP_FUNCTION(git_index_set_caps)
 {
-	zval *index;
-	php_git2_t *_index;
-	long caps;
-	int error = 0;
-
+	int result;
+	zval *index = NULL;
+	php_git2_t *_index = NULL;
+	zend_long caps;
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rl", &index, &caps) == FAILURE) {
 		return;
@@ -140,19 +146,21 @@ PHP_FUNCTION(git_index_set_caps)
 		RETURN_FALSE;
 	}
 
-	error = git_index_set_caps(PHP_GIT2_V(_index, index), caps);
-	RETURN_LONG(error);
-}
+	result = git_index_set_caps(PHP_GIT2_V(_index, index), caps);
 
-/* {{{ proto long git_index_read(index, force)
-*/
+	RETURN_BOOL(result);
+}
+/* }}} */
+
+/* {{{ proto long git_index_read(resource $index, long $force)
+ */
 PHP_FUNCTION(git_index_read)
 {
-	zval *index;
-	php_git2_t *_index;
-	long force;
-	int error = 0;
-
+	int result;
+	zval *index = NULL;
+	php_git2_t *_index = NULL;
+	zend_long force;
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rl", &index, &force) == FAILURE) {
 		return;
@@ -162,21 +170,20 @@ PHP_FUNCTION(git_index_read)
 		RETURN_FALSE;
 	}
 
-	error = git_index_read(PHP_GIT2_V(_index, index), force);
-	if (php_git2_check_error(error, "git_index_read" TSRMLS_CC)) {
-		RETURN_FALSE
-	}
-	RETURN_TRUE;
-}
+	result = git_index_read(PHP_GIT2_V(_index, index), force);
 
-/* {{{ proto resource git_index_write()
-*/
+	RETURN_LONG(result);
+}
+/* }}} */
+
+/* {{{ proto long git_index_write(resource $index)
+ */
 PHP_FUNCTION(git_index_write)
 {
-	zval *index;
-	php_git2_t *_index;
-	int error = 0;
-
+	int result;
+	zval *index = NULL;
+	php_git2_t *_index = NULL;
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &index) == FAILURE) {
 		return;
@@ -186,21 +193,20 @@ PHP_FUNCTION(git_index_write)
 		RETURN_FALSE;
 	}
 
-	error = git_index_write(PHP_GIT2_V(_index, index));
-	if (php_git2_check_error(error, "git_index_write" TSRMLS_CC)) {
-		RETURN_FALSE
-	}
-	RETURN_TRUE;
-}
+	result = git_index_write(PHP_GIT2_V(_index, index));
 
-/* {{{ proto resource git_index_path(index)
-*/
+	RETURN_LONG(result);
+}
+/* }}} */
+
+/* {{{ proto string git_index_path(resource $index)
+ */
 PHP_FUNCTION(git_index_path)
 {
-	zval *index;
-	php_git2_t *_index;
-	const char *path;
-
+	const char *result = NULL;
+	zval *index = NULL;
+	php_git2_t *_index = NULL;
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &index) == FAILURE) {
 		return;
@@ -210,20 +216,20 @@ PHP_FUNCTION(git_index_path)
 		RETURN_FALSE;
 	}
 
-	path = git_index_path(PHP_GIT2_V(_index, index));
-	RETURN_STRING(path);
-}
+	result = git_index_path(PHP_GIT2_V(_index, index));
 
-/* {{{ proto long git_index_read_tree(index, tree)
-*/
+	RETURN_STRING(result);
+}
+/* }}} */
+
+/* {{{ proto long git_index_read_tree(resource $index, resource $tree)
+ */
 PHP_FUNCTION(git_index_read_tree)
 {
-	zval *index;
-	php_git2_t *_index;
-	zval *tree;
-	php_git2_t *_tree;
-	int error = 0;
-
+	int result;
+	zval *index = NULL, *tree = NULL;
+	php_git2_t *_index = NULL, *_tree = NULL;
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rr", &index, &tree) == FAILURE) {
 		return;
@@ -237,23 +243,22 @@ PHP_FUNCTION(git_index_read_tree)
 		RETURN_FALSE;
 	}
 
-	error = git_index_read_tree(PHP_GIT2_V(_index, index), PHP_GIT2_V(_tree, tree));
-	if (php_git2_check_error(error, "git_index_read_tree" TSRMLS_CC)) {
-		RETURN_FALSE
-	}
-	RETURN_TRUE;
-}
+	result = git_index_read_tree(PHP_GIT2_V(_index, index), PHP_GIT2_V(_tree, tree));
 
-/* {{{ proto resource git_index_write_tree(index)
-*/
+	RETURN_LONG(result);
+}
+/* }}} */
+
+/* {{{ proto string git_index_write_tree(resource $index)
+ */
 PHP_FUNCTION(git_index_write_tree)
 {
-	zval *index;
-	php_git2_t *_index;
+	git_oid out;
+	char __out[GIT2_OID_HEXSIZE] = {0};
+	zval *index = NULL;
+	php_git2_t *_index = NULL;
 	int error = 0;
-	git_oid id;
-	char out[GIT2_OID_HEXSIZE] = {0};
-
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &index) == FAILURE) {
 		return;
@@ -263,25 +268,28 @@ PHP_FUNCTION(git_index_write_tree)
 		RETURN_FALSE;
 	}
 
-	error = git_index_write_tree(&id, PHP_GIT2_V(_index, index));
-	if (php_git2_check_error(error, "git_index_write_tree" TSRMLS_CC)) {
-		RETURN_FALSE
-	}
-	git_oid_fmt(out, &id);
-	RETURN_STRING(out);
-}
+	error = git_index_write_tree(&out, PHP_GIT2_V(_index, index));
 
-/* {{{ proto resource git_index_write_tree_to(index, repo)
-*/
+	if (php_git2_check_error(error, "git_index_write_tree" TSRMLS_CC)) {
+		RETURN_FALSE;
+	}
+
+	git_oid_fmt(__out, &out);
+
+	RETURN_STRING(__out);
+}
+/* }}} */
+
+/* {{{ proto string git_index_write_tree_to(resource $index, resource $repo)
+ */
 PHP_FUNCTION(git_index_write_tree_to)
 {
-	zval *index;
-	php_git2_t *_index;
-	zval *repo;
-	php_git2_t *_repo;
-	git_oid id;
+	git_oid out;
+	char __out[GIT2_OID_HEXSIZE] = {0};
+	zval *index = NULL, *repo = NULL;
+	php_git2_t *_index = NULL, *_repo = NULL;
 	int error = 0;
-
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rr", &index, &repo) == FAILURE) {
 		return;
@@ -295,21 +303,26 @@ PHP_FUNCTION(git_index_write_tree_to)
 		RETURN_FALSE;
 	}
 
-	error = git_index_write_tree_to(&id, PHP_GIT2_V(_index, index), PHP_GIT2_V(_repo, repository));
-	if (php_git2_check_error(error, "git_index_write_tree_to" TSRMLS_CC)) {
-		RETURN_FALSE
-	}
-	RETURN_TRUE;
-}
+	error = git_index_write_tree_to(&out, PHP_GIT2_V(_index, index), PHP_GIT2_V(_repo, repository));
 
-/* {{{ proto resource git_index_entrycount(index)
-*/
+	if (php_git2_check_error(error, "git_index_write_tree_to" TSRMLS_CC)) {
+		RETURN_FALSE;
+	}
+
+	git_oid_fmt(__out, &out);
+
+	RETURN_STRING(__out);
+}
+/* }}} */
+
+/* {{{ proto long git_index_entrycount(resource $index)
+ */
 PHP_FUNCTION(git_index_entrycount)
 {
-	zval *index;
-	php_git2_t *_index;
-	size_t count;
-
+	size_t result;
+	zval *index = NULL;
+	php_git2_t *_index = NULL;
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &index) == FAILURE) {
 		return;
@@ -319,17 +332,19 @@ PHP_FUNCTION(git_index_entrycount)
 		RETURN_FALSE;
 	}
 
-	count = git_index_entrycount(PHP_GIT2_V(_index, index));
-	RETURN_LONG(count);
-}
+	result = git_index_entrycount(PHP_GIT2_V(_index, index));
 
-/* {{{ proto void git_index_clear(index)
-*/
+	RETURN_LONG(result);
+}
+/* }}} */
+
+/* {{{ proto void git_index_clear(resource $index)
+ */
 PHP_FUNCTION(git_index_clear)
 {
-	zval *index;
-	php_git2_t *_index;
-
+	zval *index = NULL;
+	php_git2_t *_index = NULL;
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &index) == FAILURE) {
 		return;
@@ -341,17 +356,17 @@ PHP_FUNCTION(git_index_clear)
 
 	git_index_clear(PHP_GIT2_V(_index, index));
 }
+/* }}} */
 
-/* {{{ proto resource git_index_get_byindex(index, n)
-*/
+/* {{{ proto array git_index_get_byindex(resource $index, long $n)
+ */
 PHP_FUNCTION(git_index_get_byindex)
 {
-	zval *index;
-	php_git2_t *_index;
-	long n;
-	const git_index_entry *entry;
-	zval *result;
-
+	const git_index_entry *result = NULL;
+	zval *index = NULL, *array = NULL;
+	php_git2_t *_index = NULL;
+	zend_long n;
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rl", &index, &n) == FAILURE) {
 		return;
@@ -361,54 +376,28 @@ PHP_FUNCTION(git_index_get_byindex)
 		RETURN_FALSE;
 	}
 
-	entry = git_index_get_byindex(PHP_GIT2_V(_index, index), n);
-	if (entry == NULL) {
+	result = git_index_get_byindex(PHP_GIT2_V(_index, index), n);
+	if (result == NULL) {
 		RETURN_FALSE;
 	}
-	php_git2_index_entry_to_array(entry, &result TSRMLS_CC);
-	RETURN_ZVAL(result, 0, 1);
-}
 
-/* {{{ proto resource git_index_get_bypath(index, path, stage)
-*/
+	php_git2_git_index_entry_to_array(result, &array TSRMLS_CC);
+
+	RETURN_ZVAL(array, 0, 1);
+}
+/* }}} */
+
+/* {{{ proto array git_index_get_bypath(resource $index, string $path, long $stage)
+ */
 PHP_FUNCTION(git_index_get_bypath)
 {
-	zval *index;
-	php_git2_t *_index;
-	char *path = {0};
-	int path_len;
-	long stage = 0;
-	const git_index_entry *entry;
-	zval *result;
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"rs|l", &index, &path, &path_len, &stage) == FAILURE) {
-		return;
-	}
-
-	if ((_index = (php_git2_t *) zend_fetch_resource(Z_RES_P(index), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
-		RETURN_FALSE;
-	}
-
-	entry = git_index_get_bypath(PHP_GIT2_V(_index, index), path, stage);
-	if (entry == NULL) {
-		RETURN_FALSE;
-	}
-	php_git2_index_entry_to_array(entry, &result TSRMLS_CC);
-	RETURN_ZVAL(result, 0, 1);
-}
-
-/* {{{ proto long git_index_remove(index, path, stage)
-*/
-PHP_FUNCTION(git_index_remove)
-{
-	zval *index;
-	php_git2_t *_index;
-	char *path = {0};
-	int path_len;
-	long stage = 0;
-	int error = 0;
-
+	const git_index_entry *result = NULL;
+	zval *index = NULL, *array = NULL;
+	php_git2_t *_index = NULL;
+	char *path = NULL;
+	size_t path_len;
+	zend_long stage;
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rsl", &index, &path, &path_len, &stage) == FAILURE) {
 		return;
@@ -418,24 +407,54 @@ PHP_FUNCTION(git_index_remove)
 		RETURN_FALSE;
 	}
 
-	error = git_index_remove(PHP_GIT2_V(_index, index), path, stage);
-	if (php_git2_check_error(error, "git_index_remove" TSRMLS_CC)) {
+	result = git_index_get_bypath(PHP_GIT2_V(_index, index), path, stage);
+	if (result == NULL) {
 		RETURN_FALSE;
 	}
-	RETURN_TRUE;
-}
 
-/* {{{ proto long git_index_remove_directory(index, dir, stage)
-*/
+	php_git2_git_index_entry_to_array(result, &array TSRMLS_CC);
+
+	RETURN_ZVAL(array, 0, 1);
+}
+/* }}} */
+
+/* {{{ proto long git_index_remove(resource $index, string $path, long $stage)
+ */
+PHP_FUNCTION(git_index_remove)
+{
+	int result;
+	zval *index = NULL;
+	php_git2_t *_index = NULL;
+	char *path = NULL;
+	size_t path_len;
+	zend_long stage;
+	
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
+		"rsl", &index, &path, &path_len, &stage) == FAILURE) {
+		return;
+	}
+
+	if ((_index = (php_git2_t *) zend_fetch_resource(Z_RES_P(index), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+		RETURN_FALSE;
+	}
+
+	result = git_index_remove(PHP_GIT2_V(_index, index), path, stage);
+
+	RETURN_LONG(result);
+}
+/* }}} */
+
+/* {{{ proto long git_index_remove_directory(resource $index, string $dir, long $stage)
+ */
 PHP_FUNCTION(git_index_remove_directory)
 {
-	zval *index;
-	php_git2_t *_index;
-	char *dir = {0};
-	int dir_len;
-	long stage = 0;
-	int error = 0;
-
+	int result;
+	zval *index = NULL;
+	php_git2_t *_index = NULL;
+	char *dir = NULL;
+	size_t dir_len;
+	zend_long stage;
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rsl", &index, &dir, &dir_len, &stage) == FAILURE) {
 		return;
@@ -445,71 +464,69 @@ PHP_FUNCTION(git_index_remove_directory)
 		RETURN_FALSE;
 	}
 
-	error = git_index_remove_directory(PHP_GIT2_V(_index, index), dir, stage);
-	if (php_git2_check_error(error, "git_index_remove_directory" TSRMLS_CC)) {
-		RETURN_FALSE;
-	}
-	RETURN_TRUE;
-}
+	result = git_index_remove_directory(PHP_GIT2_V(_index, index), dir, stage);
 
-/* {{{ proto long git_index_add(index, source_entry)
-*/
+	RETURN_LONG(result);
+}
+/* }}} */
+
+/* {{{ proto long git_index_add(resource $index, array $source_entry)
+ */
 PHP_FUNCTION(git_index_add)
 {
-	zval *index;
-	php_git2_t *_index;
-	zval *source_entry;
-	int error = 0;
-	git_index_entry entry;
-
+	int result;
+	zval *index = NULL, *source_entry = NULL;
+	php_git2_t *_index = NULL;
+	git_index_entry _source_entry = {0};
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"ra", &index, &source_entry) == FAILURE) {
 		return;
 	}
-	if (!php_git2_array_to_index_entry(&entry, source_entry TSRMLS_CC)) {
-		return;
-	}
+
+	php_git2_array_to_git_index_entry(&_source_entry, source_entry TSRMLS_CC);
 
 	if ((_index = (php_git2_t *) zend_fetch_resource(Z_RES_P(index), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
-	error = git_index_add(PHP_GIT2_V(_index, index), &entry);
-	if (php_git2_check_error(error, "git_index_add" TSRMLS_CC)) {
-		RETURN_FALSE
-	}
-	RETURN_TRUE;
-}
+	result = git_index_add(PHP_GIT2_V(_index, index), &_source_entry);
 
-/* {{{ proto long git_index_entry_stage(entry)
-*/
-PHP_FUNCTION(git_index_entry_stage)
-{
-	zval *source;
-	git_index_entry entry;
-	int result = 0;
-
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"a", &source) == FAILURE) {
-		return;
-	}
-	if (!php_git2_array_to_index_entry(&entry, source TSRMLS_CC)) {
-		return;
-	}
-	result = git_index_entry_stage(&entry);
 	RETURN_LONG(result);
 }
+/* }}} */
 
-/* {{{ proto long git_index_add_bypath(index, path)
-*/
+/* {{{ proto long git_index_entry_stage(array $entry)
+ */
+PHP_FUNCTION(git_index_entry_stage)
+{
+	int result;
+	zval *entry = NULL;
+	git_index_entry _entry = {0};
+	
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
+		"a", &entry) == FAILURE) {
+		return;
+	}
+
+	php_git2_array_to_git_index_entry(&_entry, entry TSRMLS_CC);
+
+	result = git_index_entry_stage(&_entry);
+
+	RETURN_LONG(result);
+}
+/* }}} */
+
+/* {{{ proto long git_index_add_bypath(resource $index, string $path)
+ */
 PHP_FUNCTION(git_index_add_bypath)
 {
-	zval *index;
-	php_git2_t *_index;
-	char *path = {0};
-	int path_len;
-	int error = 0;
-
+	int result;
+	zval *index = NULL;
+	php_git2_t *_index = NULL;
+	char *path = NULL;
+	size_t path_len;
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &index, &path, &path_len) == FAILURE) {
 		return;
@@ -519,23 +536,22 @@ PHP_FUNCTION(git_index_add_bypath)
 		RETURN_FALSE;
 	}
 
-	error = git_index_add_bypath(PHP_GIT2_V(_index, index), path);
-	if (php_git2_check_error(error, "git_index_add_bypath" TSRMLS_CC)) {
-		RETURN_FALSE
-	}
-	RETURN_TRUE;
-}
+	result = git_index_add_bypath(PHP_GIT2_V(_index, index), path);
 
-/* {{{ proto long git_index_remove_bypath(index, path)
-*/
+	RETURN_LONG(result);
+}
+/* }}} */
+
+/* {{{ proto long git_index_remove_bypath(resource $index, string $path)
+ */
 PHP_FUNCTION(git_index_remove_bypath)
 {
-	zval *index;
-	php_git2_t *_index;
-	char *path = {0};
-	int path_len;
-	int error = 0;
-
+	int result;
+	zval *index = NULL;
+	php_git2_t *_index = NULL;
+	char *path = NULL;
+	size_t path_len;
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &index, &path, &path_len) == FAILURE) {
 		return;
@@ -545,124 +561,129 @@ PHP_FUNCTION(git_index_remove_bypath)
 		RETURN_FALSE;
 	}
 
-	error = git_index_remove_bypath(PHP_GIT2_V(_index, index), path);
-	if (php_git2_check_error(error, "git_index_remove_bypath" TSRMLS_CC)) {
-		RETURN_FALSE
-	}
-	RETURN_TRUE;
-}
+	result = git_index_remove_bypath(PHP_GIT2_V(_index, index), path);
 
-/* {{{ proto long git_index_add_all(resource $index, array $pathspec, long $flags, Callable $callback,  $payload)
+	RETURN_LONG(result);
+}
+/* }}} */
+
+/* {{{ proto long git_index_add_all(resource $index, array $pathspec, long $flags, Callable $callback, void $payload)
  */
 PHP_FUNCTION(git_index_add_all)
 {
-	int result = 0;
+	int result;
 	zval *index = NULL, *pathspec = NULL, *payload = NULL;
 	php_git2_t *_index = NULL;
 	git_strarray _pathspec = {0};
-	long flags = 0;
-	zend_fcall_info fci = empty_fcall_info;
-	zend_fcall_info_cache fcc = empty_fcall_info_cache;
-	php_git2_cb_t *cb = NULL;
-
+	zend_long flags;
+	zend_fcall_info callback_fci = empty_fcall_info;
+	zend_fcall_info_cache callback_fcc = empty_fcall_info_cache;
+	php_git2_cb_t *callback_cb = NULL;
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"ralfz", &index, &pathspec, &flags, &fci, &fcc, &payload) == FAILURE) {
+		"ralfz", &index, &pathspec, &flags, &callback_fci, &callback_fcc, &payload) == FAILURE) {
 		return;
 	}
+
+	php_git2_array_to_git_strarray(&_pathspec, pathspec TSRMLS_CC);
 
 	if ((_index = (php_git2_t *) zend_fetch_resource(Z_RES_P(index), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
-	php_git2_array_to_strarray(&_pathspec, pathspec TSRMLS_CC);
-	if (php_git2_cb_init(&cb, &fci, &fcc, payload TSRMLS_CC)) {
+	if (php_git2_cb_init(&callback_cb, &callback_fci, &callback_fcc, payload TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	result = git_index_add_all(PHP_GIT2_V(_index, index), &_pathspec, flags, php_git2_index_matched_path_cb, cb);
-	php_git2_cb_free(cb);
-	php_git2_strarray_free(&_pathspec);
+
+	result = git_index_add_all(PHP_GIT2_V(_index, index), &_pathspec, flags, php_git2_git_index_matched_path_cb, payload_cb);
+	git_strarray_free(&_pathspec);
+	php_git2_cb_free(callback_cb);
+
 	RETURN_LONG(result);
 }
 /* }}} */
 
-
-/* {{{ proto long git_index_remove_all(resource $index, array $pathspec, Callable $callback,  $payload)
+/* {{{ proto long git_index_remove_all(resource $index, array $pathspec, Callable $callback, void $payload)
  */
 PHP_FUNCTION(git_index_remove_all)
 {
-	int result = 0;
+	int result;
 	zval *index = NULL, *pathspec = NULL, *payload = NULL;
 	php_git2_t *_index = NULL;
 	git_strarray _pathspec = {0};
-	zend_fcall_info fci = empty_fcall_info;
-	zend_fcall_info_cache fcc = empty_fcall_info_cache;
-	php_git2_cb_t *cb = NULL;
-
+	zend_fcall_info callback_fci = empty_fcall_info;
+	zend_fcall_info_cache callback_fcc = empty_fcall_info_cache;
+	php_git2_cb_t *callback_cb = NULL;
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"rafz", &index, &pathspec, &fci, &fcc, &payload) == FAILURE) {
+		"rafz", &index, &pathspec, &callback_fci, &callback_fcc, &payload) == FAILURE) {
 		return;
 	}
+
+	php_git2_array_to_git_strarray(&_pathspec, pathspec TSRMLS_CC);
 
 	if ((_index = (php_git2_t *) zend_fetch_resource(Z_RES_P(index), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
-	php_git2_array_to_strarray(&_pathspec, pathspec TSRMLS_CC);
-	if (php_git2_cb_init(&cb, &fci, &fcc, payload TSRMLS_CC)) {
+	if (php_git2_cb_init(&callback_cb, &callback_fci, &callback_fcc, payload TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	result = git_index_remove_all(PHP_GIT2_V(_index, index), pathspec, php_git2_index_matched_path_cb, cb);
-	php_git2_cb_free(cb);
-	php_git2_strarray_free(&_pathspec);
+
+	result = git_index_remove_all(PHP_GIT2_V(_index, index), &_pathspec, php_git2_git_index_matched_path_cb, payload_cb);
+	git_strarray_free(&_pathspec);
+	php_git2_cb_free(callback_cb);
+
 	RETURN_LONG(result);
 }
 /* }}} */
 
-
-/* {{{ proto long git_index_update_all(resource $index, array $pathspec, Callable $callback,  $payload)
+/* {{{ proto long git_index_update_all(resource $index, array $pathspec, Callable $callback, void $payload)
  */
 PHP_FUNCTION(git_index_update_all)
 {
-	int result = 0;
+	int result;
 	zval *index = NULL, *pathspec = NULL, *payload = NULL;
 	php_git2_t *_index = NULL;
 	git_strarray _pathspec = {0};
-	zend_fcall_info fci = empty_fcall_info;
-	zend_fcall_info_cache fcc = empty_fcall_info_cache;
-	php_git2_cb_t *cb = NULL;
-
+	zend_fcall_info callback_fci = empty_fcall_info;
+	zend_fcall_info_cache callback_fcc = empty_fcall_info_cache;
+	php_git2_cb_t *callback_cb = NULL;
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"rafz", &index, &pathspec, &fci, &fcc, &payload) == FAILURE) {
+		"rafz", &index, &pathspec, &callback_fci, &callback_fcc, &payload) == FAILURE) {
 		return;
 	}
+
+	php_git2_array_to_git_strarray(&_pathspec, pathspec TSRMLS_CC);
 
 	if ((_index = (php_git2_t *) zend_fetch_resource(Z_RES_P(index), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
-	php_git2_array_to_strarray(&_pathspec, pathspec TSRMLS_CC);
-	if (php_git2_cb_init(&cb, &fci, &fcc, payload TSRMLS_CC)) {
+	if (php_git2_cb_init(&callback_cb, &callback_fci, &callback_fcc, payload TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	result = git_index_update_all(PHP_GIT2_V(_index, index), pathspec, php_git2_index_matched_path_cb, cb);
-	php_git2_cb_free(cb);
-	php_git2_strarray_free(&_pathspec);
+
+	result = git_index_update_all(PHP_GIT2_V(_index, index), &_pathspec, php_git2_git_index_matched_path_cb, payload_cb);
+	git_strarray_free(&_pathspec);
+	php_git2_cb_free(callback_cb);
+
 	RETURN_LONG(result);
 }
 /* }}} */
 
-
-/* {{{ proto long git_index_find(at_pos, index, path)
-*/
+/* {{{ proto long git_index_find(long $at_pos, resource $index, string $path)
+ */
 PHP_FUNCTION(git_index_find)
 {
-	zval *index;
-	php_git2_t *_index;
-	char *path = {0};
-	int path_len;
-	long at_pos;
-	int result = 0;
-
+	int result;
+	zend_long at_pos;
+	zval *index = NULL;
+	php_git2_t *_index = NULL;
+	char *path = NULL;
+	size_t path_len;
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"lrs", &at_pos, &index, &path, &path_len) == FAILURE) {
 		return;
@@ -673,32 +694,39 @@ PHP_FUNCTION(git_index_find)
 	}
 
 	result = git_index_find(at_pos, PHP_GIT2_V(_index, index), path);
+
 	RETURN_LONG(result);
 }
+/* }}} */
 
-/* {{{ proto long git_index_conflict_add(resource $index, $ancestor_entry, $our_entry, $their_entry)
+/* {{{ proto long git_index_conflict_add(resource $index, array $ancestor_entry, array $our_entry, array $their_entry)
  */
 PHP_FUNCTION(git_index_conflict_add)
 {
-	int result = 0;
+	int result;
 	zval *index = NULL, *ancestor_entry = NULL, *our_entry = NULL, *their_entry = NULL;
 	php_git2_t *_index = NULL;
-	git_index_entry ancestor = {0}, our = {0}, their = {0};
-
+	git_index_entry _ancestor_entry = {0};
+	git_index_entry _our_entry = {0};
+	git_index_entry _their_entry = {0};
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"raaa", &index, &ancestor_entry, &our_entry, &their_entry) == FAILURE) {
 		return;
 	}
 
-	php_git2_array_to_index_entry(&ancestor, ancestor_entry TSRMLS_CC);
-	php_git2_array_to_index_entry(&our, our_entry TSRMLS_CC);
-	php_git2_array_to_index_entry(&their, their_entry TSRMLS_CC);
+	php_git2_array_to_git_index_entry(&_ancestor_entry, ancestor_entry TSRMLS_CC);
+
+	php_git2_array_to_git_index_entry(&_our_entry, our_entry TSRMLS_CC);
+
+	php_git2_array_to_git_index_entry(&_their_entry, their_entry TSRMLS_CC);
 
 	if ((_index = (php_git2_t *) zend_fetch_resource(Z_RES_P(index), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
-	result = git_index_conflict_add(PHP_GIT2_V(_index, index), &ancestor, &our, &their);
+	result = git_index_conflict_add(PHP_GIT2_V(_index, index), &_ancestor_entry, &_our_entry, &_their_entry);
+
 	RETURN_LONG(result);
 }
 /* }}} */
@@ -743,11 +771,12 @@ PHP_FUNCTION(git_index_conflict_get)
  */
 PHP_FUNCTION(git_index_conflict_remove)
 {
-	int result = 0, path_len = 0;
+	int result;
 	zval *index = NULL;
 	php_git2_t *_index = NULL;
 	char *path = NULL;
-
+	size_t path_len;
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &index, &path, &path_len) == FAILURE) {
 		return;
@@ -758,6 +787,7 @@ PHP_FUNCTION(git_index_conflict_remove)
 	}
 
 	result = git_index_conflict_remove(PHP_GIT2_V(_index, index), path);
+
 	RETURN_LONG(result);
 }
 /* }}} */
@@ -768,7 +798,7 @@ PHP_FUNCTION(git_index_conflict_cleanup)
 {
 	zval *index = NULL;
 	php_git2_t *_index = NULL;
-
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &index) == FAILURE) {
 		return;
@@ -782,14 +812,14 @@ PHP_FUNCTION(git_index_conflict_cleanup)
 }
 /* }}} */
 
-/* {{{ proto long git_index_has_conflicts(index)
-*/
+/* {{{ proto long git_index_has_conflicts(resource $index)
+ */
 PHP_FUNCTION(git_index_has_conflicts)
 {
-	zval *index;
-	php_git2_t *_index;
-	int conflict = 0;
-
+	int result;
+	zval *index = NULL;
+	php_git2_t *_index = NULL;
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &index) == FAILURE) {
 		return;
@@ -799,9 +829,11 @@ PHP_FUNCTION(git_index_has_conflicts)
 		RETURN_FALSE;
 	}
 
-	conflict = git_index_has_conflicts(PHP_GIT2_V(_index, index));
-	RETURN_LONG(conflict);
+	result = git_index_has_conflicts(PHP_GIT2_V(_index, index));
+
+	RETURN_BOOL(result);
 }
+/* }}} */
 
 /* {{{ proto resource git_index_conflict_iterator_new(resource $index)
  */
@@ -811,7 +843,7 @@ PHP_FUNCTION(git_index_conflict_iterator_new)
 	git_index_conflict_iterator *iterator_out = NULL;
 	zval *index = NULL;
 	int error = 0;
-
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &index) == FAILURE) {
 		return;
@@ -822,12 +854,15 @@ PHP_FUNCTION(git_index_conflict_iterator_new)
 	}
 
 	error = git_index_conflict_iterator_new(&iterator_out, PHP_GIT2_V(_index, index));
+
 	if (php_git2_check_error(error, "git_index_conflict_iterator_new" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
+
 	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_INDEX_CONFLICT_ITERATOR, iterator_out, 1 TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
+
 	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
 }
 /* }}} */
@@ -875,7 +910,7 @@ PHP_FUNCTION(git_index_conflict_iterator_free)
 {
 	zval *iterator = NULL;
 	php_git2_t *_iterator = NULL;
-
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &iterator) == FAILURE) {
 		return;
@@ -888,7 +923,9 @@ PHP_FUNCTION(git_index_conflict_iterator_free)
 	if (GIT2_SHOULD_FREE(_iterator)) {
 		git_index_conflict_iterator_free(PHP_GIT2_V(_iterator, index_conflict_iterator));
 		GIT2_SHOULD_FREE(_iterator) = 0;
-	};
+	);
+
 	zval_ptr_dtor(&iterator);
 }
 /* }}} */
+

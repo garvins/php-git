@@ -6,7 +6,7 @@
  */
 PHP_FUNCTION(git_refspec_src)
 {
-	const char  *result = NULL;
+	const char *result = NULL;
 	zval *refspec = NULL;
 	php_git2_t *_refspec = NULL;
 	
@@ -14,12 +14,13 @@ PHP_FUNCTION(git_refspec_src)
 		"r", &refspec) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_refspec = (php_git2_t *) zend_fetch_resource(Z_RES_P(refspec), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
 	result = git_refspec_src(PHP_GIT2_V(_refspec, refspec));
+
 	RETURN_STRING(result);
 }
 /* }}} */
@@ -28,7 +29,7 @@ PHP_FUNCTION(git_refspec_src)
  */
 PHP_FUNCTION(git_refspec_dst)
 {
-	const char  *result = NULL;
+	const char *result = NULL;
 	zval *refspec = NULL;
 	php_git2_t *_refspec = NULL;
 	
@@ -36,12 +37,13 @@ PHP_FUNCTION(git_refspec_dst)
 		"r", &refspec) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_refspec = (php_git2_t *) zend_fetch_resource(Z_RES_P(refspec), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
 	result = git_refspec_dst(PHP_GIT2_V(_refspec, refspec));
+
 	RETURN_STRING(result);
 }
 /* }}} */
@@ -50,7 +52,7 @@ PHP_FUNCTION(git_refspec_dst)
  */
 PHP_FUNCTION(git_refspec_string)
 {
-	const char  *result = NULL;
+	const char *result = NULL;
 	zval *refspec = NULL;
 	php_git2_t *_refspec = NULL;
 	
@@ -58,12 +60,13 @@ PHP_FUNCTION(git_refspec_string)
 		"r", &refspec) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_refspec = (php_git2_t *) zend_fetch_resource(Z_RES_P(refspec), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
 	result = git_refspec_string(PHP_GIT2_V(_refspec, refspec));
+
 	RETURN_STRING(result);
 }
 /* }}} */
@@ -72,7 +75,7 @@ PHP_FUNCTION(git_refspec_string)
  */
 PHP_FUNCTION(git_refspec_force)
 {
-	int result = 0;
+	int result;
 	zval *refspec = NULL;
 	php_git2_t *_refspec = NULL;
 	
@@ -80,12 +83,13 @@ PHP_FUNCTION(git_refspec_force)
 		"r", &refspec) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_refspec = (php_git2_t *) zend_fetch_resource(Z_RES_P(refspec), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
 	result = git_refspec_force(PHP_GIT2_V(_refspec, refspec));
+
 	RETURN_LONG(result);
 }
 /* }}} */
@@ -102,12 +106,13 @@ PHP_FUNCTION(git_refspec_direction)
 		"r", &spec) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_spec = (php_git2_t *) zend_fetch_resource(Z_RES_P(spec), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
 	result = git_refspec_direction(PHP_GIT2_V(_spec, refspec));
+
 	RETURN_LONG(result);
 }
 /* }}} */
@@ -116,21 +121,23 @@ PHP_FUNCTION(git_refspec_direction)
  */
 PHP_FUNCTION(git_refspec_src_matches)
 {
-	int result = 0, refname_len = 0;
+	int result;
 	zval *refspec = NULL;
 	php_git2_t *_refspec = NULL;
 	char *refname = NULL;
+	size_t refname_len;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &refspec, &refname, &refname_len) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_refspec = (php_git2_t *) zend_fetch_resource(Z_RES_P(refspec), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
 	result = git_refspec_src_matches(PHP_GIT2_V(_refspec, refspec), refname);
+
 	RETURN_LONG(result);
 }
 /* }}} */
@@ -139,78 +146,82 @@ PHP_FUNCTION(git_refspec_src_matches)
  */
 PHP_FUNCTION(git_refspec_dst_matches)
 {
-	int result = 0, refname_len = 0;
+	int result;
 	zval *refspec = NULL;
 	php_git2_t *_refspec = NULL;
 	char *refname = NULL;
+	size_t refname_len;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &refspec, &refname, &refname_len) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_refspec = (php_git2_t *) zend_fetch_resource(Z_RES_P(refspec), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
 	result = git_refspec_dst_matches(PHP_GIT2_V(_refspec, refspec), refname);
+
 	RETURN_LONG(result);
 }
 /* }}} */
 
-/* {{{ proto string git_refspec_transform(long $outlen, resource $spec, string $name)
+/* {{{ proto string git_refspec_transform(resource $spec, string $name)
  */
 PHP_FUNCTION(git_refspec_transform)
 {
-	// TODO(chobie): fix this implementation
-	php_git2_t *_spec = NULL;
-	char out = NULL, *name = NULL;
-	long outlen = 0;
+	char out[GIT2_BUFFER_SIZE] = {0}, *name = NULL;
+	size_t outlen = GIT2_BUFFER_SIZE, name_len;
 	zval *spec = NULL;
-	int name_len = 0, error = 0;
-
+	php_git2_t *_spec = NULL;
+	int error = 0;
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"lrs", &outlen, &spec, &name, &name_len) == FAILURE) {
+		"rs", &spec, &name, &name_len) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_spec = (php_git2_t *) zend_fetch_resource(Z_RES_P(spec), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
 	error = git_refspec_transform(&out, outlen, PHP_GIT2_V(_spec, refspec), name);
+
 	if (php_git2_check_error(error, "git_refspec_transform" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	RETURN_STRING(out);
+
+	RETURN_STRING(&out);
 }
 /* }}} */
 
-/* {{{ proto string git_refspec_rtransform(long $outlen, resource $spec, string $name)
+/* {{{ proto string git_refspec_rtransform(resource $spec, string $name)
  */
 PHP_FUNCTION(git_refspec_rtransform)
 {
-	// TODO(chobie): fix this implementation
-	php_git2_t *_spec = NULL;
-	char out = NULL, *name = NULL;
-	long outlen = 0;
+	char out[GIT2_BUFFER_SIZE] = {0}, *name = NULL;
+	size_t outlen = GIT2_BUFFER_SIZE, name_len;
 	zval *spec = NULL;
-	int name_len = 0, error = 0;
+	php_git2_t *_spec = NULL;
+	int error = 0;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"lrs", &outlen, &spec, &name, &name_len) == FAILURE) {
+		"rs", &spec, &name, &name_len) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_spec = (php_git2_t *) zend_fetch_resource(Z_RES_P(spec), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
 	error = git_refspec_rtransform(&out, outlen, PHP_GIT2_V(_spec, refspec), name);
+
 	if (php_git2_check_error(error, "git_refspec_rtransform" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	RETURN_STRING(out);
+
+	RETURN_STRING(&out);
 }
 /* }}} */
 

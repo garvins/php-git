@@ -17,7 +17,7 @@ PHP_FUNCTION(git_graph_ahead_behind)
 		"rss", &ahead, &behind, &repo, &local, &local_len, &upstream, &upstream_len) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
@@ -25,6 +25,7 @@ PHP_FUNCTION(git_graph_ahead_behind)
 	if (git_oid_fromstrn(&__local, local, local_len)) {
 		RETURN_FALSE;
 	}
+
 	if (git_oid_fromstrn(&__upstream, upstream, upstream_len)) {
 		RETURN_FALSE;
 	}

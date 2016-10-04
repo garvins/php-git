@@ -10,8 +10,9 @@ PHP_FUNCTION(git_revparse_single)
 	git_object *out = NULL;
 	zval *repo = NULL;
 	char *spec = NULL;
-	int spec_len = 0, error = 0;
-
+	size_t spec_len;
+	int error = 0;
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &spec, &spec_len) == FAILURE) {
 		return;
@@ -22,12 +23,15 @@ PHP_FUNCTION(git_revparse_single)
 	}
 
 	error = git_revparse_single(&out, PHP_GIT2_V(_repo, repository), spec);
+
 	if (php_git2_check_error(error, "git_revparse_single" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_OBJECT, out, 0 TSRMLS_CC)) {
+
+	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_OBJECT, out, 1 TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
+
 	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
 }
 /* }}} */
@@ -86,14 +90,13 @@ PHP_FUNCTION(git_revparse_ext)
  */
 PHP_FUNCTION(git_revparse)
 {
-	git_revspec revspec;
-	zval *repo = NULL;
-	php_git2_t *_repo = NULL, *_from = NULL, *_to = NULL;
-	zval *result = NULL, *from, *to;
+	zval *result, *repo = NULL;
+	git_revspec *revspec = NULL;
+	php_git2_t *_repo = NULL;
 	char *spec = NULL;
-	int spec_len = 0;
+	size_t spec_len;
 	int error = 0;
-
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &spec, &spec_len) == FAILURE) {
 		return;
@@ -103,29 +106,18 @@ PHP_FUNCTION(git_revparse)
 		RETURN_FALSE;
 	}
 
+	error = git_revparse(revspec, PHP_GIT2_V(_repo, repository), spec);
 
-	memset(&revspec, '\0', sizeof(revspec));
-	error = git_revparse(&revspec, PHP_GIT2_V(_repo, repository), spec);
 	if (php_git2_check_error(error, "git_revparse" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	MAKE_STD_ZVAL(result);
-	if (php_git2_make_resource(&_from, PHP_GIT2_TYPE_OBJECT, revspec.from, 0 TSRMLS_CC)) {
+	if (revspec == NULL) {
 		RETURN_FALSE;
 	}
-	ZVAL_RESOURCE(from, GIT2_RVAL_P(_from));
 
-	if (php_git2_make_resource(&_to, PHP_GIT2_TYPE_OBJECT, revspec.to, 0 TSRMLS_CC)) {
-		RETURN_FALSE;
-	}
-	ZVAL_RESOURCE(to, GIT2_RVAL_P(_to));
+	php_git2_git_revspec_to_array(revspec, &array TSRMLS_CC);
 
-	array_init(result);
-	add_assoc_zval_ex(result, ZEND_STRS("from"), from);
-	add_assoc_zval_ex(result, ZEND_STRS("to"), to);
-	add_assoc_long_ex(result, ZEND_STRS("flags"), revspec.flags);
-
-	RETURN_ZVAL(result, 0, 1);
+	RETURN_ZVAL(array, 0, 1);
 }
 /* }}} */
 

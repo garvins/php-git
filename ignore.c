@@ -6,21 +6,23 @@
  */
 PHP_FUNCTION(git_ignore_add_rule)
 {
-	int result = 0, rules_len = 0;
+	int result;
 	zval *repo = NULL;
 	php_git2_t *_repo = NULL;
 	char *rules = NULL;
+	size_t rules_len;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &rules, &rules_len) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
 	result = git_ignore_add_rule(PHP_GIT2_V(_repo, repository), rules);
+
 	RETURN_LONG(result);
 }
 /* }}} */
@@ -29,7 +31,7 @@ PHP_FUNCTION(git_ignore_add_rule)
  */
 PHP_FUNCTION(git_ignore_clear_internal_rules)
 {
-	int result = 0;
+	int result;
 	zval *repo = NULL;
 	php_git2_t *_repo = NULL;
 	
@@ -37,37 +39,43 @@ PHP_FUNCTION(git_ignore_clear_internal_rules)
 		"r", &repo) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
 	result = git_ignore_clear_internal_rules(PHP_GIT2_V(_repo, repository));
+
 	RETURN_LONG(result);
 }
 /* }}} */
 
-/* {{{ proto long git_ignore_path_is_ignored(long $ignored, resource $repo, string $path)
+/* {{{ proto long git_ignore_path_is_ignored(resource $repo, string $path)
  */
 PHP_FUNCTION(git_ignore_path_is_ignored)
 {
-	int result = 0, path_len = 0;
-	long ignored = 0;
+	int ignored = 0;
 	zval *repo = NULL;
 	php_git2_t *_repo = NULL;
 	char *path = NULL;
+	size_t path_len;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"lrs", &ignored, &repo, &path, &path_len) == FAILURE) {
+		"rs", &repo, &path, &path_len) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
-	result = git_ignore_path_is_ignored(ignored, PHP_GIT2_V(_repo, repository), path);
-	RETURN_BOOL(result);
+	error = git_ignore_path_is_ignored(&ignored, PHP_GIT2_V(_repo, repository), path);
+
+	if (php_git2_check_error(error, "git_ignore_path_is_ignored" TSRMLS_CC)) {
+		RETURN_FALSE;
+	}
+
+	RETURN_BOOL(ignored);
 }
 /* }}} */
 
