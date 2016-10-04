@@ -2,56 +2,6 @@
 #include "php_git2_priv.h"
 #include "reference.h"
 
-static int php_git2_reference_foreach_cb(git_reference *reference, void *payload)
-{
-	php_git2_t *result;
-	zval *param_reference, *retval_ptr = NULL;
-	php_git2_cb_t *p = (php_git2_cb_t*)payload;
-	long retval = 0;
-	GIT2_TSRMLS_SET(p->tsrm_ls)
-
-	Z_ADDREF_P(p->payload);
-	MAKE_STD_ZVAL(param_reference);
-
-	php_git2_make_resource(&result, PHP_GIT2_TYPE_REFERENCE, reference, 0 TSRMLS_CC);
-	zend_list_addref(result->resource_id);
-	ZVAL_RESOURCE(param_reference, result->resource_id);
-
-	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, &retval_ptr, 2, &param_reference, &p->payload)) {
-		zend_list_delete(result->resource_id);
-		return GIT_EUSER;
-	}
-
-	retval = Z_LVAL_P(retval_ptr);
-	zval_ptr_dtor(&retval_ptr);
-	zend_list_delete(result->resource_id);
-	return retval;
-}
-
-static int php_git2_reference_foreach_name_cb(const char *name, void *payload)
-{
-	php_git2_t *result;
-	zval *param_name, *retval_ptr = NULL;
-	php_git2_cb_t *p = (php_git2_cb_t*)payload;
-	long retval = 0;
-	GIT2_TSRMLS_SET(p->tsrm_ls)
-
-	Z_ADDREF_P(p->payload);
-	MAKE_STD_ZVAL(param_name);
-	ZVAL_STRING(param_name, name);
-
-	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, &retval_ptr, 2, &param_name, &p->payload)) {
-		zval_ptr_dtor(&retval_ptr);
-		zend_list_delete(result->resource_id);
-		return GIT_EUSER;
-	}
-	retval = Z_LVAL_P(retval_ptr);
-	zval_ptr_dtor(&retval_ptr);
-	zend_list_delete(result->resource_id);
-
-	return retval;
-}
-
 /* {{{ proto resource git_reference_lookup(resource $repo, string $name)
  */
 PHP_FUNCTION(git_reference_lookup)

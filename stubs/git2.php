@@ -279,7 +279,6 @@ function git_cred_userpass_plaintext_new($username, $password){}
 function git_cred_ssh_key_new($username, $publickey, $privatekey, $passphrase){}
 function git_cred_ssh_custom_new($username, $publickey, $publickey_len, $sign_fn, $sign_data){}
 function git_cred_default_new(){}
-function git_cred_userpass($url, $user_from_url, $allowed_types, $payload){}
 function git_status_foreach($repo, $callback, $payload){}
 function git_status_foreach_ext($repo, $opts, $callback, $payload){}
 function git_status_file($status_flags, $repo, $path){}
@@ -372,7 +371,7 @@ function git_patch_size($patch, $include_context, $include_hunk_headers, $includ
 function git_patch_print($patch, $print_cb, $payload){}
 function git_patch_to_str($patch){}
 function git_merge_base($repo, $one, $two){}
-function git_merge_base_many($repo, $length, $input_array[]){}
+function git_merge_base_many($repo, $length, $input_array){}
 function git_merge_head_from_ref($repo, $ref){}
 function git_merge_head_from_fetchhead($repo, $branch_name, $remote_url, $oid){}
 function git_merge_head_from_oid($repo, $oid){}

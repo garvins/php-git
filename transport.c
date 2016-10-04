@@ -2,33 +2,6 @@
 #include "php_git2_priv.h"
 #include "transport.h"
 
-static int php_git2_transport_cb(git_transport **out, git_remote *owner, void *param)
-{
-	zval *param_owner, *retval_ptr = NULL;
-	php_git2_cb_t *p = (php_git2_cb_t*)param;
-	php_git2_t *_param_owner;
-	long retval = 0;
-	GIT2_TSRMLS_SET(p->tsrm_ls)
-
-	Z_ADDREF_P(p->payload);
-	MAKE_STD_ZVAL(param_owner);
-	if (php_git2_make_resource(&_param_owner, PHP_GIT2_TYPE_REMOTE, owner, 0 TSRMLS_CC)) {
-		return 0;
-	}
-	ZVAL_RESOURCE(param_owner, GIT2_RVAL_P(_param_owner));
-
-	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, &retval_ptr, 2, &param_owner, &p->payload)) {
-		return GIT_EUSER;
-	}
-
-	/* TODO(chobie): implement this */
-
-	retval = Z_LVAL_P(retval_ptr);
-	zval_ptr_dtor(&retval_ptr);
-	return retval;
-}
-
-
 /* {{{ proto resource git_transport_new(resource $owner, string $url)
  */
 PHP_FUNCTION(git_transport_new)

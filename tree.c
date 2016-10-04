@@ -2,62 +2,6 @@
 #include "php_git2_priv.h"
 #include "tree.h"
 
-typedef struct tree_walk_cb_t {
-	zval *payload;
-	zend_fcall_info *fci;
-	zend_fcall_info_cache *fcc;
-	GIT2_TSRMLS_DECL
-};
-
-static int tree_walk_cb(const char *root, const git_tree_entry *entry, void *payload)
-{
-	php_git2_t *result;
-	zval *param_root, *param_rsrc, *retval_ptr = NULL;
-	struct tree_walk_cb_t *p = (struct tree_walk_cb_t*)payload;
-	GIT2_TSRMLS_SET(p->tsrm_ls)
-
-	Z_ADDREF_P(p->payload);
-	MAKE_STD_ZVAL(param_root);
-	MAKE_STD_ZVAL(param_rsrc);
-
-	ZVAL_STRING(param_root, root);
-	php_git2_make_resource(&result, PHP_GIT2_TYPE_TREE_ENTRY, entry, 0 TSRMLS_CC);
-	zend_list_addref(result->resource_id);
-	ZVAL_RESOURCE(param_rsrc, result->resource_id);
-
-	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, &retval_ptr, 3, &param_root, &param_rsrc, &p->payload)) {
-		zend_list_delete(result->resource_id);
-		return 0;
-	}
-	zval_ptr_dtor(&retval_ptr);
-	zend_list_delete(result->resource_id);
-
-	return 1;
-}
-
-static int php_git2_tree_walk_cb_init(struct tree_walk_cb **out, zend_fcall_info *fci, zend_fcall_info_cache *fcc, void *payload TSRMLS_DC)
-{
-	struct tree_walk_cb_t *cb;
-
-	cb = (struct tree_walk_cb_t*)emalloc(sizeof(struct tree_walk_cb_t));
-	if (cb == NULL) {
-		return 1;
-	}
-
-	cb->payload = payload;
-	cb->fci = fci;
-	cb->fcc = fcc;
-	GIT2_TSRMLS_SET2(cb, TSRMLS_C);
-
-	*out = cb;
-	return 0;
-}
-
-static void php_git2_tree_walk_cb_free(struct tree_walk_cb *target)
-{
-	efree(target);
-}
-
 /* {{{ proto resource git_tree_entry_byindex(resource $tree, string $name)
 */
 PHP_FUNCTION(git_tree_entry_byindex)

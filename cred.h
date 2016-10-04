@@ -53,13 +53,6 @@ ZEND_END_ARG_INFO()
 ZEND_BEGIN_ARG_INFO_EX(arginfo_git_cred_default_new, 0, 0, 0)
 ZEND_END_ARG_INFO()
 
-ZEND_BEGIN_ARG_INFO_EX(arginfo_git_cred_userpass, 0, 0, 4)
-	ZEND_ARG_INFO(0, url)
-	ZEND_ARG_INFO(0, user_from_url)
-	ZEND_ARG_INFO(0, allowed_types)
-	ZEND_ARG_INFO(1, payload)
-ZEND_END_ARG_INFO()
-
 /* {{{ proto long git_cred_has_username(cred)
 */
 PHP_FUNCTION(git_cred_has_username);
@@ -79,9 +72,5 @@ PHP_FUNCTION(git_cred_ssh_custom_new);
 /* {{{ proto resource git_cred_default_new()
 */
 PHP_FUNCTION(git_cred_default_new);
-
-/* {{{ proto resource git_cred_userpass(url, user_from_url, allowed_types, payload)
-*/
-PHP_FUNCTION(git_cred_userpass);
 
 #endif

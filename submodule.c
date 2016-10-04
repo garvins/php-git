@@ -2,36 +2,6 @@
 #include "php_git2_priv.h"
 #include "submodule.h"
 
-static int php_git2_git_submodule_foreach_cb(git_submodule *sm, const char *name, void *payload)
-{
-	php_git2_t *result, *submodule;
-	zval *param_sm, *param_name, *retval_ptr = NULL;
-	php_git2_cb_t *p = (php_git2_cb_t*)payload;
-	int i = 0;
-	long retval = 0;
-	GIT2_TSRMLS_SET(p->tsrm_ls)
-
-	Z_ADDREF_P(p->payload);
-	MAKE_STD_ZVAL(param_sm);
-	MAKE_STD_ZVAL(param_name);
-	if (php_git2_make_resource(&submodule, PHP_GIT2_TYPE_SUBMODULE, sm, 0 TSRMLS_CC)) {
-		return GIT_EUSER;
-	}
-	ZVAL_RESOURCE(param_sm, GIT2_RVAL_P(submodule));
-
-	ZVAL_STRING(param_name, name);
-	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, &retval_ptr, 3,
-		&param_sm, &param_name, &p->payload)) {
-		return GIT_EUSER;
-	}
-
-	retval = Z_LVAL_P(retval_ptr);
-	zval_ptr_dtor(&retval_ptr);
-	return retval;
-
-
-}
-
 /* {{{ proto long git_submodule_lookup(resource $repo, string $name)
  */
 PHP_FUNCTION(git_submodule_lookup)

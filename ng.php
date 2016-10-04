@@ -895,7 +895,7 @@ class Fashion
             } else if (preg_match("/_type/", $f->getName())) {
                 $printer->put("RETURN_LONG(`name`);\n", "name", "result");
             } else if (preg_match("/git_signature/", $f->getReturnType())) {
-                $printer->put("php_git2_signature_to_array(result, &__result TSRMLS_CC);\n");
+                $printer->put("php_git2_git_signature_to_array(result, &__result TSRMLS_CC);\n");
                 $printer->put("RETURN_ZVAL(__result, 0, 1);\n");
             } else {
                 $printer->put("/* TODO(chobie): implement this */\n");
@@ -1078,7 +1078,7 @@ class Fashion
         foreach ($f->getArguments() as $arg) {
             /** @var Arg $arg */
             if ($arg->getType() == "git_strarray") {
-                $printer->put("php_git2_array_to_strarray(&_`name`, `name` TSRMLS_CC);\n",
+                $printer->put("php_git2_array_to_git_strarray(&_`name`, `name` TSRMLS_CC);\n",
                     "name", $arg->getName());
             }
         }

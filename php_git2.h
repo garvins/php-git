@@ -118,7 +118,6 @@ enum php_git2_resource_type {
 	PHP_GIT2_TYPE_PATHSPEC_MATCH_LIST,
 	PHP_GIT2_TYPE_PATCH,
 	PHP_GIT2_TYPE_DIFF_HUNK,
-	PHP_GIT2_TYPE_BUF,
 	PHP_GIT2_TYPE_FILTER_LIST,
 	PHP_GIT2_TYPE_FILTER_SOURCE,
 	PHP_GIT2_TYPE_DIFF_LINE,
@@ -172,7 +171,6 @@ typedef struct php_git2_t {
 		git_pathspec_match_list *pathspec_match_list;
 		git_patch *patch;
 		git_diff_hunk *diff_hunk;
-		git_buf *buf;
 		git_filter_list *filter_list;
 		git_filter_source *filter_source;
 		git_diff_line *diff_line;
@@ -235,6 +233,19 @@ typedef struct php_git2_odb_backend_foreach_callback {
 	git_odb_foreach_cb callback;
 	php_git2_cb_t *payload;
 } php_git2_odb_backend_foreach_callback;
+
+typedef struct php_git2_remote_cb_t {
+	php_git2_fcall_t callbacks[4];
+	zval *payload;
+	GIT2_TSRMLS_DECL
+} php_git2_remote_cb_t;
+
+typedef struct tree_walk_cb_t {
+	zval *payload;
+	zend_fcall_info *fci;
+	zend_fcall_info_cache *fcc;
+	GIT2_TSRMLS_DECL
+};
 
 extern zend_class_entry *php_git2_odb_backend_foreach_callback_class_entry;
 

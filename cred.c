@@ -112,20 +112,3 @@ PHP_FUNCTION(git_cred_default_new)
 }
 /* }}} */
 
-
-
-/* {{{ proto resource git_cred_userpass(url, user_from_url, allowed_types, payload)
-*/
-PHP_FUNCTION(git_cred_userpass)
-{
-
-	/* TODO(chobie): implement this */
-	php_error_docref(NULL TSRMLS_CC, E_WARNING, "git_cred_userpass not implemented yet");
-	return;
-
-//	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-//		"ssl", &url, &url_len, &user_from_url, &user_from_url_len, &allowed_types, &payload) == FAILURE) {
-//		return;
-//	}
-}
-

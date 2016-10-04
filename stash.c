@@ -2,36 +2,6 @@
 #include "php_git2_priv.h"
 #include "stash.h"
 
-static int php_git2_stash_cb(size_t index,
-	const char* message,
-	const git_oid *stash_id,
-	void *payload)
-{
-	zval *param_index, *param_message,*param_stash_id, *retval_ptr = NULL;
-	php_git2_cb_t *p = (php_git2_cb_t*)payload;
-	long retval = 0;
-	char _oid[GIT2_OID_HEXSIZE] = {0};
-	GIT2_TSRMLS_SET(p->tsrm_ls)
-
-	git_oid_fmt(_oid, stash_id);
-
-	Z_ADDREF_P(p->payload);
-	MAKE_STD_ZVAL(param_index);
-	MAKE_STD_ZVAL(param_message);
-	MAKE_STD_ZVAL(param_stash_id);
-	ZVAL_LONG(param_index, index);
-	ZVAL_STRING(param_message, message);
-	ZVAL_STRING(param_stash_id, _oid);
-
-	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, &retval_ptr, 4, &param_index, &param_message, &param_stash_id, &p->payload)) {
-		return GIT_EUSER;
-	}
-
-	retval = Z_LVAL_P(retval_ptr);
-	zval_ptr_dtor(&retval_ptr);
-	return retval;
-}
-
 /* {{{ proto resource git_stash_save(resource $repo, array $stasher, string $message, long $flags)
  */
 PHP_FUNCTION(git_stash_save)

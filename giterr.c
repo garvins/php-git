@@ -2,22 +2,6 @@
 #include "php_git2_priv.h"
 #include "giterr.h"
 
-static void php_git2_error_to_array(const git_error *error, zval **out)
-{
-	zval *array;
-
-	MAKE_STD_ZVAL(array);
-	array_init(array);
-	if (error == NULL) {
-		add_next_index_string(array, "", 1);
-		add_next_index_long(array, 0);
-	} else {
-		add_next_index_string(array, error->message, 1);
-		add_next_index_long(array, error->klass);
-	}
-	*out = array;
-}
-
 /* {{{ proto resource giterr_last()
  */
 PHP_FUNCTION(giterr_last)

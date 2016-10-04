@@ -2,36 +2,6 @@
 #include "php_git2_priv.h"
 #include "tag.h"
 
-static int php_git2_tag_foreach_cb(const char *name, git_oid *oid, void *payload)
-{
-	php_git2_t *result;
-	zval *param_name, *param_oid, *retval_ptr = NULL;
-	php_git2_cb_t *p = (php_git2_cb_t*)payload;
-	long retval = 0;
-	char buffer[GIT2_OID_HEXSIZE] = {0};
-	GIT2_TSRMLS_SET(p->tsrm_ls)
-
-	git_oid_fmt(buffer, oid);
-
-	Z_ADDREF_P(p->payload);
-	MAKE_STD_ZVAL(param_name);
-	MAKE_STD_ZVAL(param_oid);
-	ZVAL_STRING(param_name, name);
-	ZVAL_STRING(param_oid, buffer);
-
-	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, &retval_ptr, 3, &param_name, &param_oid, &p->payload)) {
-		zval_ptr_dtor(&retval_ptr);
-		zend_list_delete(result->resource_id);
-		return GIT_EUSER;
-	}
-
-	retval = Z_LVAL_P(retval_ptr);
-	zval_ptr_dtor(&retval_ptr);
-	zend_list_delete(result->resource_id);
-
-	return retval;
-}
-
 /* {{{ proto resource git_tag_lookup(resource $repo, string $id)
  */
 PHP_FUNCTION(git_tag_lookup)
