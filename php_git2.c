@@ -139,11 +139,7 @@ ZEND_DECLARE_MODULE_GLOBALS(git2);
 
 static zend_class_entry *php_git2_get_exception_base(TSRMLS_D)
 {
-#if (PHP_MAJOR_VERSION == 5) && (PHP_MINOR_VERSION < 2)
-	return zend_exception_get_default();
-#else
 	return zend_exception_get_default(TSRMLS_C);
-#endif
 }
 
 int php_git2_make_resource(php_git2_t **out, enum php_git2_resource_type type, void *resource, int should_free TSRMLS_DC)
@@ -681,7 +677,6 @@ static zend_function_entry php_git2_functions[] = {
 	PHP_FE(git_cred_ssh_key_new, arginfo_git_cred_ssh_key_new)
 	PHP_FE(git_cred_ssh_custom_new, arginfo_git_cred_ssh_custom_new)
 	PHP_FE(git_cred_default_new, arginfo_git_cred_default_new)
-	PHP_FE(git_cred_userpass, arginfo_git_cred_userpass)
 
 	/* status */
 	PHP_FE(git_status_foreach, arginfo_git_status_foreach)
