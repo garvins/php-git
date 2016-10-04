@@ -100,7 +100,7 @@ PHP_FUNCTION(git_tag_free)
 	if (GIT2_SHOULD_FREE(_tag)) {
 		git_tag_free(PHP_GIT2_V(_tag, tag));
 		GIT2_SHOULD_FREE(_tag) = 0;
-	);
+	}
 
 	zval_ptr_dtor(&tag);
 }

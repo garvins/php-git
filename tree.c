@@ -314,7 +314,7 @@ PHP_FUNCTION(git_tree_free)
 	if (GIT2_SHOULD_FREE(_tree)) {
 		git_tree_free(PHP_GIT2_V(_tree, tree));
 		GIT2_SHOULD_FREE(_tree) = 0;
-	);
+	}
 
 	zval_ptr_dtor(&tree);
 }
@@ -339,7 +339,7 @@ PHP_FUNCTION(git_tree_entry_free)
 	if (GIT2_SHOULD_FREE(_entry)) {
 		git_tree_entry_free(PHP_GIT2_V(_entry, tree_entry));
 		GIT2_SHOULD_FREE(_entry) = 0;
-	);
+	}
 
 	zval_ptr_dtor(&entry);
 }

@@ -601,7 +601,7 @@ PHP_FUNCTION(git_reference_free)
 	if (GIT2_SHOULD_FREE(_ref)) {
 		git_reference_free(PHP_GIT2_V(_ref, reference));
 		GIT2_SHOULD_FREE(_ref) = 0;
-	);
+	}
 
 	zval_ptr_dtor(&ref);
 }
@@ -779,7 +779,7 @@ PHP_FUNCTION(git_reference_iterator_free)
 	if (GIT2_SHOULD_FREE(_iter)) {
 		git_reference_iterator_free(PHP_GIT2_V(_iter, reference_iterator));
 		GIT2_SHOULD_FREE(_iter) = 0;
-	);
+	}
 
 	zval_ptr_dtor(&iter);
 }

@@ -217,7 +217,7 @@ PHP_FUNCTION(git_status_list_free)
 	if (GIT2_SHOULD_FREE(_statuslist)) {
 		git_status_list_free(PHP_GIT2_V(_statuslist, status_list));
 		GIT2_SHOULD_FREE(_statuslist) = 0;
-	);
+	}
 
 	zval_ptr_dtor(&statuslist);
 }

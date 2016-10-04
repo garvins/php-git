@@ -193,7 +193,7 @@ PHP_FUNCTION(git_blob_free)
 	if (GIT2_SHOULD_FREE(_blob)) {
 		git_blob_free(PHP_GIT2_V(_blob, blob));
 		GIT2_SHOULD_FREE(_blob) = 0;
-	);
+	}
 
 	zval_ptr_dtor(&blob);
 }

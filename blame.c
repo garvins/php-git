@@ -181,7 +181,7 @@ PHP_FUNCTION(git_blame_free)
 	if (GIT2_SHOULD_FREE(_blame)) {
 		git_blame_free(PHP_GIT2_V(_blame, blame));
 		GIT2_SHOULD_FREE(_blame) = 0;
-	);
+	}
 
 	zval_ptr_dtor(&blame);
 }

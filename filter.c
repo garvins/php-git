@@ -163,7 +163,7 @@ PHP_FUNCTION(git_filter_list_free)
 	if (GIT2_SHOULD_FREE(_filters)) {
 		git_filter_list_free(PHP_GIT2_V(_filters, filter_list));
 		GIT2_SHOULD_FREE(_filters) = 0;
-	);
+	}
 
 	zval_ptr_dtor(&filters);
 }

@@ -127,7 +127,7 @@ PHP_FUNCTION(git_patch_free)
 	if (GIT2_SHOULD_FREE(_patch)) {
 		git_patch_free(PHP_GIT2_V(_patch, patch));
 		GIT2_SHOULD_FREE(_patch) = 0;
-	);
+	}
 
 	zval_ptr_dtor(&patch);
 }

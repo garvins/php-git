@@ -263,7 +263,7 @@ PHP_FUNCTION(git_repository_free)
 	if (GIT2_SHOULD_FREE(_repo)) {
 		git_repository_free(PHP_GIT2_V(_repo, repository));
 		GIT2_SHOULD_FREE(_repo) = 0;
-	);
+	}
 
 	zval_ptr_dtor(&repo);
 }

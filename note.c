@@ -55,7 +55,7 @@ PHP_FUNCTION(git_note_iterator_free)
 	if (GIT2_SHOULD_FREE(_it)) {
 		git_note_iterator_free(PHP_GIT2_V(_it, note_iterator));
 		GIT2_SHOULD_FREE(_it) = 0;
-	);
+	}
 
 	zval_ptr_dtor(&it);
 }
@@ -286,7 +286,7 @@ PHP_FUNCTION(git_note_free)
 	if (GIT2_SHOULD_FREE(_note)) {
 		git_note_free(PHP_GIT2_V(_note, note));
 		GIT2_SHOULD_FREE(_note) = 0;
-	);
+	}
 
 	zval_ptr_dtor(&note);
 }

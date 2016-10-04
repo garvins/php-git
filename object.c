@@ -212,7 +212,7 @@ PHP_FUNCTION(git_object_free)
 	if (GIT2_SHOULD_FREE(_object)) {
 		git_object_free(PHP_GIT2_V(_object, object));
 		GIT2_SHOULD_FREE(_object) = 0;
-	);
+	}
 
 	zval_ptr_dtor(&object);
 }

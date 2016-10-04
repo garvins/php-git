@@ -96,7 +96,7 @@ PHP_FUNCTION(git_treebuilder_free)
 	if (GIT2_SHOULD_FREE(_bld)) {
 		git_treebuilder_free(PHP_GIT2_V(_bld, treebuilder));
 		GIT2_SHOULD_FREE(_bld) = 0;
-	);
+	}
 
 	zval_ptr_dtor(&bld);
 }

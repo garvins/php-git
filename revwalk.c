@@ -376,7 +376,7 @@ PHP_FUNCTION(git_revwalk_free)
 	if (GIT2_SHOULD_FREE(_walk)) {
 		git_revwalk_free(PHP_GIT2_V(_walk, revwalk));
 		GIT2_SHOULD_FREE(_walk) = 0;
-	);
+	}
 
 	zval_ptr_dtor(&walk);
 }
