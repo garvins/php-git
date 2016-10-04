@@ -1005,7 +1005,7 @@ PHP_FUNCTION(git_remote_rename)
 		RETURN_FALSE;
 	}
 
-	result = git_remote_rename(PHP_GIT2_V(_remote, remote), new_name, php_git2_git_remote_rename_problem_cb, payload_cb);
+	result = git_remote_rename(PHP_GIT2_V(_remote, remote), new_name, php_git2_git_remote_rename_problem_cb, callback_cb);
 	php_git2_cb_free(callback_cb);
 
 	RETURN_LONG(result);

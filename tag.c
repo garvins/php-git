@@ -580,7 +580,7 @@ PHP_FUNCTION(git_tag_foreach)
 		RETURN_FALSE;
 	}
 
-	result = git_tag_foreach(PHP_GIT2_V(_repo, repository), php_git2_git_tag_foreach_cb, payload_cb);
+	result = git_tag_foreach(PHP_GIT2_V(_repo, repository), php_git2_git_tag_foreach_cb, callback_cb);
 	php_git2_cb_free(callback_cb);
 
 	RETURN_LONG(result);

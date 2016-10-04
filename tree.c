@@ -489,7 +489,7 @@ PHP_FUNCTION(git_tree_walk)
 		RETURN_FALSE;
 	}
 
-	result = git_tree_walk(PHP_GIT2_V(_tree, tree), mode, php_git2_git_treewalk_cb, payload_cb);
+	result = git_tree_walk(PHP_GIT2_V(_tree, tree), mode, php_git2_git_treewalk_cb, callback_cb);
 	php_git2_cb_free(callback_cb);
 
 	RETURN_LONG(result);

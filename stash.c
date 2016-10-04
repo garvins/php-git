@@ -64,7 +64,7 @@ PHP_FUNCTION(git_stash_foreach)
 		RETURN_FALSE;
 	}
 
-	result = git_stash_foreach(PHP_GIT2_V(_repo, repository), php_git2_git_stash_cb, payload_cb);
+	result = git_stash_foreach(PHP_GIT2_V(_repo, repository), php_git2_git_stash_cb, callback_cb);
 	php_git2_cb_free(callback_cb);
 
 	RETURN_LONG(result);

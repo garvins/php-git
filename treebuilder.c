@@ -219,7 +219,7 @@ PHP_FUNCTION(git_treebuilder_filter)
 		RETURN_FALSE;
 	}
 
-	git_treebuilder_filter(PHP_GIT2_V(_bld, treebuilder), php_git2_git_treebuilder_filter_cb, payload_cb);
+	git_treebuilder_filter(PHP_GIT2_V(_bld, treebuilder), php_git2_git_treebuilder_filter_cb, filter_cb);
 	php_git2_cb_free(filter_cb);
 }
 /* }}} */

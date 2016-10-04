@@ -60,7 +60,7 @@ PHP_FUNCTION(git_submodule_foreach)
 		RETURN_FALSE;
 	}
 
-	result = git_submodule_foreach(PHP_GIT2_V(_repo, repository), php_git2_git_submodule_foreach_cb, payload_cb);
+	result = git_submodule_foreach(PHP_GIT2_V(_repo, repository), php_git2_git_submodule_foreach_cb, cb_cb);
 	php_git2_cb_free(cb_cb);
 
 	RETURN_LONG(result);

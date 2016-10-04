@@ -544,7 +544,7 @@ PHP_FUNCTION(git_reference_foreach)
 		RETURN_FALSE;
 	}
 
-	result = git_reference_foreach(PHP_GIT2_V(_repo, repository), php_git2_git_reference_foreach_cb, payload_cb);
+	result = git_reference_foreach(PHP_GIT2_V(_repo, repository), php_git2_git_reference_foreach_cb, callback_cb);
 	php_git2_cb_free(callback_cb);
 
 	RETURN_LONG(result);
@@ -575,7 +575,7 @@ PHP_FUNCTION(git_reference_foreach_name)
 		RETURN_FALSE;
 	}
 
-	result = git_reference_foreach_name(PHP_GIT2_V(_repo, repository), php_git2_git_reference_foreach_name_cb, payload_cb);
+	result = git_reference_foreach_name(PHP_GIT2_V(_repo, repository), php_git2_git_reference_foreach_name_cb, callback_cb);
 	php_git2_cb_free(callback_cb);
 
 	RETURN_LONG(result);
@@ -811,7 +811,7 @@ PHP_FUNCTION(git_reference_foreach_glob)
 		RETURN_FALSE;
 	}
 
-	result = git_reference_foreach_glob(PHP_GIT2_V(_repo, repository), glob, php_git2_git_reference_foreach_name_cb, payload_cb);
+	result = git_reference_foreach_glob(PHP_GIT2_V(_repo, repository), glob, php_git2_git_reference_foreach_name_cb, callback_cb);
 	php_git2_cb_free(callback_cb);
 
 	RETURN_LONG(result);

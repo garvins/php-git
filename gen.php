@@ -307,7 +307,7 @@ function printFile($table, $file) {
             foreach ($func['args'] as $key => $arg) {
                 if (preg_match("/void/", $arg['type'])) {
                     if  ($key > 0 && isCallback($func['args'][$key - 1])) {
-                        $nameStart = explode("_",  $arg['name'])[0];
+                        $nameStart = explode("_", $func['args'][$key - 1]['name'])[0];
                         $temp[] = "{$nameStart}_cb";
                     } else if (preg_match("/git_transport_(local|dummy)/", $func['name']) ){
                         $temp[] = "NULL";

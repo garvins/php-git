@@ -63,7 +63,7 @@ PHP_FUNCTION(git_blob_create_fromchunks)
 		RETURN_FALSE;
 	}
 
-	error = git_blob_create_fromchunks(&id, PHP_GIT2_V(_repo, repository), hintpath, php_git2_git_blob_chunk_cb, payload_cb);
+	error = git_blob_create_fromchunks(&id, PHP_GIT2_V(_repo, repository), hintpath, php_git2_git_blob_chunk_cb, callback_cb);
 
 	if (php_git2_check_error(error, "git_blob_create_fromchunks" TSRMLS_CC)) {
 		RETURN_FALSE;

@@ -595,7 +595,7 @@ PHP_FUNCTION(git_index_add_all)
 		RETURN_FALSE;
 	}
 
-	result = git_index_add_all(PHP_GIT2_V(_index, index), &_pathspec, flags, php_git2_git_index_matched_path_cb, payload_cb);
+	result = git_index_add_all(PHP_GIT2_V(_index, index), &_pathspec, flags, php_git2_git_index_matched_path_cb, callback_cb);
 	git_strarray_free(&_pathspec);
 	php_git2_cb_free(callback_cb);
 
@@ -630,7 +630,7 @@ PHP_FUNCTION(git_index_remove_all)
 		RETURN_FALSE;
 	}
 
-	result = git_index_remove_all(PHP_GIT2_V(_index, index), &_pathspec, php_git2_git_index_matched_path_cb, payload_cb);
+	result = git_index_remove_all(PHP_GIT2_V(_index, index), &_pathspec, php_git2_git_index_matched_path_cb, callback_cb);
 	git_strarray_free(&_pathspec);
 	php_git2_cb_free(callback_cb);
 
@@ -665,7 +665,7 @@ PHP_FUNCTION(git_index_update_all)
 		RETURN_FALSE;
 	}
 
-	result = git_index_update_all(PHP_GIT2_V(_index, index), &_pathspec, php_git2_git_index_matched_path_cb, payload_cb);
+	result = git_index_update_all(PHP_GIT2_V(_index, index), &_pathspec, php_git2_git_index_matched_path_cb, callback_cb);
 	git_strarray_free(&_pathspec);
 	php_git2_cb_free(callback_cb);
 

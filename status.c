@@ -26,7 +26,7 @@ PHP_FUNCTION(git_status_foreach)
 		RETURN_FALSE;
 	}
 
-	result = git_status_foreach(PHP_GIT2_V(_repo, repository), php_git2_git_status_cb, payload_cb);
+	result = git_status_foreach(PHP_GIT2_V(_repo, repository), php_git2_git_status_cb, callback_cb);
 	php_git2_cb_free(callback_cb);
 
 	RETURN_LONG(result);
@@ -63,7 +63,7 @@ PHP_FUNCTION(git_status_foreach_ext)
 		RETURN_FALSE;
 	}
 
-	result = git_status_foreach_ext(PHP_GIT2_V(_repo, repository), _opts, php_git2_git_status_cb, payload_cb);
+	result = git_status_foreach_ext(PHP_GIT2_V(_repo, repository), _opts, php_git2_git_status_cb, callback_cb);
 
 	if (should_free) {
 		php_git2_git_status_options_free(_opts TSRMLS_CC);

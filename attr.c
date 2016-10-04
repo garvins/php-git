@@ -108,7 +108,7 @@ PHP_FUNCTION(git_attr_foreach)
 		RETURN_FALSE;
 	}
 
-	result = git_attr_foreach(PHP_GIT2_V(_repo, repository), flags, path, php_git2_git_attr_foreach_cb, payload_cb);
+	result = git_attr_foreach(PHP_GIT2_V(_repo, repository), flags, path, php_git2_git_attr_foreach_cb, callback_cb);
 	php_git2_cb_free(callback_cb);
 
 	RETURN_LONG(result);

@@ -221,7 +221,7 @@ PHP_FUNCTION(git_push_status_foreach)
 		RETURN_FALSE;
 	}
 
-	result = git_push_status_foreach(PHP_GIT2_V(_push, push), php_git2_git_push_status_foreach_cb, data_cb);
+	result = git_push_status_foreach(PHP_GIT2_V(_push, push), php_git2_git_push_status_foreach_cb, cb_cb);
 	php_git2_cb_free(cb_cb);
 
 	RETURN_LONG(result);

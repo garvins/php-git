@@ -710,7 +710,7 @@ PHP_FUNCTION(git_repository_fetchhead_foreach)
 		RETURN_FALSE;
 	}
 
-	result = git_repository_fetchhead_foreach(PHP_GIT2_V(_repo, repository), php_git2_git_repository_fetchhead_foreach_cb, payload_cb);
+	result = git_repository_fetchhead_foreach(PHP_GIT2_V(_repo, repository), php_git2_git_repository_fetchhead_foreach_cb, callback_cb);
 	php_git2_cb_free(callback_cb);
 
 	RETURN_LONG(result);
@@ -741,7 +741,7 @@ PHP_FUNCTION(git_repository_mergehead_foreach)
 		RETURN_FALSE;
 	}
 
-	result = git_repository_mergehead_foreach(PHP_GIT2_V(_repo, repository), php_git2_git_repository_mergehead_foreach_cb, payload_cb);
+	result = git_repository_mergehead_foreach(PHP_GIT2_V(_repo, repository), php_git2_git_repository_mergehead_foreach_cb, callback_cb);
 	php_git2_cb_free(callback_cb);
 
 	RETURN_LONG(result);

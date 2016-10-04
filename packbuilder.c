@@ -232,7 +232,7 @@ PHP_FUNCTION(git_packbuilder_foreach)
 		RETURN_FALSE;
 	}
 
-	result = git_packbuilder_foreach(PHP_GIT2_V(_pb, packbuilder), php_git2_git_packbuilder_foreach_cb, payload_cb);
+	result = git_packbuilder_foreach(PHP_GIT2_V(_pb, packbuilder), php_git2_git_packbuilder_foreach_cb, cb_cb);
 	php_git2_cb_free(cb_cb);
 
 	RETURN_LONG(result);

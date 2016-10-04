@@ -346,7 +346,7 @@ PHP_FUNCTION(git_note_foreach)
 		RETURN_FALSE;
 	}
 
-	result = git_note_foreach(PHP_GIT2_V(_repo, repository), notes_ref, php_git2_git_note_foreach_cb, payload_cb);
+	result = git_note_foreach(PHP_GIT2_V(_repo, repository), notes_ref, php_git2_git_note_foreach_cb, note_cb);
 	php_git2_cb_free(note_cb);
 
 	RETURN_LONG(result);
