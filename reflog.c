@@ -323,7 +323,7 @@ PHP_FUNCTION(git_reflog_entry_committer)
 
 	result = git_reflog_entry_committer(PHP_GIT2_V(_entry, reflog_entry));
 
-	php_git2_git_signature_to_array(result, &array TSRMLS_CC);
+	php_git2_git_signature_to_array(result, array TSRMLS_CC);
 	git_signature_free(result);
 
 	RETURN_ZVAL(array, 0, 1);

@@ -24,7 +24,7 @@ PHP_FUNCTION(git_signature_new)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_signature_to_array(out, &array TSRMLS_CC);
+	php_git2_git_signature_to_array(out, array TSRMLS_CC);
 	git_signature_free(out);
 
 	RETURN_ZVAL(array, 0, 1);
@@ -52,7 +52,7 @@ PHP_FUNCTION(git_signature_now)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_signature_to_array(out, &array TSRMLS_CC);
+	php_git2_git_signature_to_array(out, array TSRMLS_CC);
 	git_signature_free(out);
 
 	RETURN_ZVAL(array, 0, 1);
@@ -83,7 +83,7 @@ PHP_FUNCTION(git_signature_default)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_signature_to_array(out, &array TSRMLS_CC);
+	php_git2_git_signature_to_array(out, array TSRMLS_CC);
 	git_signature_free(out);
 
 	RETURN_ZVAL(array, 0, 1);

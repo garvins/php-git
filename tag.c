@@ -282,7 +282,7 @@ PHP_FUNCTION(git_tag_tagger)
 
 	result = git_tag_tagger(PHP_GIT2_V(_tag, tag));
 
-	php_git2_git_signature_to_array(result, &array TSRMLS_CC);
+	php_git2_git_signature_to_array(result, array TSRMLS_CC);
 	git_signature_free(result);
 
 	RETURN_ZVAL(array, 0, 1);
@@ -516,7 +516,7 @@ PHP_FUNCTION(git_tag_list)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_strarray_to_array(tag_names, &array TSRMLS_CC);
+	php_git2_git_strarray_to_array(tag_names, array TSRMLS_CC);
 	git_strarray_free(tag_names);
 
 	RETURN_ZVAL(array, 0, 1);
@@ -549,7 +549,7 @@ PHP_FUNCTION(git_tag_list_match)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_strarray_to_array(tag_names, &array TSRMLS_CC);
+	php_git2_git_strarray_to_array(tag_names, array TSRMLS_CC);
 	git_strarray_free(tag_names);
 
 	RETURN_ZVAL(array, 0, 1);

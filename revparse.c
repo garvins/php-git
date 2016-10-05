@@ -115,7 +115,7 @@ PHP_FUNCTION(git_revparse)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_revspec_to_array(revspec, &array TSRMLS_CC);
+	php_git2_git_revspec_to_array(revspec, array TSRMLS_CC);
 
 	RETURN_ZVAL(array, 0, 1);
 }

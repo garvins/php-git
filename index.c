@@ -381,7 +381,7 @@ PHP_FUNCTION(git_index_get_byindex)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_index_entry_to_array(result, &array TSRMLS_CC);
+	php_git2_git_index_entry_to_array(result, array TSRMLS_CC);
 
 	RETURN_ZVAL(array, 0, 1);
 }
@@ -412,7 +412,7 @@ PHP_FUNCTION(git_index_get_bypath)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_index_entry_to_array(result, &array TSRMLS_CC);
+	php_git2_git_index_entry_to_array(result, array TSRMLS_CC);
 
 	RETURN_ZVAL(array, 0, 1);
 }

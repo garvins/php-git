@@ -192,7 +192,7 @@ PHP_FUNCTION(git_status_byindex)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_status_entry_to_array(result, &array TSRMLS_CC);
+	php_git2_git_status_entry_to_array(result, array TSRMLS_CC);
 
 	RETURN_ZVAL(array, 0, 1);
 }
@@ -259,7 +259,7 @@ PHP_FUNCTION(git_status_options_new)
 	zval *result;
 	git_status_options options = GIT_STATUS_OPTIONS_INIT;
 
-	php_git2_git_status_options_to_array(&options, &result TSRMLS_CC);
+	php_git2_git_status_options_to_array(&options, result TSRMLS_CC);
 	RETURN_ZVAL(result, 0, 1);
 }
 /* }}} */

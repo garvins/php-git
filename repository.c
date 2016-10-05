@@ -938,7 +938,7 @@ PHP_FUNCTION(git_repository_init_options_new)
 	zval *result;
 	git_repository_init_options options = GIT_REPOSITORY_INIT_OPTIONS_INIT;
 
-	php_git2_git_repository_init_options_to_array(&options, &result TSRMLS_CC);
+	php_git2_git_repository_init_options_to_array(&options, result TSRMLS_CC);
 	RETURN_ZVAL(result, 0, 1);
 }
 /* }}} */

@@ -513,7 +513,7 @@ PHP_FUNCTION(git_reference_list)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_strarray_to_array(array, &array TSRMLS_CC);
+	php_git2_git_strarray_to_array(array, array TSRMLS_CC);
 	git_strarray_free(array);
 
 	RETURN_ZVAL(array, 0, 1);

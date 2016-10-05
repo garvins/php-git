@@ -418,9 +418,9 @@ function printFile($table, $file) {
                 $funcPrefix = trim(str_replace("const", "", $func['retval']['type']));
 
                 if (preg_match('/git_error/', $func['retval']['type'])) {
-                    $buffer .= "\n\tphp_git2_{$funcPrefix}_to_array($name, &array);\n";
+                    $buffer .= "\n\tphp_git2_{$funcPrefix}_to_array($name, array);\n";
                 } else {
-                    $buffer .= "\n\tphp_git2_{$funcPrefix}_to_array($name, &array TSRMLS_CC);\n";
+                    $buffer .= "\n\tphp_git2_{$funcPrefix}_to_array($name, array TSRMLS_CC);\n";
                 }
 
                 if (shouldBeFreed($func['retval'])) {
@@ -894,7 +894,7 @@ function additionalFunctioToFile($fileName)
     if ($fileName == "blame.h" || $fileName == "blame.c") {
         $func = "\tzval *result;\n";
         $func .= "\tgit_blame_options options = GIT_BLAME_OPTIONS_INIT;\n\n";
-        $func .= "\tphp_git2_git_blame_options_to_array(&options, &result TSRMLS_CC);\n";
+        $func .= "\tphp_git2_git_blame_options_to_array(&options, result TSRMLS_CC);\n";
         $func .= "\tRETURN_ZVAL(result, 0, 1);\n";
 
         $functions = array(
@@ -907,7 +907,7 @@ function additionalFunctioToFile($fileName)
     } else if ($fileName == "repository.h" || $fileName == "repository.c") {
         $func = "\tzval *result;\n";
         $func .= "\tgit_repository_init_options options = GIT_REPOSITORY_INIT_OPTIONS_INIT;\n\n";
-        $func .= "\tphp_git2_git_repository_init_options_to_array(&options, &result TSRMLS_CC);\n";
+        $func .= "\tphp_git2_git_repository_init_options_to_array(&options, result TSRMLS_CC);\n";
         $func .= "\tRETURN_ZVAL(result, 0, 1);\n";
 
         $functions = array(
@@ -920,7 +920,7 @@ function additionalFunctioToFile($fileName)
     } else if ($fileName == "status.h" || $fileName == "status.c") {
         $func = "\tzval *result;\n";
         $func .= "\tgit_status_options options = GIT_STATUS_OPTIONS_INIT;\n\n";
-        $func .= "\tphp_git2_git_status_options_to_array(&options, &result TSRMLS_CC);\n";
+        $func .= "\tphp_git2_git_status_options_to_array(&options, result TSRMLS_CC);\n";
         $func .= "\tRETURN_ZVAL(result, 0, 1);\n";
 
         $functions = array(

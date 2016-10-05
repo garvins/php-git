@@ -48,7 +48,7 @@ PHP_FUNCTION(git_blame_get_hunk_byindex)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_blame_hunk_to_array(result, &array TSRMLS_CC);
+	php_git2_git_blame_hunk_to_array(result, array TSRMLS_CC);
 
 	RETURN_ZVAL(array, 0, 1);
 }
@@ -77,7 +77,7 @@ PHP_FUNCTION(git_blame_get_hunk_byline)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_blame_hunk_to_array(result, &array TSRMLS_CC);
+	php_git2_git_blame_hunk_to_array(result, array TSRMLS_CC);
 
 	RETURN_ZVAL(array, 0, 1);
 }
@@ -194,7 +194,7 @@ PHP_FUNCTION(git_blame_options_new)
 	zval *result;
 	git_blame_options options = GIT_BLAME_OPTIONS_INIT;
 
-	php_git2_git_blame_options_to_array(&options, &result TSRMLS_CC);
+	php_git2_git_blame_options_to_array(&options, result TSRMLS_CC);
 	RETURN_ZVAL(result, 0, 1);
 }
 /* }}} */

@@ -328,7 +328,7 @@ PHP_FUNCTION(git_pathspec_match_list_diff_entry)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_diff_delta_to_array(result, &array TSRMLS_CC);
+	php_git2_git_diff_delta_to_array(result, array TSRMLS_CC);
 
 	RETURN_ZVAL(array, 0, 1);
 }
