@@ -11,7 +11,7 @@ PHP_FUNCTION(git_note_iterator_new)
 	zval *repo = NULL;
 	char *notes_ref = NULL;
 	size_t notes_ref_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &notes_ref, &notes_ref_len) == FAILURE) {
@@ -105,7 +105,7 @@ PHP_FUNCTION(git_note_read)
 	char *notes_ref = NULL, *oid = NULL;
 	size_t notes_ref_len, oid_len;
 	git_oid __oid = {0};
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rss", &repo, &notes_ref, &notes_ref_len, &oid, &oid_len) == FAILURE) {
@@ -196,7 +196,7 @@ PHP_FUNCTION(git_note_create)
 	char *notes_ref = NULL, *oid = NULL, *note = NULL;
 	size_t notes_ref_len, oid_len, note_len;
 	zend_long force;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"raasssl", &repo, &author, &committer, &notes_ref, &notes_ref_len, &oid, &oid_len, &note, &note_len, &force) == FAILURE) {
@@ -299,7 +299,7 @@ PHP_FUNCTION(git_note_default_ref)
 	char *out = NULL;
 	zval *repo = NULL;
 	php_git2_t *_repo = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &repo) == FAILURE) {

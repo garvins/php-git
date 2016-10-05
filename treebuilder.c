@@ -9,7 +9,7 @@ PHP_FUNCTION(git_treebuilder_create)
 	php_git2_t *result = NULL, *_source = NULL;
 	git_treebuilder *out = NULL;
 	zval *source = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &source) == FAILURE) {
@@ -142,7 +142,7 @@ PHP_FUNCTION(git_treebuilder_insert)
 	size_t filename_len, id_len;
 	git_oid __id = {0};
 	zend_long filemode;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rssl", &bld, &filename, &filename_len, &id, &id_len, &filemode) == FAILURE) {
@@ -232,7 +232,7 @@ PHP_FUNCTION(git_treebuilder_write)
 	char __id[GIT2_OID_HEXSIZE] = {0};
 	zval *repo = NULL, *bld = NULL;
 	php_git2_t *_repo = NULL, *_bld = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rr", &repo, &bld) == FAILURE) {

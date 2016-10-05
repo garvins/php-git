@@ -11,7 +11,7 @@ PHP_FUNCTION(git_reference_lookup)
 	zval *repo = NULL;
 	char *name = NULL;
 	size_t name_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &name, &name_len) == FAILURE) {
@@ -46,7 +46,7 @@ PHP_FUNCTION(git_reference_name_to_id)
 	php_git2_t *_repo = NULL;
 	char *name = NULL;
 	size_t name_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &name, &name_len) == FAILURE) {
@@ -78,7 +78,7 @@ PHP_FUNCTION(git_reference_dwim)
 	zval *repo = NULL;
 	char *shorthand = NULL;
 	size_t shorthand_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &shorthand, &shorthand_len) == FAILURE) {
@@ -113,7 +113,7 @@ PHP_FUNCTION(git_reference_symbolic_create)
 	char *name = NULL, *target = NULL;
 	size_t name_len, target_len;
 	zend_long force;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rssl", &repo, &name, &name_len, &target, &target_len, &force) == FAILURE) {
@@ -149,7 +149,7 @@ PHP_FUNCTION(git_reference_create)
 	size_t name_len, id_len;
 	git_oid __id = {0};
 	zend_long force;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rssl", &repo, &name, &name_len, &id, &id_len, &force) == FAILURE) {
@@ -306,7 +306,7 @@ PHP_FUNCTION(git_reference_resolve)
 	php_git2_t *result = NULL, *_ref = NULL;
 	git_reference *out = NULL;
 	zval *ref = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &ref) == FAILURE) {
@@ -367,7 +367,7 @@ PHP_FUNCTION(git_reference_symbolic_set_target)
 	zval *ref = NULL;
 	char *target = NULL;
 	size_t target_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &ref, &target, &target_len) == FAILURE) {
@@ -402,7 +402,7 @@ PHP_FUNCTION(git_reference_set_target)
 	char *id = NULL;
 	size_t id_len;
 	git_oid __id = {0};
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &ref, &id, &id_len) == FAILURE) {
@@ -441,7 +441,7 @@ PHP_FUNCTION(git_reference_rename)
 	char *new_name = NULL;
 	size_t new_name_len;
 	zend_long force;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rsl", &ref, &new_name, &new_name_len, &force) == FAILURE) {
@@ -493,10 +493,10 @@ PHP_FUNCTION(git_reference_delete)
  */
 PHP_FUNCTION(git_reference_list)
 {
-	zval *result, *repo = NULL;
+	zval *_array, *repo = NULL;
 	git_strarray *array = NULL;
 	php_git2_t *_repo = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &repo) == FAILURE) {
@@ -513,10 +513,10 @@ PHP_FUNCTION(git_reference_list)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_strarray_to_array(array, array TSRMLS_CC);
+	php_git2_git_strarray_to_array(array, _array TSRMLS_CC);
 	git_strarray_free(array);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETURN_ZVAL(_array, 0, 1);
 }
 /* }}} */
 
@@ -641,7 +641,7 @@ PHP_FUNCTION(git_reference_iterator_new)
 	php_git2_t *result = NULL, *_repo = NULL;
 	git_reference_iterator *out = NULL;
 	zval *repo = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &repo) == FAILURE) {
@@ -675,7 +675,7 @@ PHP_FUNCTION(git_reference_iterator_glob_new)
 	zval *repo = NULL;
 	char *glob = NULL;
 	size_t glob_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &glob, &glob_len) == FAILURE) {
@@ -707,7 +707,7 @@ PHP_FUNCTION(git_reference_next)
 	php_git2_t *result = NULL, *_iter = NULL;
 	git_reference *out = NULL;
 	zval *iter = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &iter) == FAILURE) {
@@ -739,7 +739,7 @@ PHP_FUNCTION(git_reference_next_name)
 	char *out = NULL;
 	zval *iter = NULL;
 	php_git2_t *_iter = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &iter) == FAILURE) {
@@ -917,7 +917,7 @@ PHP_FUNCTION(git_reference_normalize_name)
 	char buffer_out[GIT2_BUFFER_SIZE] = {0}, *name = NULL;
 	size_t buffer_size = GIT2_BUFFER_SIZE, name_len;
 	zend_long flags;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"sl", &name, &name_len, &flags) == FAILURE) {
@@ -942,7 +942,7 @@ PHP_FUNCTION(git_reference_peel)
 	git_object *out = NULL;
 	zval *ref = NULL;
 	zend_long type;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rl", &ref, &type) == FAILURE) {

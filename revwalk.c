@@ -9,7 +9,7 @@ PHP_FUNCTION(git_revwalk_new)
 	php_git2_t *result = NULL, *_repo = NULL;
 	git_revwalk *out = NULL;
 	zval *repo = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &repo) == FAILURE) {
@@ -268,7 +268,7 @@ PHP_FUNCTION(git_revwalk_next)
 	char __out[GIT2_OID_HEXSIZE] = {0};
 	zval *walk = NULL;
 	php_git2_t *_walk = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &walk) == FAILURE) {

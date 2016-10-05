@@ -30,9 +30,9 @@ PHP_FUNCTION(giterr_clear)
  */
 PHP_FUNCTION(giterr_detach)
 {
-	zval *result;
+	zval *array;
 	git_error *cpy = NULL;
-	int error = 0;
+	int error;
 	
 	error = giterr_detach(cpy);
 

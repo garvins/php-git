@@ -9,7 +9,7 @@ PHP_FUNCTION(git_message_prettify)
 	char out[GIT2_BUFFER_SIZE] = {0}, *message = NULL;
 	size_t out_size = GIT2_BUFFER_SIZE, message_len;
 	zend_long strip_comments;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"sl", &message, &message_len, &strip_comments) == FAILURE) {

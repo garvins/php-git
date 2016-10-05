@@ -83,6 +83,7 @@ PHP_FUNCTION(git_status_file)
 	php_git2_t *_repo = NULL;
 	char *path = NULL;
 	size_t path_len;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &path, &path_len) == FAILURE) {
@@ -111,8 +112,7 @@ PHP_FUNCTION(git_status_list_new)
 	git_status_list *out = NULL;
 	zval *repo = NULL, *opts = NULL;
 	git_status_options *_opts = NULL;
-	int should_free = 0;
-	int error = 0;
+	int should_free = 0, error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r|a", &repo, &opts) == FAILURE) {
@@ -227,7 +227,7 @@ PHP_FUNCTION(git_status_list_free)
  */
 PHP_FUNCTION(git_status_should_ignore)
 {
-	int ignored = 0;
+	int ignored = 0, error;
 	zval *repo = NULL;
 	php_git2_t *_repo = NULL;
 	char *path = NULL;

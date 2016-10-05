@@ -10,7 +10,7 @@ PHP_FUNCTION(git_index_open)
 	git_index *out = NULL;
 	char *index_path = NULL;
 	size_t index_path_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"s", &index_path, &index_path_len) == FAILURE) {
@@ -37,7 +37,7 @@ PHP_FUNCTION(git_index_new)
 {
 	php_git2_t *result = NULL;
 	git_index *out = NULL;
-	int error = 0;
+	int error;
 	
 	error = git_index_new(&out);
 
@@ -257,7 +257,7 @@ PHP_FUNCTION(git_index_write_tree)
 	char __out[GIT2_OID_HEXSIZE] = {0};
 	zval *index = NULL;
 	php_git2_t *_index = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &index) == FAILURE) {
@@ -288,7 +288,7 @@ PHP_FUNCTION(git_index_write_tree_to)
 	char __out[GIT2_OID_HEXSIZE] = {0};
 	zval *index = NULL, *repo = NULL;
 	php_git2_t *_index = NULL, *_repo = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rr", &index, &repo) == FAILURE) {
@@ -842,7 +842,7 @@ PHP_FUNCTION(git_index_conflict_iterator_new)
 	php_git2_t *result = NULL, *_index = NULL;
 	git_index_conflict_iterator *iterator_out = NULL;
 	zval *index = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &index) == FAILURE) {

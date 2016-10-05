@@ -9,7 +9,7 @@ PHP_FUNCTION(git_push_new)
 	php_git2_t *result = NULL, *_remote = NULL;
 	git_push *out = NULL;
 	zval *remote = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &remote) == FAILURE) {

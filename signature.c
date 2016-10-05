@@ -6,12 +6,12 @@
  */
 PHP_FUNCTION(git_signature_new)
 {
-	zval *result;
+	zval *array;
 	git_signature *out = NULL;
 	char *name = NULL, *email = NULL;
 	size_t name_len, email_len;
 	zend_long time, offset;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"ssll", &name, &name_len, &email, &email_len, &time, &offset) == FAILURE) {
@@ -35,11 +35,11 @@ PHP_FUNCTION(git_signature_new)
  */
 PHP_FUNCTION(git_signature_now)
 {
-	zval *result;
+	zval *array;
 	git_signature *out = NULL;
 	char *name = NULL, *email = NULL;
 	size_t name_len, email_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"ss", &name, &name_len, &email, &email_len) == FAILURE) {
@@ -63,10 +63,10 @@ PHP_FUNCTION(git_signature_now)
  */
 PHP_FUNCTION(git_signature_default)
 {
-	zval *result, *repo = NULL;
+	zval *array, *repo = NULL;
 	git_signature *out = NULL;
 	php_git2_t *_repo = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &repo) == FAILURE) {

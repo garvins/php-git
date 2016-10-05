@@ -11,7 +11,7 @@ PHP_FUNCTION(git_remote_create)
 	zval *repo = NULL;
 	char *name = NULL, *url = NULL;
 	size_t name_len, url_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rss", &repo, &name, &name_len, &url, &url_len) == FAILURE) {
@@ -45,7 +45,7 @@ PHP_FUNCTION(git_remote_create_with_fetchspec)
 	zval *repo = NULL;
 	char *name = NULL, *url = NULL, *fetch = NULL;
 	size_t name_len, url_len, fetch_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rsss", &repo, &name, &name_len, &url, &url_len, &fetch, &fetch_len) == FAILURE) {
@@ -79,7 +79,7 @@ PHP_FUNCTION(git_remote_create_inmemory)
 	zval *repo = NULL;
 	char *fetch = NULL, *url = NULL;
 	size_t fetch_len, url_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rss", &repo, &fetch, &fetch_len, &url, &url_len) == FAILURE) {
@@ -113,7 +113,7 @@ PHP_FUNCTION(git_remote_load)
 	zval *repo = NULL;
 	char *name = NULL;
 	size_t name_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &name, &name_len) == FAILURE) {
@@ -336,10 +336,10 @@ PHP_FUNCTION(git_remote_add_fetch)
  */
 PHP_FUNCTION(git_remote_get_fetch_refspecs)
 {
-	zval *result, *remote = NULL;
+	zval *_array, *remote = NULL;
 	git_strarray *array = NULL;
 	php_git2_t *_remote = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &remote) == FAILURE) {
@@ -356,10 +356,10 @@ PHP_FUNCTION(git_remote_get_fetch_refspecs)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_strarray_to_array(array, array TSRMLS_CC);
+	php_git2_git_strarray_to_array(array, _array TSRMLS_CC);
 	git_strarray_free(array);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETURN_ZVAL(_array, 0, 1);
 }
 /* }}} */
 
@@ -419,10 +419,10 @@ PHP_FUNCTION(git_remote_add_push)
  */
 PHP_FUNCTION(git_remote_get_push_refspecs)
 {
-	zval *result, *remote = NULL;
+	zval *_array, *remote = NULL;
 	git_strarray *array = NULL;
 	php_git2_t *_remote = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &remote) == FAILURE) {
@@ -439,10 +439,10 @@ PHP_FUNCTION(git_remote_get_push_refspecs)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_strarray_to_array(array, array TSRMLS_CC);
+	php_git2_git_strarray_to_array(array, _array TSRMLS_CC);
 	git_strarray_free(array);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETURN_ZVAL(_array, 0, 1);
 }
 /* }}} */
 
@@ -806,10 +806,10 @@ PHP_FUNCTION(git_remote_supported_url)
  */
 PHP_FUNCTION(git_remote_list)
 {
-	zval *result, *repo = NULL;
+	zval *array, *repo = NULL;
 	git_strarray *out = NULL;
 	php_git2_t *_repo = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &repo) == FAILURE) {

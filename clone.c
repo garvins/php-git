@@ -12,8 +12,7 @@ PHP_FUNCTION(git_clone)
 	size_t url_len, local_path_len;
 	git_clone_options *_options = NULL;
 	zval *options = NULL;
-	int should_free = 0;
-	int error = 0;
+	int should_free = 0, error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"ss|a", &url, &url_len, &local_path, &local_path_len, &options) == FAILURE) {

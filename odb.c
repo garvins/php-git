@@ -8,7 +8,7 @@ PHP_FUNCTION(git_odb_new)
 {
 	php_git2_t *result = NULL;
 	git_odb *out = NULL;
-	int error = 0;
+	int error;
 	
 	error = git_odb_new(&out);
 
@@ -32,7 +32,7 @@ PHP_FUNCTION(git_odb_open)
 	git_odb *out = NULL;
 	char *objects_dir = NULL;
 	size_t objects_dir_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"s", &objects_dir, &objects_dir_len) == FAILURE) {
@@ -113,7 +113,7 @@ PHP_FUNCTION(git_odb_read)
 	char *id = NULL;
 	size_t id_len;
 	git_oid __id = {0};
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &db, &id, &id_len) == FAILURE) {
@@ -153,7 +153,7 @@ PHP_FUNCTION(git_odb_read_prefix)
 	size_t short_id_len;
 	git_oid __short_id = {0};
 	zend_long len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rsl", &db, &short_id, &short_id_len, &len) == FAILURE) {
@@ -295,7 +295,7 @@ PHP_FUNCTION(git_odb_foreach)
 		RETURN_FALSE;
 	}
 
-	result = git_odb_foreach(PHP_GIT2_V(_db, odb), php_git2_git_odb_foreach_cb, payload_cb);
+	result = git_odb_foreach(PHP_GIT2_V(_db, odb), php_git2_git_odb_foreach_cb, cb_cb);
 	php_git2_cb_free(cb_cb);
 
 	RETURN_LONG(result);
@@ -340,7 +340,7 @@ PHP_FUNCTION(git_odb_open_wstream)
 	git_odb_stream *out = NULL;
 	zval *db = NULL;
 	zend_long size, type;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rll", &db, &size, &type) == FAILURE) {
@@ -396,7 +396,7 @@ PHP_FUNCTION(git_odb_stream_finalize_write)
 	char __out[GIT2_OID_HEXSIZE] = {0};
 	zval *stream = NULL;
 	php_git2_t *_stream = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &stream) == FAILURE) {
@@ -479,7 +479,7 @@ PHP_FUNCTION(git_odb_open_rstream)
 	char *oid = NULL;
 	size_t oid_len;
 	git_oid __oid = {0};
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &db, &oid, &oid_len) == FAILURE) {
@@ -518,7 +518,7 @@ PHP_FUNCTION(git_odb_write_pack)
 	zend_fcall_info progress_fci = empty_fcall_info;
 	zend_fcall_info_cache progress_fcc = empty_fcall_info_cache;
 	php_git2_cb_t *progress_cb = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rfz", &db, &progress_fci, &progress_fcc, &progress_payload) == FAILURE) {
@@ -556,7 +556,7 @@ PHP_FUNCTION(git_odb_hash)
 	char __out[GIT2_OID_HEXSIZE] = {0};
 	char *data = NULL;
 	zend_long len, type;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"sl", &data, &len, &type) == FAILURE) {
@@ -584,7 +584,7 @@ PHP_FUNCTION(git_odb_hashfile)
 	char *path = NULL;
 	size_t path_len;
 	zend_long type;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"sl", &path, &path_len, &type) == FAILURE) {
@@ -610,7 +610,7 @@ PHP_FUNCTION(git_odb_object_dup)
 	php_git2_t *result = NULL, *_source = NULL;
 	git_odb_object *dest = NULL;
 	zval *source = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &source) == FAILURE) {
@@ -842,7 +842,7 @@ PHP_FUNCTION(git_odb_get_backend)
 	git_odb_backend *out = NULL;
 	zval *odb = NULL;
 	zend_long pos;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rl", &odb, &pos) == FAILURE) {

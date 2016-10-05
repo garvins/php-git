@@ -13,7 +13,7 @@ PHP_FUNCTION(git_object_lookup)
 	size_t id_len;
 	git_oid __id = {0};
 	zend_long type;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rsl", &repo, &id, &id_len, &type) == FAILURE) {
@@ -53,7 +53,7 @@ PHP_FUNCTION(git_object_lookup_prefix)
 	size_t id_len;
 	git_oid __id = {0};
 	zend_long len, type;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rsll", &repo, &id, &id_len, &len, &type) == FAILURE) {
@@ -92,7 +92,7 @@ PHP_FUNCTION(git_object_lookup_bypath)
 	char *path = NULL;
 	size_t path_len;
 	zend_long type;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rsl", &treeish, &path, &path_len, &type) == FAILURE) {
@@ -299,7 +299,7 @@ PHP_FUNCTION(git_object_peel)
 	git_object *peeled = NULL;
 	zval *object = NULL;
 	zend_long target_type;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rl", &object, &target_type) == FAILURE) {
@@ -331,7 +331,7 @@ PHP_FUNCTION(git_object_dup)
 	php_git2_t *result = NULL, *_source = NULL;
 	git_object *dest = NULL;
 	zval *source = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &source) == FAILURE) {

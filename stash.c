@@ -14,7 +14,7 @@ PHP_FUNCTION(git_stash_save)
 	char *message = NULL;
 	size_t message_len;
 	zend_long flags;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rasl", &repo, &stasher, &message, &message_len, &flags) == FAILURE) {

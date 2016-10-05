@@ -12,7 +12,7 @@ PHP_FUNCTION(git_tag_lookup)
 	char *id = NULL;
 	size_t id_len;
 	git_oid __id = {0};
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &id, &id_len) == FAILURE) {
@@ -52,7 +52,7 @@ PHP_FUNCTION(git_tag_lookup_prefix)
 	size_t id_len;
 	git_oid __id = {0};
 	zend_long len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rsl", &repo, &id, &id_len, &len) == FAILURE) {
@@ -166,7 +166,7 @@ PHP_FUNCTION(git_tag_target)
 	php_git2_t *result = NULL, *_tag = NULL;
 	git_object *target_out = NULL;
 	zval *tag = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &tag) == FAILURE) {
@@ -324,7 +324,7 @@ PHP_FUNCTION(git_tag_create)
 	size_t tag_name_len, message_len;
 	git_signature *_tagger = NULL;
 	zend_long force;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rsrasl", &repo, &tag_name, &tag_name_len, &target, &tagger, &message, &message_len, &force) == FAILURE) {
@@ -365,7 +365,7 @@ PHP_FUNCTION(git_tag_annotation_create)
 	char *tag_name = NULL, *message = NULL;
 	size_t tag_name_len, message_len;
 	git_signature *_tagger = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rsras", &repo, &tag_name, &tag_name_len, &target, &tagger, &message, &message_len) == FAILURE) {
@@ -406,7 +406,7 @@ PHP_FUNCTION(git_tag_create_frombuffer)
 	char *buffer = NULL;
 	size_t buffer_len;
 	zend_long force;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rsl", &repo, &buffer, &buffer_len, &force) == FAILURE) {
@@ -440,7 +440,7 @@ PHP_FUNCTION(git_tag_create_lightweight)
 	char *tag_name = NULL;
 	size_t tag_name_len;
 	zend_long force;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rsrl", &repo, &tag_name, &tag_name_len, &target, &force) == FAILURE) {
@@ -496,10 +496,10 @@ PHP_FUNCTION(git_tag_delete)
  */
 PHP_FUNCTION(git_tag_list)
 {
-	zval *result, *repo = NULL;
+	zval *array, *repo = NULL;
 	git_strarray *tag_names = NULL;
 	php_git2_t *_repo = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &repo) == FAILURE) {
@@ -527,12 +527,12 @@ PHP_FUNCTION(git_tag_list)
  */
 PHP_FUNCTION(git_tag_list_match)
 {
-	zval *result, *repo = NULL;
+	zval *array, *repo = NULL;
 	git_strarray *tag_names = NULL;
 	char *pattern = NULL;
 	size_t pattern_len;
 	php_git2_t *_repo = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"sr", &pattern, &pattern_len, &repo) == FAILURE) {
@@ -594,7 +594,7 @@ PHP_FUNCTION(git_tag_peel)
 	php_git2_t *result = NULL, *_tag = NULL;
 	git_object *tag_target_out = NULL;
 	zval *tag = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &tag) == FAILURE) {

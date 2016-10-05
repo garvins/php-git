@@ -12,7 +12,7 @@ PHP_FUNCTION(git_blob_create_frombuffer)
 	php_git2_t *_repo = NULL;
 	char *buffer = NULL;
 	zend_long len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &buffer, &len) == FAILURE) {
@@ -48,7 +48,7 @@ PHP_FUNCTION(git_blob_create_fromchunks)
 	zend_fcall_info callback_fci = empty_fcall_info;
 	zend_fcall_info_cache callback_fcc = empty_fcall_info_cache;
 	php_git2_cb_t *callback_cb = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rsfz", &repo, &hintpath, &hintpath_len, &callback_fci, &callback_fcc, &payload) == FAILURE) {
@@ -86,7 +86,7 @@ PHP_FUNCTION(git_blob_create_fromdisk)
 	php_git2_t *_repo = NULL;
 	char *path = NULL;
 	size_t path_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &path, &path_len) == FAILURE) {
@@ -119,7 +119,7 @@ PHP_FUNCTION(git_blob_create_fromworkdir)
 	php_git2_t *_repo = NULL;
 	char *relative_path = NULL;
 	size_t relative_path_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &relative_path, &relative_path_len) == FAILURE) {
@@ -152,7 +152,7 @@ PHP_FUNCTION(git_blob_filtered_content)
 	char *as_path = NULL;
 	size_t as_path_len;
 	zend_long check_for_binary_data;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rsl", &blob, &as_path, &as_path_len, &check_for_binary_data) == FAILURE) {
@@ -258,7 +258,7 @@ PHP_FUNCTION(git_blob_lookup)
 	char *id = NULL;
 	size_t id_len;
 	git_oid __id = {0};
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &id, &id_len) == FAILURE) {
@@ -298,7 +298,7 @@ PHP_FUNCTION(git_blob_lookup_prefix)
 	size_t id_len;
 	git_oid __id = {0};
 	zend_long len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rsl", &repo, &id, &id_len, &len) == FAILURE) {
@@ -377,7 +377,8 @@ PHP_FUNCTION(git_blob_rawcontent)
 		RETURN_FALSE;
 	}
 
-	size = git_blob_rawsize(PHP_GIT2_V(blob, blob));
+	git_off_t size;
+	size = git_blob_rawsize(PHP_GIT2_V(_blob, blob));
 	RETURN_STRINGL(buffer, size);
 }
 /* }}} */

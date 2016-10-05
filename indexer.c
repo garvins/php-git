@@ -15,7 +15,7 @@ PHP_FUNCTION(git_indexer_new)
 	zend_fcall_info progress_fci = empty_fcall_info;
 	zend_fcall_info_cache progress_fcc = empty_fcall_info_cache;
 	php_git2_cb_t *progress_cb = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"slrfz", &path, &path_len, &mode, &odb, &progress_fci, &progress_fcc, &progress_cb_payload) == FAILURE) {

@@ -8,7 +8,7 @@ PHP_FUNCTION(git_repository_new)
 {
 	php_git2_t *result = NULL;
 	git_repository *out = NULL;
-	int error = 0;
+	int error;
 	
 	error = git_repository_new(&out);
 
@@ -33,7 +33,7 @@ PHP_FUNCTION(git_repository_init)
 	char *path = NULL;
 	size_t path_len;
 	zend_long is_bare;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"sl", &path, &path_len, &is_bare) == FAILURE) {
@@ -62,7 +62,7 @@ PHP_FUNCTION(git_repository_open_bare)
 	git_repository *out = NULL;
 	char *bare_path = NULL;
 	size_t bare_path_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"s", &bare_path, &bare_path_len) == FAILURE) {
@@ -91,7 +91,7 @@ PHP_FUNCTION(git_repository_open)
 	git_repository *out = NULL;
 	char *path = NULL;
 	size_t path_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"s", &path, &path_len) == FAILURE) {
@@ -165,7 +165,7 @@ PHP_FUNCTION(git_repository_wrap_odb)
 	php_git2_t *result = NULL, *_odb = NULL;
 	git_repository *out = NULL;
 	zval *odb = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &odb) == FAILURE) {
@@ -197,7 +197,7 @@ PHP_FUNCTION(git_repository_discover)
 	char path_out[GIT2_BUFFER_SIZE] = {0}, *start_path = NULL, *ceiling_dirs = NULL;
 	size_t path_size = GIT2_BUFFER_SIZE, start_path_len, ceiling_dirs_len;
 	zend_long across_fs;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"sls", &start_path, &start_path_len, &across_fs, &ceiling_dirs, &ceiling_dirs_len) == FAILURE) {
@@ -223,7 +223,7 @@ PHP_FUNCTION(git_repository_open_ext)
 	char *path = NULL, *ceiling_dirs = NULL;
 	size_t path_len, ceiling_dirs_len;
 	zend_long flags;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"sls", &path, &path_len, &flags, &ceiling_dirs, &ceiling_dirs_len) == FAILURE) {
@@ -279,8 +279,7 @@ PHP_FUNCTION(git_repository_init_ext)
 	size_t repo_path_len;
 	git_repository_init_options *_opts = NULL;
 	zval *opts = NULL;
-	int should_free = 0;
-	int error = 0;
+	int should_free = 0, error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"s|a", &repo_path, &repo_path_len, &opts) == FAILURE) {
@@ -317,7 +316,7 @@ PHP_FUNCTION(git_repository_head)
 	php_git2_t *result = NULL, *_repo = NULL;
 	git_reference *out = NULL;
 	zval *repo = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &repo) == FAILURE) {
@@ -490,7 +489,7 @@ PHP_FUNCTION(git_repository_config)
 	php_git2_t *result = NULL, *_repo = NULL;
 	git_config *out = NULL;
 	zval *repo = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &repo) == FAILURE) {
@@ -522,7 +521,7 @@ PHP_FUNCTION(git_repository_odb)
 	php_git2_t *result = NULL, *_repo = NULL;
 	git_odb *out = NULL;
 	zval *repo = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &repo) == FAILURE) {
@@ -554,7 +553,7 @@ PHP_FUNCTION(git_repository_refdb)
 	php_git2_t *result = NULL, *_repo = NULL;
 	git_refdb *out = NULL;
 	zval *repo = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &repo) == FAILURE) {
@@ -586,7 +585,7 @@ PHP_FUNCTION(git_repository_index)
 	php_git2_t *result = NULL, *_repo = NULL;
 	git_index *out = NULL;
 	zval *repo = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &repo) == FAILURE) {
@@ -619,7 +618,7 @@ PHP_FUNCTION(git_repository_message)
 	size_t len = GIT2_BUFFER_SIZE;
 	zval *repo = NULL;
 	php_git2_t *_repo = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &repo) == FAILURE) {
@@ -759,7 +758,7 @@ PHP_FUNCTION(git_repository_hashfile)
 	char *path = NULL, *as_path = NULL;
 	size_t path_len, as_path_len;
 	zend_long type;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rsls", &repo, &path, &path_len, &type, &as_path, &as_path_len) == FAILURE) {

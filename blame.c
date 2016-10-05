@@ -93,8 +93,7 @@ PHP_FUNCTION(git_blame_file)
 	char *path = NULL;
 	size_t path_len;
 	git_blame_options *_options = NULL;
-	int should_free = 0;
-	int error = 0;
+	int should_free = 0, error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs|a", &repo, &path, &path_len, &options) == FAILURE) {
@@ -137,7 +136,7 @@ PHP_FUNCTION(git_blame_buffer)
 	zval *reference = NULL;
 	char *buffer = NULL;
 	size_t buffer_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &reference, &buffer, &buffer_len) == FAILURE) {

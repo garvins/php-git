@@ -35,8 +35,7 @@ PHP_FUNCTION(git_diff_tree_to_tree)
 	git_diff *diff = NULL;
 	zval *repo = NULL, *old_tree = NULL, *new_tree = NULL, *opts = NULL;
 	git_diff_options *_opts = NULL;
-	int should_free = 0;
-	int error = 0;
+	int should_free = 0, error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rrr|a", &repo, &old_tree, &new_tree, &opts) == FAILURE) {
@@ -86,8 +85,7 @@ PHP_FUNCTION(git_diff_tree_to_index)
 	git_diff *diff = NULL;
 	zval *repo = NULL, *old_tree = NULL, *index = NULL, *opts = NULL;
 	git_diff_options *_opts = NULL;
-	int should_free = 0;
-	int error = 0;
+	int should_free = 0, error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rrr|a", &repo, &old_tree, &index, &opts) == FAILURE) {
@@ -137,8 +135,7 @@ PHP_FUNCTION(git_diff_index_to_workdir)
 	git_diff *diff = NULL;
 	zval *repo = NULL, *index = NULL, *opts = NULL;
 	git_diff_options *_opts = NULL;
-	int should_free = 0;
-	int error = 0;
+	int should_free = 0, error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rr|a", &repo, &index, &opts) == FAILURE) {
@@ -184,8 +181,7 @@ PHP_FUNCTION(git_diff_tree_to_workdir)
 	git_diff *diff = NULL;
 	zval *repo = NULL, *old_tree = NULL, *opts = NULL;
 	git_diff_options *_opts = NULL;
-	int should_free = 0;
-	int error = 0;
+	int should_free = 0, error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rr|a", &repo, &old_tree, &opts) == FAILURE) {
@@ -231,8 +227,7 @@ PHP_FUNCTION(git_diff_tree_to_workdir_with_index)
 	git_diff *diff = NULL;
 	zval *repo = NULL, *old_tree = NULL, *opts = NULL;
 	git_diff_options *_opts = NULL;
-	int should_free = 0;
-	int error = 0;
+	int should_free = 0, error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rr|a", &repo, &old_tree, &opts) == FAILURE) {
@@ -420,7 +415,7 @@ PHP_FUNCTION(git_diff_get_delta)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_diff_delta_to_array(result, &array TSRMLS_CC);
+	php_git2_git_diff_delta_to_array(result, array TSRMLS_CC);
 
 	RETURN_ZVAL(array, 0, 1);
 }

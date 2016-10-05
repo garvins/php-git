@@ -12,7 +12,7 @@ PHP_FUNCTION(git_branch_create)
 	char *branch_name = NULL;
 	size_t branch_name_len;
 	zend_long force;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rsrl", &repo, &branch_name, &branch_name_len, &target, &force) == FAILURE) {
@@ -72,7 +72,7 @@ PHP_FUNCTION(git_branch_iterator_new)
 	git_branch_iterator *out = NULL;
 	zval *repo = NULL;
 	zend_long list_flags;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rl", &repo, &list_flags) == FAILURE) {
@@ -105,7 +105,7 @@ PHP_FUNCTION(git_branch_next)
 	git_reference *out = NULL;
 	zend_long out_type;
 	zval *iter = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"lr", &out_type, &iter) == FAILURE) {
@@ -165,7 +165,7 @@ PHP_FUNCTION(git_branch_move)
 	char *new_branch_name = NULL;
 	size_t new_branch_name_len;
 	zend_long force;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rsl", &branch, &new_branch_name, &new_branch_name_len, &force) == FAILURE) {
@@ -200,7 +200,7 @@ PHP_FUNCTION(git_branch_lookup)
 	char *branch_name = NULL;
 	size_t branch_name_len;
 	zend_long branch_type;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rsl", &repo, &branch_name, &branch_name_len, &branch_type) == FAILURE) {
@@ -232,7 +232,7 @@ PHP_FUNCTION(git_branch_name)
 	char *out = NULL;
 	zval *ref = NULL;
 	php_git2_t *_ref = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &ref) == FAILURE) {
@@ -260,7 +260,7 @@ PHP_FUNCTION(git_branch_upstream)
 	php_git2_t *result = NULL, *_branch = NULL;
 	git_reference *out = NULL;
 	zval *branch = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &branch) == FAILURE) {
@@ -318,7 +318,7 @@ PHP_FUNCTION(git_branch_upstream_name)
 	size_t buffer_size = GIT2_BUFFER_SIZE, canonical_branch_name_len;
 	zval *repo = NULL;
 	php_git2_t *_repo = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &canonical_branch_name, &canonical_branch_name_len) == FAILURE) {
@@ -370,7 +370,7 @@ PHP_FUNCTION(git_branch_remote_name)
 	size_t buffer_size = GIT2_BUFFER_SIZE, canonical_branch_name_len;
 	zval *repo = NULL;
 	php_git2_t *_repo = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &canonical_branch_name, &canonical_branch_name_len) == FAILURE) {

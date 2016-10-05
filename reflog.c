@@ -11,7 +11,7 @@ PHP_FUNCTION(git_reflog_read)
 	zval *repo = NULL;
 	char *name = NULL;
 	size_t name_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &name, &name_len) == FAILURE) {

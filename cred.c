@@ -33,7 +33,7 @@ PHP_FUNCTION(git_cred_userpass_plaintext_new)
 	git_cred *out = NULL;
 	char *username = NULL, *password = NULL;
 	size_t username_len, password_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"ss", &username, &username_len, &password, &password_len) == FAILURE) {
@@ -62,7 +62,7 @@ PHP_FUNCTION(git_cred_ssh_key_new)
 	git_cred *out = NULL;
 	char *username = NULL, *publickey = NULL, *privatekey = NULL, *passphrase = NULL;
 	size_t username_len, publickey_len, privatekey_len, passphrase_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"ssss", &username, &username_len, &publickey, &publickey_len, &privatekey, &privatekey_len, &passphrase, &passphrase_len) == FAILURE) {
@@ -95,7 +95,7 @@ PHP_FUNCTION(git_cred_ssh_custom_new)
 	zend_fcall_info_cache sign_fcc = empty_fcall_info_cache;
 	php_git2_cb_t *sign_cb = NULL;
 	zval *sign_data = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"sslfz", &username, &username_len, &publickey, &publickey_len, &sign_fci, &sign_fcc, &sign_data) == FAILURE) {
@@ -127,7 +127,7 @@ PHP_FUNCTION(git_cred_default_new)
 {
 	php_git2_t *result = NULL;
 	git_cred *out = NULL;
-	int error = 0;
+	int error;
 	
 	error = git_cred_default_new(&out);
 

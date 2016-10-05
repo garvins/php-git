@@ -37,7 +37,7 @@ PHP_FUNCTION(git_commit_lookup)
 	char *id = NULL;
 	size_t id_len;
 	git_oid __id = {0};
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &id, &id_len) == FAILURE) {
@@ -99,7 +99,7 @@ PHP_FUNCTION(git_commit_tree)
 	php_git2_t *result = NULL, *_commit = NULL;
 	git_tree *tree_out = NULL;
 	zval *commit = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &commit) == FAILURE) {
@@ -135,7 +135,7 @@ PHP_FUNCTION(git_commit_lookup_prefix)
 	size_t id_len;
 	git_oid __id = {0};
 	zend_long len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rsl", &repo, &id, &id_len, &len) == FAILURE) {
@@ -438,7 +438,7 @@ PHP_FUNCTION(git_commit_parent)
 	git_commit *out = NULL;
 	zval *commit = NULL;
 	zend_long n;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rl", &commit, &n) == FAILURE) {
@@ -498,7 +498,7 @@ PHP_FUNCTION(git_commit_nth_gen_ancestor)
 	git_commit *ancestor = NULL;
 	zval *commit = NULL;
 	zend_long n;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rl", &commit, &n) == FAILURE) {

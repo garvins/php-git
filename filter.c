@@ -12,7 +12,7 @@ PHP_FUNCTION(git_filter_list_load)
 	char *path = NULL;
 	size_t path_len;
 	zend_long mode;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rrsl", &repo, &blob, &path, &path_len, &mode) == FAILURE) {
@@ -50,7 +50,7 @@ PHP_FUNCTION(git_filter_list_apply_to_data)
 	php_git2_t *_filters = NULL;
 	char *in = NULL;
 	size_t in_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &filters, &in, &in_len) == FAILURE) {
@@ -85,7 +85,7 @@ PHP_FUNCTION(git_filter_list_apply_to_file)
 	php_git2_t *_filters = NULL, *_repo = NULL;
 	char *path = NULL;
 	size_t path_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rrs", &filters, &repo, &path, &path_len) == FAILURE) {
@@ -118,7 +118,7 @@ PHP_FUNCTION(git_filter_list_apply_to_blob)
 	git_buf out = {0};
 	zval *filters = NULL, *blob = NULL;
 	php_git2_t *_filters = NULL, *_blob = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rr", &filters, &blob) == FAILURE) {
@@ -201,7 +201,7 @@ PHP_FUNCTION(git_filter_list_new)
 	git_filter_list *out = NULL;
 	zval *repo = NULL;
 	zend_long mode;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rl", &repo, &mode) == FAILURE) {

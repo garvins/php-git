@@ -417,10 +417,13 @@ function printFile($table, $file) {
                 $name = ($func['retval']['pointer'] < 1 ? "&" : "") . $name;
                 $funcPrefix = trim(str_replace("const", "", $func['retval']['type']));
 
+                $zvalName = (isset($func['retval']['name']) && $func['retval']['name'] == "array") ?
+                    "_array" : "array";
+
                 if (preg_match('/git_error/', $func['retval']['type'])) {
-                    $buffer .= "\n\tphp_git2_{$funcPrefix}_to_array($name, array);\n";
+                    $buffer .= "\n\tphp_git2_{$funcPrefix}_to_array($name, $zvalName);\n";
                 } else {
-                    $buffer .= "\n\tphp_git2_{$funcPrefix}_to_array($name, array TSRMLS_CC);\n";
+                    $buffer .= "\n\tphp_git2_{$funcPrefix}_to_array($name, $zvalName TSRMLS_CC);\n";
                 }
 
                 if (shouldBeFreed($func['retval'])) {
@@ -443,7 +446,9 @@ function printFile($table, $file) {
                             $str = "return_value, GIT2_RVAL_P(__result)";
                         }
                     } else if (isArray($func['retval'], true)) {
-                        $str = "array, 0, 1";
+                        $zvalName = (isset($func['retval']['name']) && $func['retval']['name'] == "array") ?
+                            "_array" : "array";
+                        $str = "$zvalName, 0, 1";
                     } else if (isOid($func['retval'])) {
                         if (hasOutValue($func)) {
                             $str = "__{$func['retval']['name']}";
@@ -579,7 +584,11 @@ function getDeclarations($func)
         if (isResource($func['retval'])) {
             $result['php_git2_t'][] = "*result = NULL";
         } else if (isArray($func['retval'], true)) {
-            $result['zval'][] = "*result";
+            if (isset($func['retval']['name']) && $func['retval']['name'] == "array") {
+                $result['zval'][] = "*_array";
+            } else {
+                $result['zval'][] = "*array";
+            }
         }
 
         if (isBuf($func['retval'])) {
@@ -617,7 +626,7 @@ function getDeclarations($func)
             $result['int'][] = "should_free = 0";
         } else if (isArray($arg)) {
             $result['zval'][] = "*{$arg['name']} = NULL";
-
+            
             if (isArray($arg, true)) {
                 if (preg_match("/git_signature/", $arg['type'])) {
                     $result[] = "\t{$arg['type']} *_{$arg['name']} = NULL;";
@@ -661,10 +670,11 @@ function getDeclarations($func)
 
     if (isResource($func['retval'])
         || isArray($func['retval'], true)
-        || getPHPReturnType($func['retval']['type']) == "string")
+        || getPHPReturnType($func['retval']['type']) == "string"
+        || (getPHPReturnType($func['retval']['type']) == "long" && $func['retval']['pointer'] > 0))
     {
         if (hasOutValue($func)) {
-            $result[] = "\tint error = 0;";
+            $result['int'][] = "error";
         } else if (isArray($func['retval'])) {
             $result['zval'][] = "*array = NULL";
         } else if (getPHPReturnType($func['retval']['type']) != "string") {
@@ -842,7 +852,8 @@ function funcRelContBeforeMacro($func)
         $buffer .= "\n\tif (buffer == NULL){\n";
         $buffer .= "\t\tRETURN_FALSE;\n";
         $buffer .= "\t}\n\n";
-        $buffer .= "\tsize = git_blob_rawsize(PHP_GIT2_V({$func["args"][0]["name"]}, blob));\n";
+        $buffer .= "\tgit_off_t size;\n";
+        $buffer .= "\tsize = git_blob_rawsize(PHP_GIT2_V(_{$func["args"][0]["name"]}, blob));\n";
         $buffer .= "\tRETURN_STRINGL(buffer, size);\n";
     }
 

@@ -9,7 +9,7 @@ PHP_FUNCTION(git_packbuilder_new)
 	php_git2_t *result = NULL, *_repo = NULL;
 	git_packbuilder *out = NULL;
 	zval *repo = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &repo) == FAILURE) {

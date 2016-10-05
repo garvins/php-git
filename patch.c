@@ -10,7 +10,7 @@ PHP_FUNCTION(git_patch_from_diff)
 	git_patch *out = NULL;
 	zval *diff = NULL;
 	zend_long idx;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rl", &diff, &idx) == FAILURE) {
@@ -155,7 +155,7 @@ PHP_FUNCTION(git_patch_get_delta)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_diff_delta_to_array(result, &array TSRMLS_CC);
+	php_git2_git_diff_delta_to_array(result, array TSRMLS_CC);
 
 	RETURN_ZVAL(array, 0, 1);
 }
@@ -220,7 +220,7 @@ PHP_FUNCTION(git_patch_get_hunk)
 	git_diff_hunk *out = NULL;
 	zend_long lines_in_hunk, hunk_idx;
 	zval *patch = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"lrl", &lines_in_hunk, &patch, &hunk_idx) == FAILURE) {
@@ -277,7 +277,7 @@ PHP_FUNCTION(git_patch_get_line_in_hunk)
 	git_diff_line *out = NULL;
 	zval *patch = NULL;
 	zend_long hunk_idx, line_of_hunk;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rll", &patch, &hunk_idx, &line_of_hunk) == FAILURE) {
@@ -364,7 +364,7 @@ PHP_FUNCTION(git_patch_to_str)
 	char *string = NULL;
 	zval *patch = NULL;
 	php_git2_t *_patch = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &patch) == FAILURE) {

@@ -11,7 +11,7 @@ PHP_FUNCTION(git_transport_new)
 	zval *owner = NULL;
 	char *url = NULL;
 	size_t url_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &owner, &url, &url_len) == FAILURE) {
@@ -92,7 +92,7 @@ PHP_FUNCTION(git_transport_dummy)
 	php_git2_t *result = NULL, *_owner = NULL;
 	git_transport *out = NULL;
 	zval *owner = NULL, *payload = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rz", &owner, &payload) == FAILURE) {
@@ -124,7 +124,7 @@ PHP_FUNCTION(git_transport_local)
 	php_git2_t *result = NULL, *_owner = NULL;
 	git_transport *out = NULL;
 	zval *owner = NULL, *payload = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rz", &owner, &payload) == FAILURE) {
@@ -156,7 +156,7 @@ PHP_FUNCTION(git_transport_smart)
 	php_git2_t *result = NULL, *_owner = NULL;
 	git_transport *out = NULL;
 	zval *owner = NULL, *payload = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rz", &owner, &payload) == FAILURE) {
@@ -188,7 +188,7 @@ PHP_FUNCTION(git_smart_subtransport_http)
 	php_git2_t *result = NULL, *_owner = NULL;
 	git_smart_subtransport *out = NULL;
 	zval *owner = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &owner) == FAILURE) {
@@ -220,7 +220,7 @@ PHP_FUNCTION(git_smart_subtransport_git)
 	php_git2_t *result = NULL, *_owner = NULL;
 	git_smart_subtransport *out = NULL;
 	zval *owner = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &owner) == FAILURE) {
@@ -252,7 +252,7 @@ PHP_FUNCTION(git_smart_subtransport_ssh)
 	php_git2_t *result = NULL, *_owner = NULL;
 	git_smart_subtransport *out = NULL;
 	zval *owner = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &owner) == FAILURE) {

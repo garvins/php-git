@@ -175,7 +175,7 @@ PHP_FUNCTION(git_refspec_transform)
 	size_t outlen = GIT2_BUFFER_SIZE, name_len;
 	zval *spec = NULL;
 	php_git2_t *_spec = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &spec, &name, &name_len) == FAILURE) {
@@ -204,7 +204,7 @@ PHP_FUNCTION(git_refspec_rtransform)
 	size_t outlen = GIT2_BUFFER_SIZE, name_len;
 	zval *spec = NULL;
 	php_git2_t *_spec = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &spec, &name, &name_len) == FAILURE) {

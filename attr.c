@@ -30,7 +30,7 @@ PHP_FUNCTION(git_attr_get)
 	php_git2_t *_repo = NULL;
 	zend_long flags;
 	size_t path_len, name_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rlss", &repo, &flags, &path, &path_len, &name, &name_len) == FAILURE) {
@@ -60,7 +60,7 @@ PHP_FUNCTION(git_attr_get_many)
 	php_git2_t *_repo = NULL;
 	zend_long flags, num_attr;
 	size_t path_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rlsla", &repo, &flags, &path, &path_len, &num_attr, &names) == FAILURE) {

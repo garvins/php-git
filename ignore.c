@@ -54,7 +54,7 @@ PHP_FUNCTION(git_ignore_clear_internal_rules)
  */
 PHP_FUNCTION(git_ignore_path_is_ignored)
 {
-	int ignored = 0;
+	int ignored = 0, error;
 	zval *repo = NULL;
 	php_git2_t *_repo = NULL;
 	char *path = NULL;

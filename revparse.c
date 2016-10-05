@@ -11,7 +11,7 @@ PHP_FUNCTION(git_revparse_single)
 	zval *repo = NULL;
 	char *spec = NULL;
 	size_t spec_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &spec, &spec_len) == FAILURE) {
@@ -48,9 +48,9 @@ PHP_FUNCTION(git_revparse_ext)
 	zval *repo = NULL;
 	php_git2_t *_repo = NULL;
 	char *spec = NULL;
-	int spec_len = 0;
+	size_t spec_len;
 	int error = 0;
-
+	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &spec, &spec_len) == FAILURE) {
 		return;
@@ -90,12 +90,12 @@ PHP_FUNCTION(git_revparse_ext)
  */
 PHP_FUNCTION(git_revparse)
 {
-	zval *result, *repo = NULL;
+	zval *array, *repo = NULL;
 	git_revspec *revspec = NULL;
 	php_git2_t *_repo = NULL;
 	char *spec = NULL;
 	size_t spec_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &spec, &spec_len) == FAILURE) {

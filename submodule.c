@@ -11,7 +11,7 @@ PHP_FUNCTION(git_submodule_lookup)
 	zval *repo = NULL;
 	char *name = NULL;
 	size_t name_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &name, &name_len) == FAILURE) {
@@ -77,7 +77,7 @@ PHP_FUNCTION(git_submodule_add_setup)
 	char *url = NULL, *path = NULL;
 	size_t url_len, path_len;
 	zend_long use_gitlink;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rssl", &repo, &url, &url_len, &path, &path_len, &use_gitlink) == FAILURE) {
@@ -566,7 +566,7 @@ PHP_FUNCTION(git_submodule_open)
 	php_git2_t *result = NULL, *_submodule = NULL;
 	git_repository *repo = NULL;
 	zval *submodule = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &submodule) == FAILURE) {
@@ -644,6 +644,7 @@ PHP_FUNCTION(git_submodule_status)
 	unsigned int status = 0;
 	zval *submodule = NULL;
 	php_git2_t *_submodule = NULL;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &submodule) == FAILURE) {
@@ -671,6 +672,7 @@ PHP_FUNCTION(git_submodule_location)
 	unsigned int location_status = 0;
 	zval *submodule = NULL;
 	php_git2_t *_submodule = NULL;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &submodule) == FAILURE) {

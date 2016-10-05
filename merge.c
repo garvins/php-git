@@ -12,7 +12,7 @@ PHP_FUNCTION(git_merge_base)
 	php_git2_t *_repo = NULL;
 	char *one = NULL, *two = NULL;
 	size_t one_len, two_len;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rss", &repo, &one, &one_len, &two, &two_len) == FAILURE) {
@@ -88,7 +88,7 @@ PHP_FUNCTION(git_merge_head_from_ref)
 	php_git2_t *result = NULL, *_repo = NULL, *_ref = NULL;
 	git_merge_head *out = NULL;
 	zval *repo = NULL, *ref = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rr", &repo, &ref) == FAILURE) {
@@ -127,7 +127,7 @@ PHP_FUNCTION(git_merge_head_from_fetchhead)
 	char *branch_name = NULL, *remote_url = NULL, *oid = NULL;
 	size_t branch_name_len, remote_url_len, oid_len;
 	git_oid __oid = {0};
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rsss", &repo, &branch_name, &branch_name_len, &remote_url, &remote_url_len, &oid, &oid_len) == FAILURE) {
@@ -166,7 +166,7 @@ PHP_FUNCTION(git_merge_head_from_oid)
 	char *oid = NULL;
 	size_t oid_len;
 	git_oid __oid = {0};
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &oid, &oid_len) == FAILURE) {
@@ -228,8 +228,7 @@ PHP_FUNCTION(git_merge_trees)
 	git_index *out = NULL;
 	zval *repo = NULL, *ancestor_tree = NULL, *our_tree = NULL, *their_tree = NULL, *opts = NULL;
 	git_merge_tree_opts *_opts = NULL;
-	int should_free = 0;
-	int error = 0;
+	int should_free = 0, error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rrrr|a", &repo, &ancestor_tree, &our_tree, &their_tree, &opts) == FAILURE) {
@@ -367,7 +366,7 @@ PHP_FUNCTION(git_merge_result_fastforward_oid)
 	char __out[GIT2_OID_HEXSIZE] = {0};
 	zval *merge_result = NULL;
 	php_git2_t *_merge_result = NULL;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &merge_result) == FAILURE) {

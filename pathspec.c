@@ -10,7 +10,7 @@ PHP_FUNCTION(git_pathspec_new)
 	git_pathspec *out = NULL;
 	zval *pathspec = NULL;
 	git_strarray _pathspec = {0};
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"a", &pathspec) == FAILURE) {
@@ -93,7 +93,7 @@ PHP_FUNCTION(git_pathspec_match_workdir)
 	git_pathspec_match_list *out = NULL;
 	zval *repo = NULL, *ps = NULL;
 	zend_long flags;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rlr", &repo, &flags, &ps) == FAILURE) {
@@ -130,7 +130,7 @@ PHP_FUNCTION(git_pathspec_match_index)
 	git_pathspec_match_list *out = NULL;
 	zval *index = NULL, *ps = NULL;
 	zend_long flags;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rlr", &index, &flags, &ps) == FAILURE) {
@@ -167,7 +167,7 @@ PHP_FUNCTION(git_pathspec_match_tree)
 	git_pathspec_match_list *out = NULL;
 	zval *tree = NULL, *ps = NULL;
 	zend_long flags;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rlr", &tree, &flags, &ps) == FAILURE) {
@@ -204,7 +204,7 @@ PHP_FUNCTION(git_pathspec_match_diff)
 	git_pathspec_match_list *out = NULL;
 	zval *diff = NULL, *ps = NULL;
 	zend_long flags;
-	int error = 0;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rlr", &diff, &flags, &ps) == FAILURE) {
