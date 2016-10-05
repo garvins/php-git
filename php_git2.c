@@ -129,6 +129,8 @@ void static destruct_git2(zend_resource *rsrc TSRMLS_DC)
 				efree(PHP_GIT2_V(resource, odb_backend));
 				break;
 			}
+			default:
+			    break;
 		}
 	}
 
@@ -144,6 +146,7 @@ static zend_class_entry *php_git2_get_exception_base(TSRMLS_D)
 
 int php_git2_make_resource(php_git2_t **out, enum php_git2_resource_type type, void *resource, int should_free TSRMLS_DC)
 {
+    zval *tmp;
 	php_git2_t *result = NULL;
 
 	PHP_GIT2_MAKE_RESOURCE_NOCHECK(result);
@@ -295,7 +298,8 @@ int php_git2_make_resource(php_git2_t **out, enum php_git2_resource_type type, v
 	}
 
 	result->type = type;
-	result->resource_id = PHP_GIT2_LIST_INSERT(result, git2_resource_handle);
+	tmp = PHP_GIT2_LIST_INSERT(result, git2_resource_handle);
+	result->resource_id = Z_RES_P(tmp);
 	result->should_free_v = should_free;
 
 	*out = result;
@@ -1038,11 +1042,16 @@ static void php_git2_odb_backend_foreach_callback_free_storage(php_git2_odb_back
         efree(object);
 }
 
-zend_object_value php_git2_odb_backend_foreach_callback_new(zend_class_entry *ce TSRMLS_DC)
+zend_object * php_git2_odb_backend_foreach_callback_new(zend_class_entry *ce TSRMLS_DC)
 {
-        zend_object_value retval;
-        PHP_GIT2_STD_CREATE_OBJECT(php_git2_odb_backend_foreach_callback);
-        return retval;
+    php_git2_odb_backend_foreach_callback *object = (php_git2_odb_backend_foreach_callback *) ecalloc(
+        1, sizeof(*object) + zend_object_properties_size(ce));
+
+    zend_object_std_init(&object->zo, ce TSRMLS_CC);
+    object_properties_init(&object->zo, ce);
+
+    object->zo.handlers = zend_get_std_object_handlers();
+    return &object->zo;
 }
 
 PHP_MINIT_FUNCTION(git2)

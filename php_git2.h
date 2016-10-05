@@ -193,7 +193,7 @@ typedef struct php_git2_t {
 		git_filter *filter;
 	} v;
 	int should_free_v;
-	int resource_id;
+	zend_resource *resource_id;
 	int mutable;
 } php_git2_t;
 

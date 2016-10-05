@@ -30,19 +30,6 @@ extern int git2_resource_handle;
 
 #define PHP_GIT2_LIST_INSERT(type, handle) zend_list_insert(type, handle TSRMLS_CC)
 
-#  define PHP_GIT2_STD_CREATE_OBJECT(STRUCT_NAME) \
-        STRUCT_NAME *object;\
-        \
-        object = (STRUCT_NAME*)ecalloc(1, sizeof(*object));\
-        zend_object_std_init(&object->zo, ce TSRMLS_CC);\
-        object_properties_init(&object->zo, ce);\
-        \
-        retval.handle = zend_objects_store_put(object,\
-                (zend_objects_store_dtor_t)zend_objects_destroy_object,\
-                (zend_objects_free_object_storage_t) STRUCT_NAME##_free_storage ,\
-        NULL TSRMLS_CC);\
-        retval.handlers = zend_get_std_object_handlers();
-
 #define PHP_GIT2_V(git2, type) git2->v.type
 #define PHP_GIT2_V_N(git2, type) (git2 && git2->v.type) ? git2->v.type : NULL
 #define GIT2_RVAL_P(git2) git2->resource_id

@@ -22,7 +22,7 @@ static int php_git2_config_foreach_cb(const git_config_entry *entry, void *paylo
 	php_git2_config_entry_to_array(entry, &param_config_entry);
 	Z_ADDREF_P(p->payload);
 
-	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, &retval_ptr, 2, &param_config_entry, &p->payload)) {
+	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 2, &param_config_entry, &p->payload)) {
 		zval_ptr_dtor(&param_config_entry);
 		zval_ptr_dtor(&p->payload);
 		zend_list_delete(result->resource_id);
@@ -124,7 +124,7 @@ static void php_git2_config_set_with(INTERNAL_FUNCTION_PARAMETERS, enum php_git2
 			break;
 		}
 		case PHP_GIT2_CONFIG_BOOL: {
-			if (Z_TYPE_P(value) != IS_BOOL) {
+			if (Z_TYPE_P(value) != IS_TRUE || Z_TYPE_P(value) != IS_FALSE) {
 				convert_to_boolean(value);
 			}
 			error = git_config_set_bool(PHP_GIT2_V(_cfg, config), name, Z_LVAL_P(value));
@@ -199,8 +199,8 @@ static void php_git2_config_entry_to_array(git_config_entry *entry, zval **resul
 	MAKE_STD_ZVAL(tmp);
 	array_init(tmp);
 
-	add_assoc_string_ex(tmp, ZEND_STRS("name"), entry->name, 1);
-	add_assoc_string_ex(tmp, ZEND_STRS("value"), entry->value, 1);
+	add_assoc_string_ex(tmp, ZEND_STRS("name"), entry->name);
+	add_assoc_string_ex(tmp, ZEND_STRS("value"), entry->value);
 	add_assoc_long_ex(tmp, ZEND_STRS("level"), entry->level);
 	*result = tmp;
 }
