@@ -245,7 +245,7 @@ typedef struct tree_walk_cb_t {
 	zend_fcall_info *fci;
 	zend_fcall_info_cache *fcc;
 	GIT2_TSRMLS_DECL
-};
+} tree_walk_cb_t;
 
 extern zend_class_entry *php_git2_odb_backend_foreach_callback_class_entry;
 

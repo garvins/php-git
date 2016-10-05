@@ -47,17 +47,17 @@ PHP_FUNCTION(git_merge_base)
  */
 PHP_FUNCTION(git_merge_base_many)
 {
-	git_oid out, __input_array[] = {0};
+	git_oid out, __input_array = {0};
 	char __out[GIT2_OID_HEXSIZE] = {0};
 	zval *repo = NULL;
 	php_git2_t *_repo = NULL;
 	zend_long length;
-	char *input_array[] = NULL;
-	size_t input_array[]_len;
+	char *input_array = NULL;
+	size_t input_array_len;
 	int error = 0;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"rls", &repo, &length, &input_array[], &input_array[]_len) == FAILURE) {
+		"rls", &repo, &length, &input_array, &input_array_len) == FAILURE) {
 		return;
 	}
 
@@ -65,11 +65,11 @@ PHP_FUNCTION(git_merge_base_many)
 		RETURN_FALSE;
 	}
 
-	if (git_oid_fromstrn(&__input_array[], input_array[], input_array[]_len)) {
+	if (git_oid_fromstrn(&__input_array, input_array, input_array_len)) {
 		RETURN_FALSE;
 	}
 
-	error = git_merge_base_many(&out, PHP_GIT2_V(_repo, repository), length, &__input_array[]);
+	error = git_merge_base_many(&out, PHP_GIT2_V(_repo, repository), length, &__input_array);
 
 	if (php_git2_check_error(error, "git_merge_base_many" TSRMLS_CC)) {
 		RETURN_FALSE;

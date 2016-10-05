@@ -2,6 +2,11 @@
 #include "php_git2_priv.h"
 #include "helper.h"
 
+static const zend_arg_info arginfo_git_odb_backend_foreach_callback[] = {
+	ZEND_ARG_INFO(0, oid)
+	ZEND_ARG_INFO(1, payload)
+};
+
 static zval* datetime_instantiate(zend_class_entry *pce, zval *object TSRMLS_DC)
 {
     return php_date_instantiate(pce, object TSRMLS_CC);
@@ -1032,10 +1037,9 @@ int php_git2_git_attr_foreach_cb(const char *name, const char *value, void *payl
 
 int php_git2_git_submodule_foreach_cb(git_submodule *sm, const char *name, void *payload)
 {
-	php_git2_t *result, *submodule;
+	php_git2_t *submodule;
 	zval *param_sm, *param_name, *retval_ptr = NULL;
 	php_git2_cb_t *p = (php_git2_cb_t*)payload;
-	int i = 0;
 	long retval = 0;
 	GIT2_TSRMLS_SET(p->tsrm_ls)
 
@@ -1129,13 +1133,6 @@ int php_git2_git_stash_cb(size_t index, const char* message, const git_oid *stas
 }
 
 int php_git2_git_note_foreach_cb(const git_oid *blob_id, const git_oid *annotated_object_id, void *payload)
-{
-    // todo need to implementated
-
-    return 0;
-}
-
-int php_git2_git_transfer_progress_callback(const git_transfer_progress *stats, void *payload)
 {
     // todo need to implementated
 
@@ -1318,7 +1315,8 @@ int php_git2_git_remote_rename_problem_cb(const char *problematic_refspec, void 
 void php_git2_array_to_git_remote_callbacks(git_remote_callbacks *cb, zval *callbacks TSRMLS_DC)
 {
     zval *credentials_cb = NULL;
-    *cb = GIT_REMOTE_CALLBACKS_INIT;
+    struct git_remote_callbacks _cb = GIT_REMOTE_CALLBACKS_INIT;
+    cb = &_cb;
     php_git2_remote_cb_t *_payload = NULL;
 
 	/* TODO(chobie): support other callbacks */
@@ -2049,11 +2047,6 @@ int php_git2_odb_backend_exists(git_odb_backend *backend, const git_oid *oid)
 	zval_ptr_dtor(&retval_ptr);
 	return !retval;
 }
-
-static const zend_arg_info arginfo_git_odb_backend_foreach_callback[] = {
-	ZEND_ARG_INFO(0, oid)
-	ZEND_ARG_INFO(1, payload)
-};
 
 void git_ex_cb(INTERNAL_FUNCTION_PARAMETERS)
 {

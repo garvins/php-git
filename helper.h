@@ -134,8 +134,6 @@ int php_git2_git_stash_cb(size_t index, const char* message, const git_oid *stas
 
 int php_git2_git_note_foreach_cb(const git_oid *blob_id, const git_oid *annotated_object_id, void *payload);
 
-int php_git2_git_transfer_progress_callback(const git_transfer_progress *stats, void *payload);
-
 void php_git2_array_to_git_transfer_progress(git_transfer_progress *progress, zval **array TSRMLS_DC);
 
 int php_git2_git_cred_cb(git_cred **cred, const char *url, const char *username_from_url, unsigned int allowed_types, void *data);
@@ -164,7 +162,7 @@ void php_git2_git_status_entry_to_array(git_status_entry *entry, zval *out TSRML
 
 int php_git2_git_status_cb(const char *path, unsigned int status_flags, void *payload);
 
-int php_git2_git_cred_sign_callback(void *, ...);
+int php_git2_git_cred_sign_callback(void *payload, ...);
 
 void php_git2_array_to_git_repository_init_options(git_repository_init_options *opts, zval *array TSRMLS_DC);
 
