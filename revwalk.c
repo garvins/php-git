@@ -378,7 +378,7 @@ PHP_FUNCTION(git_revwalk_free)
 		GIT2_SHOULD_FREE(_walk) = 0;
 	}
 
-	zval_ptr_dtor(&walk);
+	zval_ptr_dtor(walk);
 }
 /* }}} */
 

@@ -600,7 +600,7 @@ PHP_FUNCTION(git_remote_ls)
 	MAKE_STD_ZVAL(container);
 	array_init(container);
 	for (i = 0; i < size; i++) {
-		php_git2_git_remote_head_to_array(out[i], &retval TSRMLS_CC);
+		php_git2_git_remote_head_to_array(out[i], retval TSRMLS_CC);
 		add_next_index_zval(container, retval);
 	}
 	RETURN_ZVAL(container, 0, 1);
@@ -714,7 +714,7 @@ PHP_FUNCTION(git_remote_free)
 		GIT2_SHOULD_FREE(_remote) = 0;
 	}
 
-	zval_ptr_dtor(&remote);
+	zval_ptr_dtor(remote);
 }
 /* }}} */
 

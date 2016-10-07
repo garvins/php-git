@@ -129,7 +129,7 @@ PHP_FUNCTION(git_patch_free)
 		GIT2_SHOULD_FREE(_patch) = 0;
 	}
 
-	zval_ptr_dtor(&patch);
+	zval_ptr_dtor(patch);
 }
 /* }}} */
 

@@ -212,4 +212,12 @@ void php_git2_odb_refresh(git_odb_backend *_backend);
 
 int php_git2_git_push_transfer_progress(unsigned int current, unsigned int total, size_t bytes, void* payload);
 
+void php_git2_git_config_entry_to_array(git_config_entry *entry, zval *result);
+
+int php_git2_git_config_foreach_cb(const git_config_entry *entry, void *payload);
+
+int php_git2_git_config_backend_foreach_match_cb(const git_config_entry *entry, void * payload);
+
+void php_git2_array_to_git_cvar_map(git_cvar_map *map, zval *out TSRMLS_DC);
+
 #endif

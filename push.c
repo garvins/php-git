@@ -249,7 +249,7 @@ PHP_FUNCTION(git_push_free)
 		GIT2_SHOULD_FREE(_push) = 0;
 	}
 
-	zval_ptr_dtor(&push);
+	zval_ptr_dtor(push);
 }
 /* }}} */
 

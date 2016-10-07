@@ -57,7 +57,7 @@ PHP_FUNCTION(git_note_iterator_free)
 		GIT2_SHOULD_FREE(_it) = 0;
 	}
 
-	zval_ptr_dtor(&it);
+	zval_ptr_dtor(it);
 }
 /* }}} */
 
@@ -288,7 +288,7 @@ PHP_FUNCTION(git_note_free)
 		GIT2_SHOULD_FREE(_note) = 0;
 	}
 
-	zval_ptr_dtor(&note);
+	zval_ptr_dtor(note);
 }
 /* }}} */
 

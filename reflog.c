@@ -374,7 +374,7 @@ PHP_FUNCTION(git_reflog_free)
 		GIT2_SHOULD_FREE(_reflog) = 0;
 	}
 
-	zval_ptr_dtor(&reflog);
+	zval_ptr_dtor(reflog);
 }
 /* }}} */
 

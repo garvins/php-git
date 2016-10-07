@@ -102,7 +102,7 @@ PHP_FUNCTION(git_tag_free)
 		GIT2_SHOULD_FREE(_tag) = 0;
 	}
 
-	zval_ptr_dtor(&tag);
+	zval_ptr_dtor(tag);
 }
 /* }}} */
 

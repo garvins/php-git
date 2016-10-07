@@ -195,7 +195,7 @@ PHP_FUNCTION(git_blob_free)
 		GIT2_SHOULD_FREE(_blob) = 0;
 	}
 
-	zval_ptr_dtor(&blob);
+	zval_ptr_dtor(blob);
 }
 /* }}} */
 

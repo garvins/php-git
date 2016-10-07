@@ -182,7 +182,7 @@ PHP_FUNCTION(git_blame_free)
 		GIT2_SHOULD_FREE(_blame) = 0;
 	}
 
-	zval_ptr_dtor(&blame);
+	zval_ptr_dtor(blame);
 }
 /* }}} */
 

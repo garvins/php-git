@@ -146,7 +146,7 @@ PHP_FUNCTION(git_indexer_free)
 		GIT2_SHOULD_FREE(_idx) = 0;
 	}
 
-	zval_ptr_dtor(&idx);
+	zval_ptr_dtor(idx);
 }
 /* }}} */
 

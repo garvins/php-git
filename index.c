@@ -74,7 +74,7 @@ PHP_FUNCTION(git_index_free)
 		GIT2_SHOULD_FREE(_index) = 0;
 	}
 
-	zval_ptr_dtor(&index);
+	zval_ptr_dtor(index);
 }
 /* }}} */
 
@@ -756,8 +756,8 @@ PHP_FUNCTION(git_index_conflict_get)
 	}
 
 	php_git2_index_entry_to_array(ancestor_out, &ancestor TSRMLS_CC);
-	php_git2_index_entry_to_array(our_out, &our TSRMLS_CC);
-	php_git2_index_entry_to_array(their_out, &their TSRMLS_CC);
+	php_git2_index_entry_to_array(our_out, our TSRMLS_CC);
+	php_git2_index_entry_to_array(their_out, their TSRMLS_CC);
 	MAKE_STD_ZVAL(container);
     array_init(container);
     add_assoc_zval_ex(container, ZEND_STRS("ancestor"), ancestor);
@@ -892,9 +892,9 @@ PHP_FUNCTION(git_index_conflict_next)
 		RETURN_FALSE;
 	}
 
-	php_git2_index_entry_to_array(ancestor_out, &ancestor TSRMLS_CC);
-	php_git2_index_entry_to_array(our_out, &our TSRMLS_CC);
-	php_git2_index_entry_to_array(their_out, &their TSRMLS_CC);
+	php_git2_index_entry_to_array(ancestor_out, ancestor TSRMLS_CC);
+	php_git2_index_entry_to_array(our_out, our TSRMLS_CC);
+	php_git2_index_entry_to_array(their_out, their TSRMLS_CC);
 	MAKE_STD_ZVAL(container);
 	array_init(container);
     add_assoc_zval_ex(container, ZEND_STRS("ancestor"), ancestor);
@@ -925,7 +925,7 @@ PHP_FUNCTION(git_index_conflict_iterator_free)
 		GIT2_SHOULD_FREE(_iterator) = 0;
 	}
 
-	zval_ptr_dtor(&iterator);
+	zval_ptr_dtor(iterator);
 }
 /* }}} */
 

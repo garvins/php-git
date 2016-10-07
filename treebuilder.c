@@ -98,7 +98,7 @@ PHP_FUNCTION(git_treebuilder_free)
 		GIT2_SHOULD_FREE(_bld) = 0;
 	}
 
-	zval_ptr_dtor(&bld);
+	zval_ptr_dtor(bld);
 }
 /* }}} */
 

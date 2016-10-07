@@ -23,7 +23,7 @@ PHP_FUNCTION(git_commit_free)
 		GIT2_SHOULD_FREE(_commit) = 0;
 	}
 
-	zval_ptr_dtor(&commit);
+	zval_ptr_dtor(commit);
 }
 /* }}} */
 

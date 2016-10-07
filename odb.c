@@ -99,7 +99,7 @@ PHP_FUNCTION(git_odb_free)
 		GIT2_SHOULD_FREE(_db) = 0;
 	}
 
-	zval_ptr_dtor(&db);
+	zval_ptr_dtor(db);
 }
 /* }}} */
 
@@ -198,7 +198,7 @@ PHP_FUNCTION(git_odb_read_header)
 		"rs", &db, &id, &id_len) == FAILURE) {
 		return;
 	}
-	
+
 	if ((_db = (php_git2_t *) zend_fetch_resource(Z_RES_P(db), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
@@ -465,7 +465,7 @@ PHP_FUNCTION(git_odb_stream_free)
 		GIT2_SHOULD_FREE(_stream) = 0;
 	}
 
-	zval_ptr_dtor(&stream);
+	zval_ptr_dtor(stream);
 }
 /* }}} */
 
@@ -656,7 +656,7 @@ PHP_FUNCTION(git_odb_object_free)
 		GIT2_SHOULD_FREE(_object) = 0;
 	}
 
-	zval_ptr_dtor(&object);
+	zval_ptr_dtor(object);
 }
 /* }}} */
 

@@ -55,7 +55,7 @@ PHP_FUNCTION(git_pathspec_free)
 		GIT2_SHOULD_FREE(_ps) = 0;
 	}
 
-	zval_ptr_dtor(&ps);
+	zval_ptr_dtor(ps);
 }
 /* }}} */
 
@@ -254,7 +254,7 @@ PHP_FUNCTION(git_pathspec_match_list_free)
 		GIT2_SHOULD_FREE(_m) = 0;
 	}
 
-	zval_ptr_dtor(&m);
+	zval_ptr_dtor(m);
 }
 /* }}} */
 

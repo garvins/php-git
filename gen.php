@@ -53,6 +53,8 @@ if (is_dir($_SERVER['argv'][1])) {
                 $fileBaseName = $fileBaseName[0];
             } else if ($fileBaseName[1] == "smart") {
                 $fileBaseName = "transport";
+            } else if ($fileBaseName[1] == "config") {
+                $fileBaseName = "g_config";
             } else {
                 $fileBaseName = $fileBaseName[1];
             }
@@ -90,7 +92,7 @@ function parseFile($path){
             );
 
             //replace inline callbacks
-            $match[3][$i] = preg_replace("/((?:^|,)\s+)\w+\s+\(\*c(?:b|allback)\)\s*\([\s\S]*?\)(\s*(?:,|$))/", "$1{$match[2][$i]}_cb cb$2", $match[3][$i]);
+            $match[3][$i] = preg_replace("/((?:^|,)\s+)\w+\s+\(\*(?:cb|callback|fn)\)\s*\([\s\S]*?\)(\s*(?:,|$))/", "$1{$match[2][$i]}_cb cb$2", $match[3][$i]);
             $list = array_map("trim", explode(",", $match[3][$i]));
 
             $pl = substr_count($match[1][$i], '*');
@@ -350,7 +352,7 @@ function printFile($table, $file) {
                     $buffer .= "\t\t" . ($func['retval']['type'] != "void" ? "result = " : "") . "{$func['name']}(" . join(", ", $temp) . ");\n";
                     $buffer .= "\t\tGIT2_SHOULD_FREE(_{$func['args'][0]['name']}) = 0;\n";
                     $buffer .= "\t}\n\n";
-                    $buffer .= "\tzval_ptr_dtor(&{$func['args'][0]['name']});\n";
+                    $buffer .= "\tzval_ptr_dtor({$func['args'][0]['name']});\n";
                 } else if (preg_match("/void/", $func['retval']['type']) && $func['retval']['pointer'] > 0) {
                     $buffer .= "\tbuffer = {$func['name']}(" . join(", ", $temp) . ");\n";
                 } else {
@@ -557,6 +559,8 @@ function shouldBeFreed($arg) {
         case "git_revspec":
         case "git_diff_delta":
         case "git_remote_head":
+        case "git_config_entry":
+        case "git_cvar_map":
             return false;
         default:
             return true;
@@ -820,6 +824,8 @@ function getPHPReturnType($cType)
         case "git_revspec":
         case "git_diff_delta":
         case "git_remote_head":
+        case "git_config_entry":
+        case "git_cvar_map":
             return "array";
         default:
             return "resource";
@@ -893,6 +899,7 @@ function functionBlacklist($funcName)
         "git_odb_backend_one_pack" => true,
         "git_odb_backend_pack" => true,
         "git_odb_backend_loose" => true,
+        "git_config_add_backend" => true,
     );
 
     return isset($blackList[$funcName]) && $blackList[$funcName];

@@ -216,7 +216,7 @@ PHP_FUNCTION(git_merge_head_free)
 		GIT2_SHOULD_FREE(_head) = 0;
 	}
 
-	zval_ptr_dtor(&head);
+	zval_ptr_dtor(head);
 }
 /* }}} */
 
@@ -410,7 +410,7 @@ PHP_FUNCTION(git_merge_result_free)
 		GIT2_SHOULD_FREE(_merge_result) = 0;
 	}
 
-	zval_ptr_dtor(&merge_result);
+	zval_ptr_dtor(merge_result);
 }
 /* }}} */
 

@@ -23,7 +23,7 @@ PHP_FUNCTION(git_diff_free)
 		GIT2_SHOULD_FREE(_diff) = 0;
 	}
 
-	zval_ptr_dtor(&diff);
+	zval_ptr_dtor(diff);
 }
 /* }}} */
 
@@ -340,7 +340,7 @@ PHP_FUNCTION(git_diff_options_init)
 	}
 
 	result = git_diff_options_init(&options, version);
-	php_git2_git_diff_options_to_array(&options, &out TSRMLS_CC);
+	php_git2_git_diff_options_to_array(&options, out TSRMLS_CC);
 	RETURN_ZVAL(out, 0, 1);
 }
 /* }}} */

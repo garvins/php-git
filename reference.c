@@ -603,7 +603,7 @@ PHP_FUNCTION(git_reference_free)
 		GIT2_SHOULD_FREE(_ref) = 0;
 	}
 
-	zval_ptr_dtor(&ref);
+	zval_ptr_dtor(ref);
 }
 /* }}} */
 
@@ -781,7 +781,7 @@ PHP_FUNCTION(git_reference_iterator_free)
 		GIT2_SHOULD_FREE(_iter) = 0;
 	}
 
-	zval_ptr_dtor(&iter);
+	zval_ptr_dtor(iter);
 }
 /* }}} */
 

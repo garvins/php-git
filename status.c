@@ -219,7 +219,7 @@ PHP_FUNCTION(git_status_list_free)
 		GIT2_SHOULD_FREE(_statuslist) = 0;
 	}
 
-	zval_ptr_dtor(&statuslist);
+	zval_ptr_dtor(statuslist);
 }
 /* }}} */
 

@@ -337,7 +337,7 @@ PHP_FUNCTION(git_packbuilder_free)
 		GIT2_SHOULD_FREE(_pb) = 0;
 	}
 
-	zval_ptr_dtor(&pb);
+	zval_ptr_dtor(pb);
 }
 /* }}} */
 

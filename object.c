@@ -214,7 +214,7 @@ PHP_FUNCTION(git_object_free)
 		GIT2_SHOULD_FREE(_object) = 0;
 	}
 
-	zval_ptr_dtor(&object);
+	zval_ptr_dtor(object);
 }
 /* }}} */
 

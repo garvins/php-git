@@ -335,7 +335,7 @@ PHP_FUNCTION(git_checkout_opts_new)
 	zval *tmp;
 	git_checkout_opts opt = GIT_CHECKOUT_OPTS_INIT;
 
-	php_git2_git_checkout_opts_to_array(&opt, &tmp TSRMLS_CC);
+	php_git2_git_checkout_opts_to_array(&opt, tmp TSRMLS_CC);
 	RETURN_ZVAL(tmp, 0, 1);
 }
 

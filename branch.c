@@ -151,7 +151,7 @@ PHP_FUNCTION(git_branch_iterator_free)
 		GIT2_SHOULD_FREE(_iter) = 0;
 	}
 
-	zval_ptr_dtor(&iter);
+	zval_ptr_dtor(iter);
 }
 /* }}} */
 

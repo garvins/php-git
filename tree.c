@@ -316,7 +316,7 @@ PHP_FUNCTION(git_tree_free)
 		GIT2_SHOULD_FREE(_tree) = 0;
 	}
 
-	zval_ptr_dtor(&tree);
+	zval_ptr_dtor(tree);
 }
 /* }}} */
 
@@ -341,7 +341,7 @@ PHP_FUNCTION(git_tree_entry_free)
 		GIT2_SHOULD_FREE(_entry) = 0;
 	}
 
-	zval_ptr_dtor(&entry);
+	zval_ptr_dtor(entry);
 }
 /* }}} */
 

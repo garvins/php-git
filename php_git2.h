@@ -29,10 +29,6 @@
 #define PHP_GIT2_EXTNAME "git2"
 #define PHP_GIT2_EXTVER "0.3.0"
 
-#ifdef HAVE_CONFIG_H
-#include "config.h"
-#endif
-
 #include "php.h"
 #include "php_ini.h"
 #include "zend.h"

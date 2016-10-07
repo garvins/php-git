@@ -165,7 +165,7 @@ PHP_FUNCTION(git_filter_list_free)
 		GIT2_SHOULD_FREE(_filters) = 0;
 	}
 
-	zval_ptr_dtor(&filters);
+	zval_ptr_dtor(filters);
 }
 /* }}} */
 
