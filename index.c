@@ -693,7 +693,7 @@ PHP_FUNCTION(git_index_find)
 		RETURN_FALSE;
 	}
 
-	result = git_index_find(at_pos, PHP_GIT2_V(_index, index), path);
+	result = git_index_find(&at_pos, PHP_GIT2_V(_index, index), path);
 
 	RETURN_LONG(result);
 }
@@ -736,7 +736,7 @@ PHP_FUNCTION(git_index_conflict_add)
 PHP_FUNCTION(git_index_conflict_get)
 {
 	php_git2_t *_index = NULL;
-	git_index_entry *ancestor_out = NULL, *our_out = NULL, *their_out = NULL;
+	const git_index_entry *ancestor_out = NULL, *our_out = NULL, *their_out = NULL;
 	zval *index = NULL, *ancestor, *our, *their, *container;
 	char *path = NULL;
 	int path_len = 0, error = 0;
@@ -755,9 +755,9 @@ PHP_FUNCTION(git_index_conflict_get)
 		RETURN_FALSE;
 	}
 
-	php_git2_index_entry_to_array(ancestor_out, &ancestor TSRMLS_CC);
-	php_git2_index_entry_to_array(our_out, our TSRMLS_CC);
-	php_git2_index_entry_to_array(their_out, their TSRMLS_CC);
+	php_git2_git_index_entry_to_array(ancestor_out, ancestor TSRMLS_CC);
+	php_git2_git_index_entry_to_array(our_out, our TSRMLS_CC);
+	php_git2_git_index_entry_to_array(their_out, their TSRMLS_CC);
 
     array_init(container);
     add_assoc_zval_ex(container, ZEND_STRS("ancestor"), ancestor);
@@ -872,7 +872,7 @@ PHP_FUNCTION(git_index_conflict_iterator_new)
 PHP_FUNCTION(git_index_conflict_next)
 {
 	php_git2_t *_iterator = NULL;
-	git_index_entry *ancestor_out = NULL, *our_out = NULL, *their_out = NULL;
+	const git_index_entry *ancestor_out = NULL, *our_out = NULL, *their_out = NULL;
 	zval *iterator = NULL, *ancestor, *our, *their, *container;
 	int error = 0;
 
@@ -892,9 +892,9 @@ PHP_FUNCTION(git_index_conflict_next)
 		RETURN_FALSE;
 	}
 
-	php_git2_index_entry_to_array(ancestor_out, ancestor TSRMLS_CC);
-	php_git2_index_entry_to_array(our_out, our TSRMLS_CC);
-	php_git2_index_entry_to_array(their_out, their TSRMLS_CC);
+	php_git2_git_index_entry_to_array(ancestor_out, ancestor TSRMLS_CC);
+	php_git2_git_index_entry_to_array(our_out, our TSRMLS_CC);
+	php_git2_git_index_entry_to_array(their_out, their TSRMLS_CC);
 
 	array_init(container);
     add_assoc_zval_ex(container, ZEND_STRS("ancestor"), ancestor);

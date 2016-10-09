@@ -144,7 +144,8 @@ function parseFile($path){
                 
                 if (!preg_match("/git_reflog_(entry_id_new|write)/", $match[2][$i]) &&
                     (!preg_match("/git_(packbuilder|index)_write$/", $match[2][$i])) &&
-                    ($key == 0 && ($pl >= 2 || preg_match("/(cpy|out|git_strarray|(revspec|int) \*)/", $l)
+                    ($key == 0 && ($pl >= 2 || preg_match("/(cpy|out|git_strarray|revspec \*)/", $l)
+                            || ($pl == 1 && getPHPReturnType($type) == "long")
                             || preg_match("/(write|create|new)/", $match[2][$i])))) {
                     $w = 1;
                     $tmp['retval'] = array(
