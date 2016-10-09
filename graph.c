@@ -31,7 +31,6 @@ PHP_FUNCTION(git_graph_ahead_behind)
 	}
 	result = git_graph_ahead_behind(&ahead, &behind, PHP_GIT2_V(_repo, repository), &__local, &__upstream);
 
-	MAKE_STD_ZVAL(array);
 	array_init(array);
 	add_next_index_long(array, ahead);
 	add_next_index_long(array, behind);

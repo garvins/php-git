@@ -65,10 +65,6 @@ PHP_FUNCTION(git_revparse_ext)
 		RETURN_FALSE;
 	}
 
-	MAKE_STD_ZVAL(array);
-	MAKE_STD_ZVAL(a);
-	MAKE_STD_ZVAL(b);
-
 	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_OBJECT, object_out, 0 TSRMLS_CC)) {
 		RETURN_FALSE;
 	}

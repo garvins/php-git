@@ -758,7 +758,7 @@ PHP_FUNCTION(git_index_conflict_get)
 	php_git2_index_entry_to_array(ancestor_out, &ancestor TSRMLS_CC);
 	php_git2_index_entry_to_array(our_out, our TSRMLS_CC);
 	php_git2_index_entry_to_array(their_out, their TSRMLS_CC);
-	MAKE_STD_ZVAL(container);
+
     array_init(container);
     add_assoc_zval_ex(container, ZEND_STRS("ancestor"), ancestor);
     add_assoc_zval_ex(container, ZEND_STRS("our"), our);
@@ -895,7 +895,7 @@ PHP_FUNCTION(git_index_conflict_next)
 	php_git2_index_entry_to_array(ancestor_out, ancestor TSRMLS_CC);
 	php_git2_index_entry_to_array(our_out, our TSRMLS_CC);
 	php_git2_index_entry_to_array(their_out, their TSRMLS_CC);
-	MAKE_STD_ZVAL(container);
+
 	array_init(container);
     add_assoc_zval_ex(container, ZEND_STRS("ancestor"), ancestor);
     add_assoc_zval_ex(container, ZEND_STRS("our"), our);

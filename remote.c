@@ -597,7 +597,6 @@ PHP_FUNCTION(git_remote_ls)
 		RETURN_FALSE;
 	}
 
-	MAKE_STD_ZVAL(container);
 	array_init(container);
 	for (i = 0; i < size; i++) {
 		php_git2_git_remote_head_to_array(out[i], retval TSRMLS_CC);

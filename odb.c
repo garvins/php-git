@@ -210,7 +210,7 @@ PHP_FUNCTION(git_odb_read_header)
 	if (php_git2_check_error(error, "git_odb_read_header" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	MAKE_STD_ZVAL(_result);
+
 	array_init(_result);
 	add_next_index_long(_result, len_out);
 	add_next_index_long(_result, type_out);
