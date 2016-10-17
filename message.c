@@ -22,7 +22,7 @@ PHP_FUNCTION(git_message_prettify)
 		RETURN_FALSE;
 	}
 
-	RETURN_STRING(&out);
+	RETURN_STRING(out);
 }
 /* }}} */
 

@@ -192,7 +192,7 @@ PHP_FUNCTION(git_refspec_transform)
 		RETURN_FALSE;
 	}
 
-	RETURN_STRING(&out);
+	RETURN_STRING(out);
 }
 /* }}} */
 
@@ -221,7 +221,7 @@ PHP_FUNCTION(git_refspec_rtransform)
 		RETURN_FALSE;
 	}
 
-	RETURN_STRING(&out);
+	RETURN_STRING(out);
 }
 /* }}} */
 

@@ -222,15 +222,20 @@ function printFile($table, $file) {
 
         $t = array();
         foreach ($func['args'] as $key => $a) {
-            if (($key == 0 && preg_match("/(buffer|((_|^)size|len)$)/", $a['name']))
-                || ($key > 0 && "{$func['args'][$key - 1]["name"]}_len" ==  $a['name'])
-                || ($key > 0 && preg_match("/buffer/", $func['args'][$key - 1]["name"]) && preg_match("/len/", $a["name"]))
-                || ($key > 0 && getPHPReturnType($func['args'][$key - 1]['type']) == "void"
-                    && $func['args'][$key - 1]['pointer'] > 0 && preg_match("/(_|^)size$/", $a["name"]))) {
+            if (isPointerLen($a, $func, $key)) {
                 continue;
             }
 
-            $t[] = (isCallback($a) ? "Callable" : getPHPReturnType($a['type'])) . " \${$a['name']}";
+            if (isCallback($a)) {
+                $sigParamType = "Callable";
+            } else if (getPHPReturnType($a['type']) == 'void' && $a['pointer'] > 0
+                && ($key < 1 || !isCallback($func['args'][$key - 1])) && !preg_match('/payload/', $a['name'])) {
+                $sigParamType = "string";
+            } else {
+                $sigParamType = getPHPReturnType($a['type']);
+            }
+
+            $t[] = "$sigParamType \${$a['name']}";
         }
 
         $sig = join(", ", $t);
@@ -246,7 +251,7 @@ function printFile($table, $file) {
             $buffer .= "{\n";
             $buffer .= getDeclarations($func);
 
-            if (count($func['args'])) {
+            if (count($func['args']) > 1 || (count($func['args']) && !isPointerLen($func['args'][0], $func, 0))) {
                 $buffer .= "\tif (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,\n";
                 $buffer .= "\t\t" . sprintf('"%s", %s) == FAILURE) {%s', getParseStr($func), getParseStr2($func), "\n");
                 $buffer .= "\t\treturn;\n";
@@ -308,7 +313,9 @@ function printFile($table, $file) {
             }
 
             foreach ($func['args'] as $key => $arg) {
-                if (preg_match("/void/", $arg['type'])) {
+                if ($key > 0 && isPointerLen($arg, $func, $key)) {
+                    $temp[] = $arg['name'];
+                } else if (preg_match("/void/", $arg['type'])) {
                     if  ($key > 0 && isCallback($func['args'][$key - 1])) {
                         $nameStart = explode("_", $func['args'][$key - 1]['name'])[0];
                         $temp[] = "{$nameStart}_cb";
@@ -459,7 +466,7 @@ function printFile($table, $file) {
                             $str = "__result";
                         }
                     } else if (getPHPReturnType($func['retval']['type']) == "string"
-                        && (hasOutValue($func) && $func['retval']['pointer'] <= 1
+                        && (hasOutValue($func) && $func['retval']['pointer'] < 1
                             || !hasOutValue($func) && $func['retval']['pointer'] == 0)
                         && !preg_match("/buffer/", $func['args'][0]['name'])) {
                         $str = isset($func['retval']['name']) ? "&". $func['retval']['name'] : "&result";
@@ -469,7 +476,7 @@ function printFile($table, $file) {
                     } else {
                         $str = isset($func['retval']['name']) ? $func['retval']['name'] : "result";
                     }
-
+                    
                     if (isBuf($func['retval'])) {
                         $buffer .= "\n\tRETURN_STRINGL(git_buf_cstr($str), git_buf_len($str));\n";
                         $buffer .= "\tgit_buf_free($str);\n";
@@ -547,6 +554,20 @@ function isBoolFunction($func) {
     }
 }
 
+function isPointerLen($arg, $func, $key) {
+    if ($key <= 0) {
+        $retType = getPHPReturnType($func['retval']['type']);
+    } else {
+        $retType = getPHPReturnType($func['args'][$key - 1]['type']);
+    }
+
+    return ($retType == "string" || $retType == "void")
+        && getPHPReturnType($arg['type']) == "long"
+        && preg_match("/(buffer|size|len)/", $arg['name'])
+        && (($key <= 0 && $func['retval']['pointer'] > 0)
+         || ($key > 0 && $func['args'][$key - 1]['pointer'] > 0));
+}
+
 function shouldBeFreed($arg) {
     $type = explode(" ", $arg['type']);
     $type = end($type);
@@ -598,7 +619,7 @@ function getDeclarations($func)
 
         if (isBuf($func['retval'])) {
             $result[$func['retval']['type']][] = "{$func['retval']['name']} = {0}";
-        } else if (isChar($func['retval']) && preg_match("/(buffer|((_|^)size|len)$)/", $func['args'][0]['name'])) {
+        } else if (isChar($func['retval']) && isPointerLen($func['args'][0], $func, 0)) {
             $result[$func['retval']['type']][] = "{$func['retval']['name']}[GIT2_BUFFER_SIZE] = {0}";
         } else if (isArray($func['retval'], true)) {
             $result[$func['retval']['type']][] = "*{$func['retval']['name']} = NULL";
@@ -623,9 +644,7 @@ function getDeclarations($func)
     }
 
     foreach ($func['args'] as $key => $arg) {
-        if (($key > 0 && "{$func['args'][$key - 1]["name"]}_len" ==  $arg['name'])) {
-            continue;
-        } else if (isOption($arg)) {
+        if (isOption($arg)) {
             $result[$arg['type']][] = "*_{$arg['name']} = NULL";
             $result['zval'][] = "*{$arg['name']} = NULL";
             $result['int'][] = "should_free = 0";
@@ -644,32 +663,38 @@ function getDeclarations($func)
             $result['zend_fcall_info'][] = "{$nameStart}_fci = empty_fcall_info";
             $result['zend_fcall_info_cache'][] = "{$nameStart}_fcc = empty_fcall_info_cache";
             $result['php_git2_cb_t'][] = "*{$nameStart}_cb = NULL";
-        } else if (isChar($arg)) {
-            $result['char'][] = "*{$arg['name']} = NULL";
-            $result['size_t'][] = "{$arg['name']}_len";
         } else if (getPHPReturnType($arg['type']) == "long") {
-            if ($key == 0 && preg_match("/(buffer|((_|^)size|len)$)/", $arg['name'])) {
-                $result[$arg['type']][] = "{$arg['name']} = GIT2_BUFFER_SIZE";
+            if (isPointerLen($arg, $func, $key)) {
+                if ($key == 0) {
+                    $result[$arg['type']][] = "{$arg['name']} = GIT2_BUFFER_SIZE";
+                } else {
+                    $result['size_t'][] = "{$arg['name']}";
+                }
             } else {
                 $result['zend_long'][] = "{$arg['name']}";
             }
+        } else if (isChar($arg)) {
+            $result['char'][] = "*{$arg['name']} = NULL";
         } else if (isOid($arg)) {
             $result['char'][] = "*{$arg['name']} = NULL";
-            $result['size_t'][] = "{$arg['name']}_len";
             $result['git_oid'][] = "__{$arg['name']} = {0}";
         } else if (isBuf($arg)) {
             $result['char'][] = "*{$arg['name']} = NULL";
             $result['git_buf'][] = "_{$arg['name']} = {0};";
-            $result['size_t'][] = "{$arg['name']}_len";
         } else if (preg_match("/git_/", $arg['type'])) {
             $result['zval'][] = "*{$arg['name']} = NULL";
             $result['php_git2_t'][] = "*_{$arg['name']} = NULL";
         } else if (preg_match("/void/", $arg['type'])) {
-            if ($arg['pointer'] > 0 && count($func['args']) - 1 > $key && ($key < 1 || !isCallback($func['args'][$key - 1]))) {
+            if ($arg['pointer'] > 0 && !preg_match('/payload/', $arg['name']) && ($key < 1 || !isCallback($func['args'][$key - 1]))) {
                 $result['char'][] = "*{$arg['name']} = NULL";
             } else {
                 $result['zval'][] = "*{$arg['name']} = NULL";
             }
+        }
+
+        if (getPHPReturnType($arg['type']) == "string" && !isArray($arg)
+            && (count($func['args']) <= $key + 1 || !isPointerLen($func['args'][$key + 1], $func, $key + 1))) {
+            $result['size_t'][] = "{$arg['name']}_len";
         }
     }
 
@@ -704,8 +729,7 @@ function getParseStr($func)
     $hasOptional = false;
     $result = array();
     foreach ($func['args'] as $key => $arg) {
-        if ($key > 0 && preg_match("/buffer/", $func['args'][$key - 1]["name"])
-            && preg_match("/len/", $arg["name"])) {
+        if (isPointerLen($arg, $func, $key)) {
             continue;
         }
 
@@ -719,11 +743,7 @@ function getParseStr($func)
         } else if (getPHPReturnType($arg['type']) == "string") {
             $result[] = "s";
         } else if (getPHPReturnType($arg['type']) == "long") {
-            if (!(((end($result)  == 's' || $key == 0) && preg_match("/(buffer|(_|^)size$)/", $arg['name']))
-                || $key == 0 && preg_match("/len$/", $arg['name'])
-                || ($key > 0 && getPHPReturnType($func['args'][$key - 1]['type']) == "void" && preg_match("/len$/", $arg['name'])))) {
-                $result[] = "l";
-            }
+            $result[] = "l";
         } else if (isCallback($arg)) {
             $result[] = "f";
         } else if (isResource($arg)) {
@@ -744,8 +764,7 @@ function getParseStr2($func)
 {
     $result = array();
     foreach ($func['args'] as $key => $arg) {
-        if ($key == 0 && preg_match("/(buffer|((_|^)size|len)$)/", $arg['name'])
-            || ($key > 0 && "{$func['args'][$key - 1]["name"]}_len" ==  $arg['name'])) {
+        if ($key == 0 && isPointerLen($arg, $func, $key)) {
             continue;
         }
 
@@ -759,7 +778,8 @@ function getParseStr2($func)
 
         $result[] = "&{$arg['name']}";
 
-        if (getPHPReturnType($arg['type']) == "string" && !isArray($arg)) {
+        if (getPHPReturnType($arg['type']) == "string" && !isArray($arg)
+            && (count($func['args']) <= $key + 1 || !isPointerLen($func['args'][$key + 1], $func, $key + 1))) {
             $result[] = "&{$arg['name']}_len";
         }
     }

@@ -2,72 +2,57 @@
 #include "php_git2_priv.h"
 #include "g_config.h"
 
-/* {{{ proto string git_config_find_global(long $length)
+/* {{{ proto string git_config_find_global()
  */
 PHP_FUNCTION(git_config_find_global)
 {
-	char out = NULL;
-	zend_long length;
+	char out[GIT2_BUFFER_SIZE] = {0};
+	size_t length = GIT2_BUFFER_SIZE;
 	int error;
 	
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"l", &length) == FAILURE) {
-		return;
-	}
-
 	error = git_config_find_global(&out, length);
 
 	if (php_git2_check_error(error, "git_config_find_global" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
 
-	RETURN_STRING(&out);
+	RETURN_STRING(out);
 }
 /* }}} */
 
-/* {{{ proto string git_config_find_xdg(long $length)
+/* {{{ proto string git_config_find_xdg()
  */
 PHP_FUNCTION(git_config_find_xdg)
 {
-	char out = NULL;
-	zend_long length;
+	char out[GIT2_BUFFER_SIZE] = {0};
+	size_t length = GIT2_BUFFER_SIZE;
 	int error;
 	
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"l", &length) == FAILURE) {
-		return;
-	}
-
 	error = git_config_find_xdg(&out, length);
 
 	if (php_git2_check_error(error, "git_config_find_xdg" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
 
-	RETURN_STRING(&out);
+	RETURN_STRING(out);
 }
 /* }}} */
 
-/* {{{ proto string git_config_find_system(long $length)
+/* {{{ proto string git_config_find_system()
  */
 PHP_FUNCTION(git_config_find_system)
 {
-	char out = NULL;
-	zend_long length;
+	char out[GIT2_BUFFER_SIZE] = {0};
+	size_t length = GIT2_BUFFER_SIZE;
 	int error;
 	
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"l", &length) == FAILURE) {
-		return;
-	}
-
 	error = git_config_find_system(&out, length);
 
 	if (php_git2_check_error(error, "git_config_find_system" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
 
-	RETURN_STRING(&out);
+	RETURN_STRING(out);
 }
 /* }}} */
 

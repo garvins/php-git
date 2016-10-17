@@ -35,8 +35,8 @@ PHP_FUNCTION(git_commit_lookup)
 	git_commit *commit = NULL;
 	zval *repo = NULL;
 	char *id = NULL;
-	size_t id_len;
 	git_oid __id = {0};
+	size_t id_len;
 	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
@@ -124,7 +124,7 @@ PHP_FUNCTION(git_commit_tree)
 }
 /* }}} */
 
-/* {{{ proto resource git_commit_lookup_prefix(resource $repo, string $id, long $len)
+/* {{{ proto resource git_commit_lookup_prefix(resource $repo, string $id)
  */
 PHP_FUNCTION(git_commit_lookup_prefix)
 {
@@ -132,13 +132,12 @@ PHP_FUNCTION(git_commit_lookup_prefix)
 	git_commit *commit = NULL;
 	zval *repo = NULL;
 	char *id = NULL;
-	size_t id_len;
 	git_oid __id = {0};
-	zend_long len;
+	size_t len;
 	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"rsl", &repo, &id, &id_len, &len) == FAILURE) {
+		"rs", &repo, &id, &len) == FAILURE) {
 		return;
 	}
 

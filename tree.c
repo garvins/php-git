@@ -38,8 +38,8 @@ PHP_FUNCTION(git_tree_entry_byoid)
 	zval *tree = NULL;
 	php_git2_t *_tree = NULL, *__result = NULL;
 	char *oid = NULL;
-	size_t oid_len;
 	git_oid __oid = {0};
+	size_t oid_len;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &tree, &oid, &oid_len) == FAILURE) {
@@ -406,8 +406,8 @@ PHP_FUNCTION(git_tree_lookup)
 	git_tree *out = NULL;
 	zval *repo = NULL;
 	char *id = NULL;
-	size_t id_len;
 	git_oid __id = {0};
+	size_t id_len;
 	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,

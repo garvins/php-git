@@ -45,7 +45,7 @@ PHP_FUNCTION(git_indexer_new)
 }
 /* }}} */
 
-/* {{{ proto long git_indexer_append(resource $idx, void $data, array $stats)
+/* {{{ proto long git_indexer_append(resource $idx, string $data, array $stats)
  */
 PHP_FUNCTION(git_indexer_append)
 {
@@ -53,7 +53,7 @@ PHP_FUNCTION(git_indexer_append)
 	zval *idx = NULL, *stats = NULL;
 	php_git2_t *_idx = NULL;
 	char *data = NULL;
-	zend_long size;
+	size_t size;
 	git_transfer_progress _stats = {0};
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,

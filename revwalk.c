@@ -62,8 +62,8 @@ PHP_FUNCTION(git_revwalk_push)
 	zval *walk = NULL;
 	php_git2_t *_walk = NULL;
 	char *id = NULL;
-	size_t id_len;
 	git_oid __id = {0};
+	size_t id_len;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &walk, &id, &id_len) == FAILURE) {
@@ -140,8 +140,8 @@ PHP_FUNCTION(git_revwalk_hide)
 	zval *walk = NULL;
 	php_git2_t *_walk = NULL;
 	char *commit_id = NULL;
-	size_t commit_id_len;
 	git_oid __commit_id = {0};
+	size_t commit_id_len;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &walk, &commit_id, &commit_id_len) == FAILURE) {

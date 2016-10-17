@@ -10,8 +10,8 @@ PHP_FUNCTION(git_object_lookup)
 	git_object *object = NULL;
 	zval *repo = NULL;
 	char *id = NULL;
-	size_t id_len;
 	git_oid __id = {0};
+	size_t id_len;
 	zend_long type;
 	int error;
 	
@@ -42,7 +42,7 @@ PHP_FUNCTION(git_object_lookup)
 }
 /* }}} */
 
-/* {{{ proto resource git_object_lookup_prefix(resource $repo, string $id, long $len, long $type)
+/* {{{ proto resource git_object_lookup_prefix(resource $repo, string $id, long $type)
  */
 PHP_FUNCTION(git_object_lookup_prefix)
 {
@@ -50,13 +50,13 @@ PHP_FUNCTION(git_object_lookup_prefix)
 	git_object *object_out = NULL;
 	zval *repo = NULL;
 	char *id = NULL;
-	size_t id_len;
 	git_oid __id = {0};
-	zend_long len, type;
+	size_t len;
+	zend_long type;
 	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"rsll", &repo, &id, &id_len, &len, &type) == FAILURE) {
+		"rsl", &repo, &id, &len, &type) == FAILURE) {
 		return;
 	}
 

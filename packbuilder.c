@@ -66,8 +66,8 @@ PHP_FUNCTION(git_packbuilder_insert)
 	zval *pb = NULL;
 	php_git2_t *_pb = NULL;
 	char *id = NULL, *name = NULL;
-	size_t id_len, name_len;
 	git_oid __id = {0};
+	size_t id_len, name_len;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rss", &pb, &id, &id_len, &name, &name_len) == FAILURE) {
@@ -96,8 +96,8 @@ PHP_FUNCTION(git_packbuilder_insert_tree)
 	zval *pb = NULL;
 	php_git2_t *_pb = NULL;
 	char *id = NULL;
-	size_t id_len;
 	git_oid __id = {0};
+	size_t id_len;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &pb, &id, &id_len) == FAILURE) {
@@ -126,8 +126,8 @@ PHP_FUNCTION(git_packbuilder_insert_commit)
 	zval *pb = NULL;
 	php_git2_t *_pb = NULL;
 	char *id = NULL;
-	size_t id_len;
 	git_oid __id = {0};
+	size_t id_len;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &pb, &id, &id_len) == FAILURE) {

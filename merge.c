@@ -164,8 +164,8 @@ PHP_FUNCTION(git_merge_head_from_oid)
 	git_merge_head *out = NULL;
 	zval *repo = NULL;
 	char *oid = NULL;
-	size_t oid_len;
 	git_oid __oid = {0};
+	size_t oid_len;
 	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,

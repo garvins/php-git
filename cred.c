@@ -98,7 +98,7 @@ PHP_FUNCTION(git_cred_ssh_custom_new)
 	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"sslfz", &username, &username_len, &publickey, &publickey_len, &sign_fci, &sign_fcc, &sign_data) == FAILURE) {
+		"ssfz", &username, &username_len, &publickey, &publickey_len, &sign_fci, &sign_fcc, &sign_data) == FAILURE) {
 		return;
 	}
 

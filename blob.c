@@ -2,7 +2,7 @@
 #include "php_git2_priv.h"
 #include "blob.h"
 
-/* {{{ proto string git_blob_create_frombuffer(resource $repo, void $buffer)
+/* {{{ proto string git_blob_create_frombuffer(resource $repo, string $buffer)
  */
 PHP_FUNCTION(git_blob_create_frombuffer)
 {
@@ -11,7 +11,7 @@ PHP_FUNCTION(git_blob_create_frombuffer)
 	zval *repo = NULL;
 	php_git2_t *_repo = NULL;
 	char *buffer = NULL;
-	zend_long len;
+	size_t len;
 	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
@@ -256,8 +256,8 @@ PHP_FUNCTION(git_blob_lookup)
 	git_blob *blob = NULL;
 	zval *repo = NULL;
 	char *id = NULL;
-	size_t id_len;
 	git_oid __id = {0};
+	size_t id_len;
 	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
@@ -287,7 +287,7 @@ PHP_FUNCTION(git_blob_lookup)
 }
 /* }}} */
 
-/* {{{ proto resource git_blob_lookup_prefix(resource $repo, string $id, long $len)
+/* {{{ proto resource git_blob_lookup_prefix(resource $repo, string $id)
  */
 PHP_FUNCTION(git_blob_lookup_prefix)
 {
@@ -295,13 +295,12 @@ PHP_FUNCTION(git_blob_lookup_prefix)
 	git_blob *blob = NULL;
 	zval *repo = NULL;
 	char *id = NULL;
-	size_t id_len;
 	git_oid __id = {0};
-	zend_long len;
+	size_t len;
 	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"rsl", &repo, &id, &id_len, &len) == FAILURE) {
+		"rs", &repo, &id, &len) == FAILURE) {
 		return;
 	}
 

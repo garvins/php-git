@@ -67,8 +67,8 @@ PHP_FUNCTION(git_note_next)
 {
 	int result;
 	char *note_id = NULL, *annotated_id = NULL;
-	size_t note_id_len, annotated_id_len;
 	git_oid __note_id = {0}, __annotated_id = {0};
+	size_t note_id_len, annotated_id_len;
 	zval *it = NULL;
 	php_git2_t *_it = NULL;
 	

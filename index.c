@@ -673,19 +673,18 @@ PHP_FUNCTION(git_index_update_all)
 }
 /* }}} */
 
-/* {{{ proto long git_index_find(long $at_pos, resource $index, string $path)
+/* {{{ proto long git_index_find(resource $index, string $path)
  */
 PHP_FUNCTION(git_index_find)
 {
-	int result;
-	zend_long at_pos;
+	size_t at_pos = 0, path_len;
 	zval *index = NULL;
 	php_git2_t *_index = NULL;
 	char *path = NULL;
-	size_t path_len;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"lrs", &at_pos, &index, &path, &path_len) == FAILURE) {
+		"rs", &index, &path, &path_len) == FAILURE) {
 		return;
 	}
 
@@ -693,9 +692,13 @@ PHP_FUNCTION(git_index_find)
 		RETURN_FALSE;
 	}
 
-	result = git_index_find(&at_pos, PHP_GIT2_V(_index, index), path);
+	error = git_index_find(&at_pos, PHP_GIT2_V(_index, index), path);
 
-	RETURN_LONG(result);
+	if (php_git2_check_error(error, "git_index_find" TSRMLS_CC)) {
+		RETURN_FALSE;
+	}
+
+	RETURN_LONG(at_pos);
 }
 /* }}} */
 

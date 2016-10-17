@@ -67,8 +67,8 @@ PHP_FUNCTION(git_reflog_append)
 	zval *reflog = NULL, *committer = NULL;
 	php_git2_t *_reflog = NULL;
 	char *id = NULL, *msg = NULL;
-	size_t id_len, msg_len;
 	git_oid __id = {0};
+	size_t id_len, msg_len;
 	git_signature *_committer = NULL;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,

@@ -210,7 +210,7 @@ PHP_FUNCTION(git_repository_discover)
 		RETURN_FALSE;
 	}
 
-	RETURN_STRING(&path_out);
+	RETURN_STRING(path_out);
 }
 /* }}} */
 
@@ -635,7 +635,7 @@ PHP_FUNCTION(git_repository_message)
 		RETURN_FALSE;
 	}
 
-	RETURN_STRING(&out);
+	RETURN_STRING(out);
 }
 /* }}} */
 
@@ -814,8 +814,8 @@ PHP_FUNCTION(git_repository_set_head_detached)
 	zval *repo = NULL;
 	php_git2_t *_repo = NULL;
 	char *commitish = NULL;
-	size_t commitish_len;
 	git_oid __commitish = {0};
+	size_t commitish_len;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rs", &repo, &commitish, &commitish_len) == FAILURE) {

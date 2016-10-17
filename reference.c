@@ -400,8 +400,8 @@ PHP_FUNCTION(git_reference_set_target)
 	git_reference *out = NULL;
 	zval *ref = NULL;
 	char *id = NULL;
-	size_t id_len;
 	git_oid __id = {0};
+	size_t id_len;
 	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
