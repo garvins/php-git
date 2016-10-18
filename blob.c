@@ -169,7 +169,7 @@ PHP_FUNCTION(git_blob_filtered_content)
 		RETURN_FALSE;
 	}
 
-	RETURN_STRINGL(git_buf_cstr(&out), git_buf_len(&out));
+	RETURN_STRINGL(out.ptr, out.size);
 	git_buf_free(&out);
 }
 /* }}} */

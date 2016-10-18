@@ -48,6 +48,7 @@
 #include "git2/odb_backend.h"
 #include "git2/trace.h"
 #include "git2/sys/filter.h"
+#include "git2/sys/repository.h"
 #include "git2/sys/odb_backend.h"
 
 #include "date/php_date.h"

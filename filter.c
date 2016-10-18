@@ -71,7 +71,7 @@ PHP_FUNCTION(git_filter_list_apply_to_data)
 		RETURN_FALSE;
 	}
 
-	RETURN_STRINGL(git_buf_cstr(&out), git_buf_len(&out));
+	RETURN_STRINGL(out.ptr, out.size);
 	git_buf_free(&out);
 }
 /* }}} */
@@ -106,7 +106,7 @@ PHP_FUNCTION(git_filter_list_apply_to_file)
 		RETURN_FALSE;
 	}
 
-	RETURN_STRINGL(git_buf_cstr(&out), git_buf_len(&out));
+	RETURN_STRINGL(out.ptr, out.size);
 	git_buf_free(&out);
 }
 /* }}} */
@@ -139,7 +139,7 @@ PHP_FUNCTION(git_filter_list_apply_to_blob)
 		RETURN_FALSE;
 	}
 
-	RETURN_STRINGL(git_buf_cstr(&out), git_buf_len(&out));
+	RETURN_STRINGL(out.ptr, out.size);
 	git_buf_free(&out);
 }
 /* }}} */

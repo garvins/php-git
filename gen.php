@@ -478,8 +478,8 @@ function printFile($table, $file) {
                     }
                     
                     if (isBuf($func['retval'])) {
-                        $buffer .= "\n\tRETURN_STRINGL(git_buf_cstr($str), git_buf_len($str));\n";
-                        $buffer .= "\tgit_buf_free($str);\n";
+                        $buffer .= "\n\tRETURN_STRINGL({$str}.ptr, {$str}.size);\n";
+                        $buffer .= "\tgit_buf_free(&$str);\n";
                     } else {
                         $buffer .= "\n\t" . (isBoolFunction($func) ? 'RETURN_BOOL' : getReturnMacro($func['retval']['type'])) ."($str);\n";
                     }
