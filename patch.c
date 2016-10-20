@@ -218,8 +218,8 @@ PHP_FUNCTION(git_patch_line_stats)
 PHP_FUNCTION(git_patch_get_hunk)
 {
 	php_git2_t *result = NULL, *_patch = NULL;
-	git_diff_hunk *out = NULL;
 	zend_long lines_in_hunk, hunk_idx;
+	const git_diff_hunk *out = NULL;
 	zval *patch = NULL;
 	int error;
 	
@@ -275,7 +275,7 @@ PHP_FUNCTION(git_patch_num_lines_in_hunk)
 PHP_FUNCTION(git_patch_get_line_in_hunk)
 {
 	php_git2_t *result = NULL, *_patch = NULL;
-	git_diff_line *out = NULL;
+	const git_diff_line *out = NULL;
 	zval *patch = NULL;
 	zend_long hunk_idx, line_of_hunk;
 	int error;
@@ -352,6 +352,7 @@ PHP_FUNCTION(git_patch_print)
 		&empty_fcall_info, &empty_fcall_info_cache,
 		&fci, &fcc
 	);
+
 	result = git_patch_print(PHP_GIT2_V(_patch, patch), php_git2_git_diff_line_cb, cb);
 	php_git2_multi_cb_free(cb);
 	RETURN_LONG(result);

@@ -525,6 +525,7 @@ PHP_FUNCTION(git_diff_print)
                                &fci, &fcc)) {
 		RETURN_FALSE;
 	}
+
 	result = git_diff_print(PHP_GIT2_V(_diff, diff), format, php_git2_git_diff_line_cb, cb);
 	php_git2_multi_cb_free(cb);
 	RETURN_LONG(result);
@@ -624,6 +625,7 @@ PHP_FUNCTION(git_diff_blob_to_buffer)
 		&hunk_fci, &hunk_fcc,
 		&line_fci, &line_fcc
 	);
+
 	result = git_diff_blob_to_buffer(
 		PHP_GIT2_V(_old_blob, blob), old_as_path,
 		buffer, buffer_len, buffer_as_path,

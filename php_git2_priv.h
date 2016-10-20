@@ -59,7 +59,7 @@ do {\
 #define GIT2_OID_HEXSIZE (GIT_OID_HEXSZ+1)
 #define GIT2_BUFFER_SIZE 512
 
-int php_git2_make_resource(php_git2_t **out, enum php_git2_resource_type type, void *resource, int should_free TSRMLS_DC);
+int php_git2_make_resource(php_git2_t **out, enum php_git2_resource_type type, const void *resource, int should_free TSRMLS_DC);
 
 #include "helper.h"
 

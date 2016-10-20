@@ -281,7 +281,7 @@ PHP_FUNCTION(git_merge)
 	php_git2_t *result = NULL, *_repo = NULL, *_their_head = NULL;
 	git_merge_result *out = NULL;
 	zval *repo = NULL, *opts = NULL, *theirhead = NULL;
-	git_merge_head *heads[1];
+	const git_merge_head *heads[1];
 	int error = 0;
 	git_merge_opts options = GIT_MERGE_OPTS_INIT;
 	
@@ -301,6 +301,7 @@ PHP_FUNCTION(git_merge)
 	heads[0] = PHP_GIT2_V(_their_head, merge_head);
 
 	error = git_merge(&out, PHP_GIT2_V(_repo, repository), heads, 1, &options);
+
 	if (php_git2_check_error(error, "git_merge" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}

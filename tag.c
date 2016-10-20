@@ -282,7 +282,6 @@ PHP_FUNCTION(git_tag_tagger)
 	result = git_tag_tagger(PHP_GIT2_V(_tag, tag));
 
 	php_git2_git_signature_to_array(result, array TSRMLS_CC);
-	git_signature_free(result);
 
 	RETURN_ZVAL(array, 0, 1);
 }

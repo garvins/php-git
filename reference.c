@@ -736,7 +736,7 @@ PHP_FUNCTION(git_reference_next)
  */
 PHP_FUNCTION(git_reference_next_name)
 {
-	char *out = NULL;
+	const char *out = NULL;
 	zval *iter = NULL;
 	php_git2_t *_iter = NULL;
 	int error;

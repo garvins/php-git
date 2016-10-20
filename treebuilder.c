@@ -136,7 +136,7 @@ PHP_FUNCTION(git_treebuilder_get)
 PHP_FUNCTION(git_treebuilder_insert)
 {
 	php_git2_t *result = NULL, *_bld = NULL;
-	git_tree_entry *out = NULL;
+	const git_tree_entry *out = NULL;
 	zval *bld = NULL;
 	char *filename = NULL, *id = NULL;
 	size_t filename_len, id_len;

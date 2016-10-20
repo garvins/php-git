@@ -144,7 +144,7 @@ static zend_class_entry *php_git2_get_exception_base(TSRMLS_D)
 	return zend_exception_get_default(TSRMLS_C);
 }
 
-int php_git2_make_resource(php_git2_t **out, enum php_git2_resource_type type, void *resource, int should_free TSRMLS_DC)
+int php_git2_make_resource(php_git2_t **out, enum php_git2_resource_type type, const void *resource, int should_free TSRMLS_DC)
 {
     zval *tmp;
 	php_git2_t *result = NULL;

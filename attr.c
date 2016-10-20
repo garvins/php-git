@@ -25,10 +25,11 @@ PHP_FUNCTION(git_attr_value)
  */
 PHP_FUNCTION(git_attr_get)
 {
-	char *value_out = NULL, *path = NULL, *name = NULL;
+	const char *value_out = NULL;
 	zval *repo = NULL;
 	php_git2_t *_repo = NULL;
 	zend_long flags;
+	char *path = NULL, *name = NULL;
 	size_t path_len, name_len;
 	int error;
 	
@@ -55,10 +56,12 @@ PHP_FUNCTION(git_attr_get)
  */
 PHP_FUNCTION(git_attr_get_many)
 {
-	char *values_out = NULL, *path = NULL;
-	zval *repo = NULL, *names = NULL;
+	const char *values_out = NULL;
+	zval *repo = NULL;
+	const char **names = NULL;
 	php_git2_t *_repo = NULL;
 	zend_long flags, num_attr;
+	char *path = NULL;
 	size_t path_len;
 	int error;
 	

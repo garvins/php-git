@@ -229,7 +229,7 @@ PHP_FUNCTION(git_branch_lookup)
  */
 PHP_FUNCTION(git_branch_name)
 {
-	char *out = NULL;
+	const char *out = NULL;
 	zval *ref = NULL;
 	php_git2_t *_ref = NULL;
 	int error;

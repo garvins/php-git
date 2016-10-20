@@ -572,7 +572,7 @@ PHP_FUNCTION(git_remote_connect)
  */
 PHP_FUNCTION(git_remote_ls)
 {
-	git_remote_head **out = NULL;
+	const git_remote_head **out = NULL;
 	size_t size = 0;
 	zval *remote = NULL, *retval = NULL, *container = NULL;
 	php_git2_t *_remote = NULL;

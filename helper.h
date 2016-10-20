@@ -34,7 +34,7 @@ long php_git2_read_arrval_long2(zval *array, char *name, size_t name_len, long v
 
 long php_git2_read_arrval_long(zval *array, char *name, size_t name_len TSRMLS_DC);
 
-const char* php_git2_read_arrval_string(zval *array, char *name, size_t name_len TSRMLS_DC);
+char* php_git2_read_arrval_string(zval *array, char *name, size_t name_len TSRMLS_DC);
 
 void php_git2_array_to_git_signature(git_signature *signature, zval *author TSRMLS_DC);
 
@@ -84,7 +84,7 @@ int php_git2_git_diff_line_cb(const git_diff_delta *delta, const git_diff_hunk *
 
 int php_git2_git_blob_chunk_cb(char *content, size_t max_length, void *payload);
 
-void php_git2_git_transfer_progress_to_array(git_transfer_progress *progress, zval *out TSRMLS_DC);
+void php_git2_git_transfer_progress_to_array(const git_transfer_progress *progress, zval *out TSRMLS_DC);
 
 void php_git2_fcall_info_wrapper(zval *target, zend_fcall_info **out_fci, zend_fcall_info_cache **out_fcc TSRMLS_DC);
 
@@ -94,7 +94,7 @@ void php_git2_array_to_git_blame_options(git_blame_options *options, zval *array
 
 void php_git2_git_blame_options_to_array(git_blame_options *options, zval *out TSRMLS_DC);
 
-void php_git2_git_blame_hunk_to_array(git_blame_hunk *hunk, zval *out TSRMLS_DC);
+void php_git2_git_blame_hunk_to_array(const git_blame_hunk *hunk, zval *out TSRMLS_DC);
 
 void php_git2_git_clone_options_to_array(git_clone_options *options, zval *out TSRMLS_DC);
 
@@ -138,7 +138,7 @@ void php_git2_array_to_git_transfer_progress(git_transfer_progress *progress, zv
 
 int php_git2_git_cred_cb(git_cred **cred, const char *url, const char *username_from_url, unsigned int allowed_types, void *data);
 
-void php_git2_git_remote_head_to_array(git_remote_head *head, zval *out TSRMLS_DC);
+void php_git2_git_remote_head_to_array(const git_remote_head *head, zval *out TSRMLS_DC);
 
 int php_git2_git_reference_foreach_cb(git_reference *reference, void *payload);
 
@@ -158,7 +158,7 @@ void php_git2_git_status_options_to_array(git_status_options *options, zval *out
 
 void php_git2_array_to_git_status_options(git_status_options *options, zval *array TSRMLS_DC);
 
-void php_git2_git_status_entry_to_array(git_status_entry *entry, zval *out TSRMLS_DC);
+void php_git2_git_status_entry_to_array(const git_status_entry *entry, zval *out TSRMLS_DC);
 
 int php_git2_git_status_cb(const char *path, unsigned int status_flags, void *payload);
 
@@ -212,7 +212,7 @@ void php_git2_odb_refresh(git_odb_backend *_backend);
 
 int php_git2_git_push_transfer_progress(unsigned int current, unsigned int total, size_t bytes, void* payload);
 
-void php_git2_git_config_entry_to_array(git_config_entry *entry, zval *result);
+void php_git2_git_config_entry_to_array(const git_config_entry *entry, zval *result);
 
 int php_git2_git_config_foreach_cb(const git_config_entry *entry, void *payload);
 

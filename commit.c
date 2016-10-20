@@ -86,7 +86,6 @@ PHP_FUNCTION(git_commit_author)
 	result = git_commit_author(PHP_GIT2_V(_commit, commit));
 
 	php_git2_git_signature_to_array(result, array TSRMLS_CC);
-	git_signature_free(result);
 
 	RETURN_ZVAL(array, 0, 1);
 }
@@ -351,7 +350,6 @@ PHP_FUNCTION(git_commit_committer)
 	result = git_commit_committer(PHP_GIT2_V(_commit, commit));
 
 	php_git2_git_signature_to_array(result, array TSRMLS_CC);
-	git_signature_free(result);
 
 	RETURN_ZVAL(array, 0, 1);
 }

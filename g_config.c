@@ -273,7 +273,7 @@ PHP_FUNCTION(git_config_free)
 PHP_FUNCTION(git_config_get_entry)
 {
 	zval *array, *cfg = NULL;
-	git_config_entry *out = NULL;
+	const git_config_entry *out = NULL;
 	php_git2_t *_cfg = NULL;
 	char *name = NULL;
 	size_t name_len;
@@ -396,9 +396,10 @@ PHP_FUNCTION(git_config_get_bool)
  */
 PHP_FUNCTION(git_config_get_string)
 {
-	char *out = NULL, *name = NULL;
+	const char *out = NULL;
 	zval *cfg = NULL;
 	php_git2_t *_cfg = NULL;
+	char *name = NULL;
 	size_t name_len;
 	int error;
 	

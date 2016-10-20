@@ -296,7 +296,7 @@ PHP_FUNCTION(git_note_free)
  */
 PHP_FUNCTION(git_note_default_ref)
 {
-	char *out = NULL;
+	const char *out = NULL;
 	zval *repo = NULL;
 	php_git2_t *_repo = NULL;
 	int error;

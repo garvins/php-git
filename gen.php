@@ -96,11 +96,13 @@ function parseFile($path){
             $list = array_map("trim", explode(",", $match[3][$i]));
 
             $pl = substr_count($match[1][$i], '*');
+            $isConst = preg_match('/(^|\s)const\s/', $match[1][$i]);
             $tmp['name'] = $match[2][$i];
             $tmp['rettype'] = $match[1][$i];
             $tmp['retval'] = array(
-                "type" => trim(str_replace("*", "", $match[1][$i])),
-                "pointer" => $pl
+                "type" => trim(str_replace('*', '', preg_replace('/(^|\s)const\s/', '', $match[1][$i]))),
+                "pointer" => $pl,
+                "const" => $isConst
             );
 
             $d = count($list);
@@ -132,7 +134,8 @@ function parseFile($path){
                 $l = preg_replace("/\/\*[\s\S]+\*\//", "", $l);
                 $pl = substr_count($l, '*');
                 $b = array_map(function($l){return trim($l, " *");}, explode(" ", $l));
-                $type = str_replace('*', '', preg_replace('/^const /', '', substr($l, 0, strrpos($l, " "))));
+                $isConst = preg_match('/(^|\s)const\s/', $l);
+                $type = trim(str_replace('*', '', preg_replace('/(^|\s)const\s/', '', substr($l, 0, strrpos($l, " ")))));
 
                 // function param has only one word => void
                 if (count($b) < 2) {
@@ -142,17 +145,17 @@ function parseFile($path){
                 $n = array_pop($b);
                 $b = array_pop($b);
                 
-                if (!preg_match("/git_reflog_(entry_id_new|write)/", $match[2][$i]) &&
-                    (!preg_match("/git_(packbuilder|index)_write$/", $match[2][$i])) &&
-                    ($key == 0 && ($pl >= 2 || preg_match("/(cpy|out|git_strarray|revspec \*)/", $l)
-                            || ($pl == 1 && getPHPReturnType($type) == "long")
-                            || preg_match("/(write|create|new)/", $match[2][$i])))) {
+                if ($key == 0 && ($pl >= 2 || preg_match('/out/', $l) || (!$isConst
+                    && (($pl == 1 && (getPHPReturnType($type) == "long"))
+                        || isArray(array('type' => $type), true)
+                        || isOid(array('type' => $type)))))) {
                     $w = 1;
                     $tmp['retval'] = array(
                         "write" => $w,
                         "name" => $n,
                         "type" => $type,
                         "pointer" => $pl,
+                        "const" => $isConst
                     );
                 } else {
                     $w = 0;
@@ -164,6 +167,7 @@ function parseFile($path){
                         "name" => $n,
                         "type" => $type,
                         "pointer" => $pl,
+                        "const" => false
                     );
 
                     if ($_SERVER['argv'][2] == "0") {
@@ -387,10 +391,10 @@ function printFile($table, $file) {
                     $buffer .= "\t}\n";
                     break;
                 } else if (isArray($arg, true)) {
-                    if (preg_match("/git_signature/", $arg['type'])) {
-                        $buffer .= "\tgit_signature_free(_{$arg['name']});\n";
-                    } else if (preg_match("/git_strarray/", $arg['type'])) {
-                        $buffer .= "\tgit_strarray_free(&_{$arg['name']});\n";
+                    $name = ($arg['pointer'] < 1 || preg_match("/git_strarray/", $arg['type']) ? "&" : "") . "_" . $arg['name'];
+                    $funcPrefix = trim($arg['type']);
+                    if (shouldBeFreed($arg) && !$arg['const']) {
+                        $buffer .= "\t{$funcPrefix}_free($name);\n";
                     }
                 }
             }
@@ -407,7 +411,7 @@ function printFile($table, $file) {
 
             // ------- make resource from out value -------
             if (isResource($func['retval'])) {
-                $cleanType = strtoupper(trim(str_replace(array("git_", "const") , "", $func['retval']['type'])));
+                $cleanType = strtoupper(trim(str_replace(array("git_") , "", $func['retval']['type'])));
                 if (hasOutValue($func)) {
                     $buffer .= "\n\tif (php_git2_make_resource(&result, PHP_GIT2_TYPE_{$cleanType}, {$func['retval']['name']}, 1 TSRMLS_CC)) {\n";
                 } else {
@@ -425,7 +429,7 @@ function printFile($table, $file) {
                 }
 
                 $name = ($func['retval']['pointer'] < 1 ? "&" : "") . $name;
-                $funcPrefix = trim(str_replace("const", "", $func['retval']['type']));
+                $funcPrefix = trim($func['retval']['type']);
 
                 $zvalName = (isset($func['retval']['name']) && $func['retval']['name'] == "array") ?
                     "_array" : "array";
@@ -436,7 +440,7 @@ function printFile($table, $file) {
                     $buffer .= "\n\tphp_git2_{$funcPrefix}_to_array($name, $zvalName TSRMLS_CC);\n";
                 }
 
-                if (shouldBeFreed($func['retval'])) {
+                if (shouldBeFreed($func['retval']) && !$func['retval']['const']) {
                     $buffer .= "\t{$funcPrefix}_free($name);\n";
                 }
             }
@@ -506,7 +510,6 @@ function printFile($table, $file) {
         file_put_contents($file, $buffer);
     }
 }
-
 
 function isOption($arg) {
     return preg_match('/_opt(s|ions)$/', $arg['type']);
@@ -606,6 +609,7 @@ function hasOutValue($func) {
 
 function getDeclarations($func)
 {
+    $const = ($func['retval']['const'] ? "const " : "");
     if (hasOutValue($func)) {
         if (isResource($func['retval'])) {
             $result['php_git2_t'][] = "*result = NULL";
@@ -617,16 +621,18 @@ function getDeclarations($func)
             }
         }
 
+        $returnType = $const . $func['retval']['type'];
         if (isBuf($func['retval'])) {
-            $result[$func['retval']['type']][] = "{$func['retval']['name']} = {0}";
+            $value = "{$func['retval']['name']} = {0}";
         } else if (isChar($func['retval']) && isPointerLen($func['args'][0], $func, 0)) {
-            $result[$func['retval']['type']][] = "{$func['retval']['name']}[GIT2_BUFFER_SIZE] = {0}";
+            $value = "{$func['retval']['name']}[GIT2_BUFFER_SIZE] = {0}";
         } else if (isArray($func['retval'], true)) {
-            $result[$func['retval']['type']][] = "*{$func['retval']['name']} = NULL";
+            $value = "*{$func['retval']['name']} = NULL";
         } else {
-            $result[$func['retval']['type']][] = str_repeat("*", ($func['retval']['pointer'] > 1 ? $func['retval']['pointer'] -1 : 0)) . $func['retval']['name'] .
+            $value = str_repeat("*", ($func['retval']['pointer'] > 1 ? $func['retval']['pointer'] -1 : 0)) . $func['retval']['name'] .
                 (getPHPReturnType($func['retval']['type']) == "long" ? " = 0" : (isOid($func['retval']) ? "" : " = NULL"));
         }
+        $result[$returnType][] = $value;
 
         if (isOid($func['retval'])) {
             $result[] = "\tchar __{$func['retval']['name']}[GIT2_OID_HEXSIZE] = {0};";
@@ -634,13 +640,13 @@ function getDeclarations($func)
     } else if (preg_match("/resource/", $func['retval']['type'])) {
         $result[] = "\tphp_git2_t *result = NULL;";
     } else if (!preg_match("/void/", $func['retval']['type'])) {
-        $result[$func['retval']['type']][] = str_repeat("*", $func['retval']['pointer']) . "result" . ($func['retval']['pointer'] ? " = NULL" : "");
+        $result[$const . $func['retval']['type']][] = str_repeat("*", $func['retval']['pointer']) . "result" . ($func['retval']['pointer'] ? " = NULL" : "");
 
         if (isOid($func['retval'])) {
             $result[] = "\tchar __result[GIT2_OID_HEXSIZE] = {0};";
         }
     } else if ($func['retval']['pointer'] > 0) {
-        $result[] = "\tconst char *buffer = NULL;";
+        $result[] = "\t{$const}char *buffer = NULL;";
     }
 
     foreach ($func['args'] as $key => $arg) {
