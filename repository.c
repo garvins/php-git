@@ -204,7 +204,7 @@ PHP_FUNCTION(git_repository_discover)
 		return;
 	}
 
-	error = git_repository_discover(&path_out, path_size, start_path, across_fs, ceiling_dirs);
+	error = git_repository_discover(path_out, path_size, start_path, across_fs, ceiling_dirs);
 
 	if (php_git2_check_error(error, "git_repository_discover" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -287,7 +287,7 @@ PHP_FUNCTION(git_repository_init_ext)
 	}
 
 	if (opts != NULL) {
-		php_git2_array_to_git_repository_init_options(&_opts, opts TSRMLS_CC);
+		php_git2_array_to_git_repository_init_options(_opts, opts TSRMLS_CC);
 		should_free = 1;
 	}
 
@@ -629,7 +629,7 @@ PHP_FUNCTION(git_repository_message)
 		RETURN_FALSE;
 	}
 
-	error = git_repository_message(&out, len, PHP_GIT2_V(_repo, repository));
+	error = git_repository_message(out, len, PHP_GIT2_V(_repo, repository));
 
 	if (php_git2_check_error(error, "git_repository_message" TSRMLS_CC)) {
 		RETURN_FALSE;

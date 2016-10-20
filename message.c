@@ -16,7 +16,7 @@ PHP_FUNCTION(git_message_prettify)
 		return;
 	}
 
-	error = git_message_prettify(&out, out_size, message, strip_comments);
+	error = git_message_prettify(out, out_size, message, strip_comments);
 
 	if (php_git2_check_error(error, "git_message_prettify" TSRMLS_CC)) {
 		RETURN_FALSE;

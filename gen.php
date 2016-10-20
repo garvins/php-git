@@ -267,7 +267,7 @@ function printFile($table, $file) {
             foreach ($func['args'] as $arg) {
                 if (isOption($arg)){
                     $buffer .= "\tif ({$arg['name']} != NULL) {\n";
-                    $buffer .= "\t\tphp_git2_array_to_{$arg['type']}(&_{$arg['name']}, {$arg['name']} TSRMLS_CC);\n";
+                    $buffer .= "\t\tphp_git2_array_to_{$arg['type']}(_{$arg['name']}, {$arg['name']} TSRMLS_CC);\n";
                     $buffer .= "\t\tshould_free = 1;\n";
                     $buffer .= "\t}\n\n";
                 } else if (isArray($arg, true)) {
@@ -281,6 +281,12 @@ function printFile($table, $file) {
 
 
             foreach ($func['args'] as $key => $t) {
+                if (count($func['args']) > $key + 1 && isPointerLen($func['args'][$key + 1], $func, $key + 1)) {
+                    $lengthParam =  $func['args'][$key + 1]['name'];
+                } else {
+                    $lengthParam = "{$t['name']}_len";
+                }
+
                 if (isCallback($t)) {
                     $nameStart = explode("_",  $t['name'])[0];
                     $buffer .= "\tif (php_git2_cb_init(&{$nameStart}_cb, &{$nameStart}_fci, &{$nameStart}_fcc, {$func['args'][$key +    1]['name']} TSRMLS_CC)) {\n";
@@ -291,11 +297,11 @@ function printFile($table, $file) {
                     $buffer .= "\t\tRETURN_FALSE;\n";
                     $buffer .= "\t}\n\n";
                 } else if (isOid($t)) {
-                    $buffer .= "\tif (git_oid_fromstrn(&__{$t['name']}, {$t['name']}, {$t['name']}_len)) {\n";
+                    $buffer .= "\tif (git_oid_fromstrn(&__{$t['name']}, {$t['name']}, $lengthParam)) {\n";
                     $buffer .= "\t\tRETURN_FALSE;\n";
                     $buffer .= "\t}\n\n";
                 } else if (isBuf($t)) {
-                    $buffer .= "\tif (git_buf_set(&_{$t['name']}, {$t['name']}, {$t['name']}_len)) {\n";
+                    $buffer .= "\tif (git_buf_set(&_{$t['name']}, {$t['name']}, $lengthParam)) {\n";
                     $buffer .= "\t\tRETURN_FALSE;\n";
                     $buffer .= "\t}\n\n";
                 }
@@ -307,7 +313,7 @@ function printFile($table, $file) {
 
             if (hasOutValue($func)) {
                 if ((isArray($func['retval'], true) && $func['retval']['pointer'] < 2)
-                    || (isChar($func['retval']) && preg_match("/buffer/", $func['args'][0]['name']))) {
+                    || (isChar($func['retval']) && $func['retval']['pointer'] == 1)) {
                     $deRef = "";
                 } else {
                     $deRef = "&";
@@ -474,9 +480,6 @@ function printFile($table, $file) {
                             || !hasOutValue($func) && $func['retval']['pointer'] == 0)
                         && !preg_match("/buffer/", $func['args'][0]['name'])) {
                         $str = isset($func['retval']['name']) ? "&". $func['retval']['name'] : "&result";
-                    } else if (getPHPReturnType($func['retval']['type']) == "void" && $func['retval']['pointer'] > 0
-                        && $func['name'] == "git_odb_object_data") {
-                        $str = "buffer, git_odb_object_size(PHP_GIT2_V(_object, odb_object))";
                     } else {
                         $str = isset($func['retval']['name']) ? $func['retval']['name'] : "result";
                     }
@@ -487,6 +490,8 @@ function printFile($table, $file) {
                     } else {
                         $buffer .= "\n\t" . (isBoolFunction($func) ? 'RETURN_BOOL' : getReturnMacro($func['retval']['type'])) ."($str);\n";
                     }
+                } else if (preg_match('/git_odb_object_data/', $func['name'])) {
+                    $buffer .= "\n\t" . getReturnMacro($func['retval']['type']) . "(buffer, git_odb_object_size(PHP_GIT2_V(_object, odb_object)));\n";
                 }
             }
 
@@ -586,6 +591,7 @@ function shouldBeFreed($arg) {
         case "git_remote_head":
         case "git_config_entry":
         case "git_cvar_map":
+        case "git_remote_callbacks":
             return false;
         default:
             return true;
@@ -637,8 +643,6 @@ function getDeclarations($func)
         if (isOid($func['retval'])) {
             $result[] = "\tchar __{$func['retval']['name']}[GIT2_OID_HEXSIZE] = {0};";
         }
-    } else if (preg_match("/resource/", $func['retval']['type'])) {
-        $result[] = "\tphp_git2_t *result = NULL;";
     } else if (!preg_match("/void/", $func['retval']['type'])) {
         $result[$const . $func['retval']['type']][] = str_repeat("*", $func['retval']['pointer']) . "result" . ($func['retval']['pointer'] ? " = NULL" : "");
 

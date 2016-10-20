@@ -2,16 +2,6 @@
 #include "php_git2_priv.h"
 #include "helper.h"
 
-static const zend_arg_info arginfo_git_odb_backend_foreach_callback[] = {
-	ZEND_ARG_INFO(0, oid)
-	ZEND_ARG_INFO(1, payload)
-};
-
-static zval* datetime_instantiate(zend_class_entry *pce, zval *object TSRMLS_DC)
-{
-    return php_date_instantiate(pce, object TSRMLS_CC);
-}
-
 int php_git2_check_error(int error_code, const char *action TSRMLS_DC)
 {
 	int result = 0;
@@ -96,7 +86,7 @@ void php_git2_array_to_git_signature(git_signature *signature, zval *author TSRM
 		instanceof_function_ex(Z_OBJCE_P(time), php_date_get_date_ce(), 0 TSRMLS_CC)) {
 		php_date_obj *date;
 
-		date = (php_date_obj *)zend_object_store_get_object(time TSRMLS_CC);
+		date = (php_date_obj *) Z_OBJ_P(time);
 		signature->when.time = date->time->sse;
 		signature->when.offset = date->time->z;
 	}
@@ -110,17 +100,17 @@ void php_git2_git_signature_to_array(const git_signature *signature, zval *out T
 
 	array_init(out);
 
-	datetime_instantiate(php_date_get_date_ce(), datetime TSRMLS_CC);
+    php_date_instantiate(php_date_get_date_ce(), datetime TSRMLS_CC);
 	snprintf(time_str,12,"%c%ld",'@', signature->when.time);
 
-	datetime_instantiate(php_date_get_timezone_ce(), timezone TSRMLS_CC);
-	tzobj = (php_timezone_obj *) zend_object_store_get_object(timezone TSRMLS_CC);
+    php_date_instantiate(php_date_get_timezone_ce(), timezone TSRMLS_CC);
+	tzobj = (php_timezone_obj *) Z_OBJ_P(timezone);
 	tzobj->initialized = 1;
 	tzobj->type = TIMELIB_ZONETYPE_OFFSET;
 	tzobj->tzi.utc_offset = -signature->when.offset; // doesn't work
 
 	/* TODO(chobie): how do i set offset? */
-	php_date_initialize(zend_object_store_get_object(datetime TSRMLS_CC), time_str, strlen(time_str), NULL, timezone, 0 TSRMLS_CC);
+	php_date_initialize(Z_PHPDATE_P(datetime), time_str, strlen(time_str), NULL, timezone, 0 TSRMLS_CC);
 
 	if (signature->name == NULL) {
 		add_assoc_null_ex(out, ZEND_STRS("name"));
@@ -150,15 +140,16 @@ void php_git2_git_strarray_to_array(git_strarray *array, zval *out TSRMLS_DC)
 
 int php_git2_call_function_v(zend_fcall_info *fci, zend_fcall_info_cache *fcc TSRMLS_DC, zval *retval, uint32_t param_count, ...)
 {
-	zval **params = NULL;
+	zval *params = NULL, *param;
 	va_list ap;
 	int i = 0;
 
 	if (param_count > 0) {
-		params = emalloc(sizeof(zval*) * param_count);
+		params = emalloc(sizeof(zval) * param_count);
 		va_start(ap, param_count);
 		for (i = 0; i < param_count; i++) {
-			params[i] = va_arg(ap, zval**);
+		    param = va_arg(ap, zval*);
+			params[i] = *param;
 		}
 		va_end(ap);
 	} else {
@@ -174,7 +165,7 @@ int php_git2_call_function_v(zend_fcall_info *fci, zend_fcall_info_cache *fcc TS
 		if (zend_call_function(fci, fcc TSRMLS_CC) != SUCCESS) {
 			if (param_count > 0) {
 				for (i = 0; i < param_count; i++) {
-					zval_ptr_dtor(params[i]);
+					zval_ptr_dtor(&params[i]);
 				}
 				efree(params);
 			}
@@ -185,7 +176,7 @@ int php_git2_call_function_v(zend_fcall_info *fci, zend_fcall_info_cache *fcc TS
 
 	if (param_count > 0) {
 		for (i = 0; i < param_count; i++) {
-			zval_ptr_dtor(params[i]);
+			zval_ptr_dtor(&params[i]);
 		}
 		efree(params);
 	}
@@ -218,7 +209,6 @@ void php_git2_cb_free(php_git2_cb_t *target)
 void php_git2_array_to_git_strarray(git_strarray *out, zval *array TSRMLS_DC)
 {
 	int elements = 0, i;
-	HashPosition pos;
 	zval *value;
 
 	if (array == NULL) {
@@ -300,7 +290,7 @@ void php_git2_git_checkout_opts_to_array(git_checkout_opts *opts, zval *out TSRM
 
 	if (opts->paths.count > 0) {
 		zval *paths;
-		php_git2_git_strarray_to_array(&opts->paths, &paths TSRMLS_CC);
+		php_git2_git_strarray_to_array(&opts->paths, paths TSRMLS_CC);
 		add_assoc_zval_ex(out, ZEND_STRS("paths"), paths);
 	} else {
 		zval *paths;
@@ -371,8 +361,10 @@ void php_git2_git_checkout_progress_cb(const char *path, size_t completed_steps,
 	ZVAL_LONG(param_completed_steps, completed_steps);
 	ZVAL_LONG(param_total_steps, total_steps);
 
-	SEPARATE_ZVAL_TO_MAKE_IS_REF(&p->payload);
-	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 4, &param_path, &param_completed_steps, &param_total_steps, &p->payload)) {
+	SEPARATE_ZVAL(p->payload);
+	ZVAL_MAKE_REF(p->payload);
+
+	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 4, param_path, param_completed_steps, param_total_steps, p->payload)) {
 		return;
 	}
 
@@ -424,7 +416,7 @@ void php_git2_fcall_info_wrapper2(zval *target, zend_fcall_info *fci, zend_fcall
 	}
 }
 
-int php_git2_array_to_git_checkout_opts(git_checkout_opts **out, zval *array TSRMLS_DC)
+int php_git2_array_to_git_checkout_opts(git_checkout_opts *out, zval *array TSRMLS_DC)
 {
 	const char *target_directory, *our_label, *their_label;
 	git_checkout_opts *opts = NULL, def = GIT_CHECKOUT_OPTS_INIT;
@@ -488,12 +480,13 @@ int php_git2_array_to_git_checkout_opts(git_checkout_opts **out, zval *array TSR
 	opts->our_label = our_label;
 	opts->their_label = their_label;
 
-	*out = opts;
+	out = opts;
 	return 0;
 }
 
-int php_git2_multi_cb_init(php_git2_multi_cb_t **out, void *payload TSRMLS_DC, int num_callbacks, ...)
+int php_git2_multi_cb_init(php_git2_multi_cb_t **out, void *payload TSRMLS_DC, int num_args, ...)
 {
+    int num_callbacks = num_args / 2;
 	php_git2_multi_cb_t *cb;
 	int i = 0;
 	va_list ap;
@@ -509,20 +502,25 @@ int php_git2_multi_cb_init(php_git2_multi_cb_t **out, void *payload TSRMLS_DC, i
 
 	cb->callbacks = emalloc(sizeof(php_git2_fcall_t) * num_callbacks);
 	memset(cb->callbacks, '\0', sizeof(php_git2_fcall_t) * num_callbacks);
-    va_start(ap, (num_callbacks * 2));
+    va_start(ap, num_args);
     for (i = 0; i < num_callbacks; i++) {
         zend_fcall_info* fci = va_arg(ap, zend_fcall_info*);
         zend_fcall_info_cache* fcc = va_arg(ap, zend_fcall_info_cache*);
         
         if (!fci) {
-            fci = &empty_fcall_info;
+            memcpy(&cb->callbacks[i].fci, &empty_fcall_info, sizeof(zend_fcall_info));
+        } else {
+            memcpy(&cb->callbacks[i].fci, &fci, sizeof(zend_fcall_info));
         }
+
         if (!fcc) {
-            fcc = &empty_fcall_info_cache;
+            memcpy(&cb->callbacks[i].fcc, &empty_fcall_info_cache, sizeof(zend_fcall_info_cache));
+        } else {
+            memcpy(&cb->callbacks[i].fcc, &fcc, sizeof(zend_fcall_info_cache));
         }
         
-        memcpy(&cb->callbacks[i].fci, fci, sizeof(zend_fcall_info));
-        memcpy(&cb->callbacks[i].fcc, fcc, sizeof(zend_fcall_info_cache));
+        memcpy(&cb->callbacks[i].fci, &fci, sizeof(zend_fcall_info));
+        memcpy(&cb->callbacks[i].fcc, &fcc, sizeof(zend_fcall_info_cache));
     }
 	va_end(ap);
 
@@ -675,7 +673,8 @@ int php_git2_git_diff_file_cb( const git_diff_delta *delta, float progress, void
 	Z_ADDREF_P(p->payload);
 	ZVAL_DOUBLE(param_progress, progress);
 	php_git2_git_diff_delta_to_array(delta, param_delta TSRMLS_CC);
-	if (php_git2_call_function_v(&p->callbacks[0].fci, &p->callbacks[0].fcc TSRMLS_CC, retval_ptr, 3, &param_delta, &param_progress, &p->payload)) {
+
+	if (php_git2_call_function_v(&p->callbacks[0].fci, &p->callbacks[0].fcc TSRMLS_CC, retval_ptr, 3, param_delta, param_progress, p->payload)) {
 		return GIT_EUSER;
 	}
 
@@ -696,7 +695,7 @@ int php_git2_git_diff_hunk_cb(const git_diff_delta *delta, const git_diff_hunk *
 	php_git2_git_diff_delta_to_array(delta, param_delta TSRMLS_CC);
 	php_git2_diff_hunk_to_array(hunk, param_hunk TSRMLS_CC);
 
-	if (php_git2_call_function_v(&p->callbacks[1].fci, &p->callbacks[1].fcc TSRMLS_CC, retval_ptr, 3, &param_delta, &param_hunk, &p->payload)) {
+	if (php_git2_call_function_v(&p->callbacks[1].fci, &p->callbacks[1].fcc TSRMLS_CC, retval_ptr, 3, param_delta, param_hunk, p->payload)) {
 		return GIT_EUSER;
 	}
 
@@ -717,7 +716,7 @@ int php_git2_git_diff_line_cb(const git_diff_delta *delta, const git_diff_hunk *
 	php_git2_diff_hunk_to_array(hunk, param_hunk TSRMLS_CC);
 	php_git2_diff_line_to_array(line, param_line TSRMLS_CC);
 
-	if (php_git2_call_function_v(&p->callbacks[2].fci, &p->callbacks[2].fcc TSRMLS_CC, retval_ptr, 4, &param_delta, &param_hunk, &param_line, &p->payload)) {
+	if (php_git2_call_function_v(&p->callbacks[2].fci, &p->callbacks[2].fcc TSRMLS_CC, retval_ptr, 4, param_delta, param_hunk, param_line, p->payload)) {
 		return GIT_EUSER;
 	}
 
@@ -754,7 +753,7 @@ void php_git2_array_to_git_blame_options(git_blame_options *options, zval *array
 	options->flags = php_git2_read_arrval_long(array, ZEND_STRS("flags") TSRMLS_CC);
 	options->min_match_characters = php_git2_read_arrval_long(array, ZEND_STRS("min_match_characters") TSRMLS_CC);
 	tmp = php_git2_read_arrval(array, ZEND_STRS("newest_commit") TSRMLS_CC);
-	if (Z_TYPE_P(tmp) != NULL) {
+	if (Z_ISREF_P(tmp)) {
 		if (Z_TYPE_P(tmp) != IS_STRING) {
 			convert_to_string(tmp);
 		}
@@ -764,7 +763,7 @@ void php_git2_array_to_git_blame_options(git_blame_options *options, zval *array
 	}
 
 	tmp = php_git2_read_arrval(array, ZEND_STRS("oldest_commit") TSRMLS_CC);
-	if (Z_TYPE_P(tmp) != NULL) {
+	if (Z_ISREF_P(tmp)) {
 		if (Z_TYPE_P(tmp) != IS_STRING) {
 			convert_to_string(tmp);
 		}
@@ -790,14 +789,14 @@ void php_git2_git_blame_options_to_array(git_blame_options *options, zval *out T
 
 	if (git_oid_iszero(&options->newest_commit) != 1) {
 		git_oid_fmt(buf, &options->newest_commit);
-		add_assoc_string_ex(out, ZEND_STRS("newest_commit"), out);
+		add_assoc_str_ex(out, ZEND_STRS("newest_commit"), zval_get_string(out));
 	} else {
 		add_assoc_null_ex(out, ZEND_STRS("newest_commit"));
 	}
 
 	if (git_oid_iszero(&options->oldest_commit) != 1) {
 		git_oid_fmt(buf, &options->oldest_commit);
-		add_assoc_string_ex(out, ZEND_STRS("oldest_commit"), out);
+		add_assoc_str_ex(out, ZEND_STRS("oldest_commit"), zval_get_string(out));
 	} else {
 		add_assoc_null_ex(out, ZEND_STRS("oldest_commit"));
 	}
@@ -923,10 +922,10 @@ int php_git2_git_index_matched_path_cb(const char *path, const char *matched_pat
 	ZVAL_STRING(param_path, path);
 	ZVAL_STRING(param_matched_pathspec, matched_pathspec);
 
-	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 3, &param_path, &param_matched_pathspec, &p->payload)) {
+	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 3, param_path, param_matched_pathspec, p->payload)) {
 		zval_ptr_dtor(param_path);
 		zval_ptr_dtor(param_matched_pathspec);
-		zval_ptr_dtor(&p->payload);
+		zval_ptr_dtor(p->payload);
 		return 0;
 	}
 
@@ -1011,7 +1010,7 @@ int php_git2_git_tag_foreach_cb(const char *name, git_oid *oid, void *payload)
 	ZVAL_STRING(param_name, name);
 	ZVAL_STRING(param_oid, buffer);
 
-	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 3, &param_name, &param_oid, &p->payload)) {
+	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 3, param_name, param_oid, p->payload)) {
 		zval_ptr_dtor(retval_ptr);
 		zend_list_delete(result->resource_id);
 		return GIT_EUSER;
@@ -1049,7 +1048,7 @@ int php_git2_git_submodule_foreach_cb(git_submodule *sm, const char *name, void 
 
 	ZVAL_STRING(param_name, name);
 	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 3,
-		&param_sm, &param_name, &p->payload)) {
+		param_sm, param_name, p->payload)) {
 		return GIT_EUSER;
 	}
 
@@ -1081,13 +1080,14 @@ int php_git2_git_treebuilder_filter_cb(const git_tree_entry *entry, void *payloa
 	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_TREE_ENTRY, entry, 0 TSRMLS_CC)) {
 		return 0;
 	}
-	zend_list_addref(GIT2_RVAL_P(result));
+
 	ZVAL_RES(param_tree_entry, GIT2_RVAL_P(result));
+	GIT2_RVAL_P(result)->gc.refcount++;
 	Z_ADDREF_P(p->payload);
 
-	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 2, &param_tree_entry, &p->payload)) {
+	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 2, param_tree_entry, p->payload)) {
 		zval_ptr_dtor(param_tree_entry);
-		zval_ptr_dtor(&p->payload);
+		zval_ptr_dtor(p->payload);
 		zend_list_delete(result->resource_id);
 		retval = 0;
 		return 0;
@@ -1115,7 +1115,7 @@ int php_git2_git_stash_cb(size_t index, const char* message, const git_oid *stas
 	ZVAL_STRING(param_message, message);
 	ZVAL_STRING(param_stash_id, _oid);
 
-	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 4, &param_index, &param_message, &param_stash_id, &p->payload)) {
+	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 4, param_index, param_message, param_stash_id, p->payload)) {
 		return GIT_EUSER;
 	}
 
@@ -1131,7 +1131,7 @@ int php_git2_git_note_foreach_cb(const git_oid *blob_id, const git_oid *annotate
     return 0;
 }
 
-void php_git2_array_to_git_transfer_progress(git_transfer_progress *progress, zval **array TSRMLS_DC)
+void php_git2_array_to_git_transfer_progress(git_transfer_progress *progress, zval *array TSRMLS_DC)
 {
     // todo need to implementated
 }
@@ -1141,8 +1141,8 @@ int php_git2_git_cred_cb(git_cred **cred, const char *url, const char *username_
 	php_git2_t *result;
 	zval *param_url = NULL, *param_username_from_url = NULL, *param_allowed_types = NULL, *retval_ptr;
 	php_git2_remote_cb_t *cb = (php_git2_remote_cb_t*)data;
-	GIT2_TSRMLS_SET(cb->tsrm_ls);
 	int retval = 1;
+	GIT2_TSRMLS_SET(cb->tsrm_ls);
 
 	if (cb != NULL) {
 		ZVAL_NULL(param_url);
@@ -1156,10 +1156,11 @@ int php_git2_git_cred_cb(git_cred **cred, const char *url, const char *username_
 		}
 		ZVAL_LONG(param_allowed_types, allowed_types);
 		Z_ADDREF_P(cb->payload);
-		SEPARATE_ZVAL_TO_MAKE_IS_REF(&cb->payload);
+        SEPARATE_ZVAL(cb->payload);
+        ZVAL_MAKE_REF(cb->payload);
 
 		if (php_git2_call_function_v(&cb->callbacks[0].fci, &cb->callbacks[0].fcc TSRMLS_CC, retval_ptr, 4,
-			&param_url, &param_username_from_url, &param_allowed_types, &cb->payload)) {
+			param_url, param_username_from_url, param_allowed_types, cb->payload)) {
 				fprintf(stderr, "CALL FUNCTION ERROR");
 		}
 	}
@@ -1198,10 +1199,10 @@ int php_git2_git_reference_foreach_cb(git_reference *reference, void *payload)
 	Z_ADDREF_P(p->payload);
 
 	php_git2_make_resource(&result, PHP_GIT2_TYPE_REFERENCE, reference, 0 TSRMLS_CC);
-	zend_list_addref(result->resource_id);
+	GIT2_RVAL_P(result)->gc.refcount++;
 	ZVAL_RES(param_reference, GIT2_RVAL_P(result));
 
-	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 2, &param_reference, &p->payload)) {
+	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 2, param_reference, p->payload)) {
 		zend_list_delete(result->resource_id);
 		return GIT_EUSER;
 	}
@@ -1223,7 +1224,7 @@ int php_git2_git_reference_foreach_name_cb(const char *name, void *payload)
 	Z_ADDREF_P(p->payload);
 	ZVAL_STRING(param_name, name);
 
-	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 2, &param_name, &p->payload)) {
+	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 2, param_name, p->payload)) {
 		zval_ptr_dtor(retval_ptr);
 		zend_list_delete(result->resource_id);
 		return GIT_EUSER;
@@ -1252,11 +1253,11 @@ int php_git2_git_repository_fetchhead_foreach_cb(const char *ref_name, const cha
 	ZVAL_BOOL(param_is_merge, is_merge);
 
 	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 5,
-	 	&param_ref_name,
-	 	&param_remote_url,
-	 	&param_oid,
-	 	&param_is_merge,
-	 	&p->payload)) {
+	 	param_ref_name,
+	 	param_remote_url,
+	 	param_oid,
+	 	param_is_merge,
+	 	p->payload)) {
 		return GIT_EUSER;
 	}
 
@@ -1278,7 +1279,7 @@ int php_git2_git_repository_mergehead_foreach_cb(const git_oid *oid, void *paylo
 	Z_ADDREF_P(p->payload);
 	ZVAL_STRING(param_oid, _oid);
 
-	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 2, &param_oid, &p->payload)) {
+	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 2, param_oid, p->payload)) {
 		return GIT_EUSER;
 	}
 
@@ -1298,8 +1299,9 @@ void php_git2_array_to_git_remote_callbacks(git_remote_callbacks *cb, zval *call
 {
     zval *credentials_cb = NULL;
     struct git_remote_callbacks _cb = GIT_REMOTE_CALLBACKS_INIT;
-    cb = &_cb;
     php_git2_remote_cb_t *_payload = NULL;
+
+    cb = &_cb;
 
 	/* TODO(chobie): support other callbacks */
     cb->credentials = php_git2_git_cred_cb;
@@ -1335,10 +1337,10 @@ int php_git2_git_treewalk_cb(const char *root, const git_tree_entry *entry, void
 
 	ZVAL_STRING(param_root, root);
 	php_git2_make_resource(&result, PHP_GIT2_TYPE_TREE_ENTRY, entry, 0 TSRMLS_CC);
-	zend_list_addref(result->resource_id);
-	ZVAL_RESOURCE(param_rsrc, result->resource_id);
+	GIT2_RVAL_P(result)->gc.refcount++;
+	ZVAL_RES(param_rsrc, GIT2_RVAL_P(result));
 
-	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 3, &param_root, &param_rsrc, &p->payload)) {
+	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 3, param_root, param_rsrc, p->payload)) {
 		zend_list_delete(result->resource_id);
 		return 0;
 	}
@@ -1357,7 +1359,7 @@ void php_git2_git_status_options_to_array(git_status_options *options, zval *out
 	add_assoc_long_ex(out, ZEND_STRS("version"), options->version);
 	add_assoc_long_ex(out, ZEND_STRS("show"), options->show);
 	add_assoc_long_ex(out, ZEND_STRS("flags"), options->flags);
-	php_git2_git_strarray_to_array(&options->pathspec, &pathspec TSRMLS_CC);
+	php_git2_git_strarray_to_array(&options->pathspec, pathspec TSRMLS_CC);
 	add_assoc_zval_ex(out, ZEND_STRS("pathspec"), pathspec);
 }
 
@@ -1367,7 +1369,7 @@ void php_git2_array_to_git_status_options(git_status_options *options, zval *arr
 	options->show = php_git2_read_arrval_long2(array, ZEND_STRS("version"), 0 TSRMLS_CC);
 	options->flags = php_git2_read_arrval_long2(array, ZEND_STRS("version"), 0 TSRMLS_CC);
 
-	php_git2_array_to_strarray(&options->pathspec, php_git2_read_arrval(array, ZEND_STRS("pathspec") TSRMLS_CC) TSRMLS_CC);
+	php_git2_array_to_git_strarray(&options->pathspec, php_git2_read_arrval(array, ZEND_STRS("pathspec") TSRMLS_CC) TSRMLS_CC);
 }
 
 void php_git2_git_status_entry_to_array(const git_status_entry *entry, zval *out TSRMLS_DC)
@@ -1377,13 +1379,13 @@ void php_git2_git_status_entry_to_array(const git_status_entry *entry, zval *out
 	array_init(out);
 
 	if (entry->head_to_index) {
-		php_git2_git_diff_delta_to_array(entry->head_to_index, &head_to_index TSRMLS_CC);
+		php_git2_git_diff_delta_to_array(entry->head_to_index, head_to_index TSRMLS_CC);
 	} else {
 		ZVAL_NULL(head_to_index);
 	}
 
 	if (entry->index_to_workdir) {
-		php_git2_git_diff_delta_to_array(entry->index_to_workdir, &index_to_workdir TSRMLS_CC);
+		php_git2_git_diff_delta_to_array(entry->index_to_workdir, index_to_workdir TSRMLS_CC);
 	} else {
 		ZVAL_NULL(index_to_workdir);
 	}
@@ -1406,7 +1408,7 @@ int php_git2_git_status_cb(const char *path, unsigned int status_flags, void *pa
 	ZVAL_LONG(param_status_flags, status_flags);
 
 	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 3,
-		&param_path, &param_status_flags, &p->payload)) {
+		param_path, param_status_flags, p->payload)) {
 		return GIT_EUSER;
 	}
 
@@ -1492,7 +1494,7 @@ int php_git2_git_odb_foreach_cb(const git_oid *id, void *payload)
 	git_oid_fmt(buf, id);
 	ZVAL_STRING(param_oid, buf);
 
-	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 2, &param_oid, &p->payload)) {
+	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 2, param_oid, p->payload)) {
 		return GIT_EUSER;
 	}
 
@@ -1501,14 +1503,14 @@ int php_git2_git_odb_foreach_cb(const git_oid *id, void *payload)
 	return retval;
 }
 
-int php_git2_git_filter_check_fn(git_filter  *self, void **payload, const git_filter_source *src, const char **attr_values)
+int php_git2_git_filter_check_fn(git_filter *self, void **payload, const git_filter_source *src, const char **attr_values)
 {
 	php_git2_filter *filter = (php_git2_filter*)self;
-	php_git2_t *result, *filter_source;
+	php_git2_t *filter_source;
 	zval *param_payload = NULL, *param_source = NULL, *param_attr = NULL, *retval_ptr = NULL;
 	php_git2_multi_cb_t *p = filter->multi;
-	const unsigned char *ptr = self->attributes;
-	int last_is_space = 0;
+	const char *ptr = self->attributes;
+	int result, last_is_space = 0;
 	int attribute_count = 0, len = 0;
 	GIT2_TSRMLS_SET(p->tsrm_ls)
 
@@ -1557,7 +1559,7 @@ int php_git2_git_filter_check_fn(git_filter  *self, void **payload, const git_fi
 	}
 
 	if (php_git2_call_function_v(&p->callbacks[2].fci, &p->callbacks[2].fcc TSRMLS_CC, retval_ptr, 3,
-		&param_payload, &param_source, &param_attr)) {
+		param_payload, param_source, param_attr)) {
 		return GIT_EUSER;
 	}
 
@@ -1586,7 +1588,7 @@ void php_git2_git_filter_shutdown_fn(git_filter *self)
 	ZVAL_NULL(param_self);
 	ZVAL_NULL(param_payload);
 
-	if (php_git2_call_function_v(&p->callbacks[1].fci, &p->callbacks[1].fcc TSRMLS_CC, retval_ptr, 2, &param_self, &param_payload)) {
+	if (php_git2_call_function_v(&p->callbacks[1].fci, &p->callbacks[1].fcc TSRMLS_CC, retval_ptr, 2, param_self, param_payload)) {
 	}
 	zval_ptr_dtor(retval_ptr);
 }
@@ -1601,7 +1603,7 @@ int php_git2_git_filter_init_fn(git_filter *self)
 	ZVAL_NULL(param_self);
 	ZVAL_NULL(param_payload);
 
-	if (php_git2_call_function_v(&p->callbacks[0].fci, &p->callbacks[0].fcc TSRMLS_CC, retval_ptr, 2, &param_self, &param_payload)) {
+	if (php_git2_call_function_v(&p->callbacks[0].fci, &p->callbacks[0].fcc TSRMLS_CC, retval_ptr, 2, param_self, param_payload)) {
 	}
 	zval_ptr_dtor(retval_ptr);
 }
@@ -1625,7 +1627,7 @@ int php_git2_git_filter_apply_fn(git_filter *self, void **payload, git_buf *to, 
 	ZVAL_RES(param_src, GIT2_RVAL_P(filter_source));
 
 	if (php_git2_call_function_v(&p->callbacks[3].fci, &p->callbacks[3].fcc TSRMLS_CC, retval_ptr, 3,
-		&param_payload, &param_from, &param_src)) {
+		param_payload, param_from, param_src)) {
 		return GIT_EUSER;
 	}
 
@@ -1655,7 +1657,7 @@ void php_git2_git_filter_cleanup_fn(git_filter *self, void *payload)
 	ZVAL_NULL(param_self);
 	ZVAL_NULL(param_payload);
 
-	if (php_git2_call_function_v(&p->callbacks[4].fci, &p->callbacks[4].fcc TSRMLS_CC, retval_ptr, 2, &param_self, &param_payload)) {
+	if (php_git2_call_function_v(&p->callbacks[4].fci, &p->callbacks[4].fcc TSRMLS_CC, retval_ptr, 2, param_self, param_payload)) {
 	}
 }
 
@@ -1673,7 +1675,7 @@ int php_git2_git_packbuilder_progress(int stage, unsigned int current, unsigned 
 	ZVAL_LONG(param_total, total);
 
 	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 4,
-		&param_stage, &param_current, &param_total, &p->payload)) {
+		param_stage, param_current, param_total, p->payload)) {
 		return GIT_EUSER;
 	}
 
@@ -1697,7 +1699,7 @@ int php_git2_git_packbuilder_foreach_cb(void *buf, size_t size, void *payload)
 	ZVAL_LONG(param_size, size);
 
 	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 3,
-		&param_buf, &param_size, &p->payload)) {
+		param_buf, param_size, p->payload)) {
 		return GIT_EUSER;
 	}
 
@@ -1720,7 +1722,7 @@ int php_git2_git_transfer_progress_callback(const git_transfer_progress *stats, 
 
 
 	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 2,
-		&param_stats, &p->payload)) {
+		param_stats, p->payload)) {
 		return GIT_EUSER;
 	}
 
@@ -1751,7 +1753,7 @@ int php_git2_git_push_status_foreach_cb(const char *ref, const char *msg, void *
 		ZVAL_STRING(param_msg, msg);
 	}
 
-	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 3, &param_ref, &param_msg, &p->payload)) {
+	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 3, param_ref, param_msg, p->payload)) {
 		zend_list_delete(result->resource_id);
 		return GIT_EUSER;
 	}
@@ -1763,10 +1765,20 @@ int php_git2_git_push_status_foreach_cb(const char *ref, const char *msg, void *
 
 void php_git2_git_revspec_to_array(const git_revspec *revspec, zval *out TSRMLS_DC)
 {
+	php_git2_t *to = NULL, *from = NULL;
+
 	array_init(out);
 
-	add_assoc_zval_ex(out, ZEND_STRS("from"), revspec->from);
-	add_assoc_zval_ex(out, ZEND_STRS("to"), revspec->to);
+	if (php_git2_make_resource(&from, PHP_GIT2_TYPE_OBJECT, revspec->from, 1 TSRMLS_CC)) {
+		return;
+	}
+
+    if (php_git2_make_resource(&to, PHP_GIT2_TYPE_OBJECT, revspec->to, 1 TSRMLS_CC)) {
+		return;
+	}
+
+	add_assoc_resource_ex(out, ZEND_STRS("from"), GIT2_RVAL_P(from));
+	add_assoc_resource_ex(out, ZEND_STRS("to"), GIT2_RVAL_P(to));
 	add_assoc_long_ex(out, ZEND_STRS("flags"), revspec->flags);
 }
 
@@ -1779,20 +1791,26 @@ int php_git2_odb_backend_foreach(git_odb_backend *backend, git_odb_foreach_cb cb
 	php_git2_odb_backend_foreach_callback *_callback;
 	php_git2_cb_t *__cb = (php_git2_cb_t*)data;
 	int retval = 0;
+	zend_arg_info common_arg_info[] = {
+	    {zend_string_init("oid", sizeof("oid") - 1, 0), NULL, 0, 0, 0, 0 },
+	    {zend_string_init("payload", sizeof("payload") - 1, 0), NULL, 0, 1, 0, 0 },
+	};
+
 	GIT2_TSRMLS_SET(p->tsrm_ls);
 
 	object_init_ex(callback, php_git2_odb_backend_foreach_callback_class_entry);
-	_callback = (php_git2_odb_backend_foreach_callback*)zend_object_store_get_object(callback TSRMLS_CC);
+	_callback = (php_git2_odb_backend_foreach_callback*) Z_OBJ_P(callback TSRMLS_CC);
 	_callback->callback = cb;
 	_callback->payload = __cb;
 	Z_ADDREF_P(callback);
 
+    // todo
 	function.type = ZEND_INTERNAL_FUNCTION;
-	function.common.function_name = "callback";
+	function.common.function_name = zend_string_init("callback", sizeof("callback") - 1, 0);
 	function.common.fn_flags = ZEND_ACC_CLOSURE;
 	function.common.num_args = 2;
 	function.common.required_num_args = 2;
-	function.common.arg_info = &arginfo_git_odb_backend_foreach_callback;
+	function.common.arg_info = common_arg_info;
 	function.common.scope = php_git2_odb_backend_foreach_callback_class_entry;
 	function.internal_function.type = ZEND_INTERNAL_FUNCTION;
 	function.internal_function.scope = php_git2_odb_backend_foreach_callback_class_entry;
@@ -1801,14 +1819,14 @@ int php_git2_odb_backend_foreach(git_odb_backend *backend, git_odb_foreach_cb cb
 	function.internal_function.module = &git2_module_entry;
 	function.internal_function.num_args = 2;
 	function.internal_function.required_num_args = 2;
-	function.internal_function.arg_info = &arginfo_git_odb_backend_foreach_callback;
+	function.internal_function.arg_info = NULL;
 
 
-    zend_create_closure(param_callback, &function, php_git2_odb_backend_foreach_callback_class_entry, callback TSRMLS_CC);
+    zend_create_closure(param_callback, &function, function.common.scope, function.common.scope, callback TSRMLS_CC);
     Z_ADDREF_P(__cb->payload);
 
 	if (php_git2_call_function_v(&p->callbacks[6].fci, &p->callbacks[6].fcc TSRMLS_CC, retval_ptr, 2,
-		&param_callback, &__cb->payload)) {
+		param_callback, __cb->payload)) {
 		return GIT_EUSER;
 	}
 
@@ -1823,14 +1841,14 @@ int php_git2_odb_backend_read(void **buffer, size_t *size, git_otype *type, git_
 	zval *param_oid = NULL, *retval_ptr = NULL;
 	php_git2_multi_cb_t *p = php_backend->multi;
 	int retval = 0;
-	GIT2_TSRMLS_SET(p->tsrm_ls);
 	char buf[41] = {0};
+	GIT2_TSRMLS_SET(p->tsrm_ls);
 
 	git_oid_fmt(buf, oid);
 
 	ZVAL_STRING(param_oid, buf);
 
-	if (php_git2_call_function_v(&p->callbacks[0].fci, &p->callbacks[0].fcc TSRMLS_CC, retval_ptr, 1, &param_oid)) {
+	if (php_git2_call_function_v(&p->callbacks[0].fci, &p->callbacks[0].fcc TSRMLS_CC, retval_ptr, 1, param_oid)) {
 		return GIT_EUSER;
 	}
 	if (Z_TYPE_P(retval_ptr) == IS_ARRAY) {
@@ -1847,7 +1865,7 @@ int php_git2_odb_backend_read(void **buffer, size_t *size, git_otype *type, git_
 		memcpy(pp, Z_STRVAL_P(value), Z_STRLEN_P(value));
 
 		*buffer = pp;
-		size = Z_STRLEN_P(value);
+		size = &Z_STRLEN_P(value);
 
 		zend_hash_move_forward(Z_ARRVAL_P(retval_ptr));
 		otype = zend_hash_get_current_data(Z_ARRVAL_P(retval_ptr));
@@ -1866,8 +1884,8 @@ int php_git2_odb_backend_write(git_odb_backend *backend, const git_oid *oid, con
 	zval *param_oid = NULL, *param_buffer = NULL, *param_otype = NULL, *retval_ptr = NULL;
 	php_git2_multi_cb_t *p = php_backend->multi;
 	int retval = 0;
-	GIT2_TSRMLS_SET(p->tsrm_ls);
 	char buf[41] = {0};
+	GIT2_TSRMLS_SET(p->tsrm_ls);
 
 	git_oid_fmt(buf, oid);
 
@@ -1876,7 +1894,7 @@ int php_git2_odb_backend_write(git_odb_backend *backend, const git_oid *oid, con
 	ZVAL_LONG(param_otype, type);
 
 	if (php_git2_call_function_v(&p->callbacks[1].fci, &p->callbacks[1].fcc TSRMLS_CC, retval_ptr, 3,
-		&param_oid, &param_buffer, &param_otype)) {
+		param_oid, param_buffer, param_otype)) {
 		return GIT_EUSER;
 	}
 
@@ -1891,14 +1909,14 @@ int php_git2_odb_backend_read_prefix(git_oid *out_oid, void **buffer_p, size_t *
 	zval *param_short_oid = NULL, *retval_ptr = NULL;
 	php_git2_multi_cb_t *p = php_backend->multi;
 	int retval = 0;
-	GIT2_TSRMLS_SET(p->tsrm_ls);
 	char buf[41] = {0};
+	GIT2_TSRMLS_SET(p->tsrm_ls);
 
 	git_oid_nfmt(buf, len, short_oid);
 
 	ZVAL_STRING(param_short_oid, buf);
 
-	if (php_git2_call_function_v(&p->callbacks[2].fci, &p->callbacks[2].fcc TSRMLS_CC, retval_ptr, 1, &param_short_oid)) {
+	if (php_git2_call_function_v(&p->callbacks[2].fci, &p->callbacks[2].fcc TSRMLS_CC, retval_ptr, 1, param_short_oid)) {
 		return GIT_EUSER;
 	}
 
@@ -1916,7 +1934,7 @@ int php_git2_odb_backend_read_prefix(git_oid *out_oid, void **buffer_p, size_t *
 		memcpy(pp, Z_STRVAL_P(value), Z_STRLEN_P(value));
 
 		*buffer_p = pp;
-		*len_p = Z_STRLEN_PP(value);
+		len_p = &Z_STRLEN_P(value);
 
 		zend_hash_move_forward(Z_ARRVAL_P(retval_ptr));
 		otype = zend_hash_get_current_data(Z_ARRVAL_P(retval_ptr));
@@ -1941,14 +1959,14 @@ int php_git2_odb_backend_read_header(size_t *len_p, git_otype *type_p, git_odb_b
 	zval *param_oid = NULL, *retval_ptr = NULL;
 	php_git2_multi_cb_t *p = php_backend->multi;
 	int retval = 0;
-	GIT2_TSRMLS_SET(p->tsrm_ls);
 	char buf[41] = {0};
+	GIT2_TSRMLS_SET(p->tsrm_ls);
 
 	git_oid_fmt(buf, oid);
 
 	ZVAL_STRING(param_oid, buf);
 
-	if (php_git2_call_function_v(&p->callbacks[3].fci, &p->callbacks[3].fcc TSRMLS_CC, retval_ptr, 1, &param_oid)) {
+	if (php_git2_call_function_v(&p->callbacks[3].fci, &p->callbacks[3].fcc TSRMLS_CC, retval_ptr, 1, param_oid)) {
 		return GIT_EUSER;
 	}
 	if (Z_TYPE_P(retval_ptr) == IS_ARRAY) {
@@ -1982,15 +2000,15 @@ int php_git2_odb_backend_exists(git_odb_backend *backend, const git_oid *oid)
 	zval *param_oid = NULL, *retval_ptr = NULL;
 	php_git2_multi_cb_t *p = php_backend->multi;
 	int retval = 0;
-	GIT2_TSRMLS_SET(p->tsrm_ls);
 	char buf[41] = {0};
+	GIT2_TSRMLS_SET(p->tsrm_ls);
 
 	git_oid_fmt(buf, oid);
 
 	ZVAL_STRING(param_oid, buf);
 
 	if (php_git2_call_function_v(&p->callbacks[5].fci, &p->callbacks[5].fcc TSRMLS_CC, retval_ptr, 1,
-		&param_oid)) {
+		param_oid)) {
 		return GIT_EUSER;
 	}
 
@@ -2006,7 +2024,7 @@ int php_git2_odb_backend_exists(git_odb_backend *backend, const git_oid *oid)
 
 void git_ex_cb(INTERNAL_FUNCTION_PARAMETERS)
 {
-	zval *payload, *this = getThis();
+	zval *payload;
 	php_git2_odb_backend_foreach_callback *_callback;
 	char *oid;
 	int oid_len, retval = 0;
@@ -2021,7 +2039,7 @@ void git_ex_cb(INTERNAL_FUNCTION_PARAMETERS)
 		return;
 	}
 
-	_callback = (php_git2_odb_backend_foreach_callback*)zend_object_store_get_object(this TSRMLS_CC);
+	_callback = (php_git2_odb_backend_foreach_callback *) Z_OBJ_P(getThis());
 	_callback->payload->payload = payload;
 	retval = _callback->callback(&_oid, _callback->payload);
 	RETURN_LONG(retval);
@@ -2042,7 +2060,7 @@ void php_git2_odb_backend_free(git_odb_backend *_backend)
 	return;
 }
 
-void php_git2_odb_refresh(git_odb_backend *_backend)
+int php_git2_odb_refresh(git_odb_backend *_backend)
 {
 	php_git2_odb_backend *php_backend = (php_git2_odb_backend*)_backend;
 	zval *retval_ptr = NULL;
@@ -2081,12 +2099,12 @@ int php_git2_git_config_foreach_cb(const git_config_entry *entry, void *payload)
 	long retval = 0;
 	GIT2_TSRMLS_SET(p->tsrm_ls)
 
-	php_git2_config_entry_to_array(entry, param_config_entry);
+	php_git2_git_config_entry_to_array(entry, param_config_entry);
 	Z_ADDREF_P(p->payload);
 
-	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 2, &param_config_entry, &p->payload)) {
+	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 2, param_config_entry, p->payload)) {
 		zval_ptr_dtor(param_config_entry);
-		zval_ptr_dtor(&p->payload);
+		zval_ptr_dtor(p->payload);
 		zend_list_delete(result->resource_id);
 		retval = 0;
 		return 0;
@@ -2109,4 +2127,32 @@ void php_git2_array_to_git_cvar_map(git_cvar_map *map, zval *out TSRMLS_DC)
     // todo need to implementated
 }
 
+void php_git2_git_repository_init_options_free(git_repository_init_options *options)
+{
+    // todo need to implementated
+}
 
+void php_git2_git_clone_options_free(git_clone_options *options)
+{
+    // todo need to implementated
+}
+
+void php_git2_git_status_options_free(git_status_options *options)
+{
+    // todo need to implementated
+}
+
+void php_git2_array_to_git_merge_tree_opts(git_merge_tree_opts *options, zval *array TSRMLS_DC)
+{
+    // todo need to implementated
+}
+
+void php_git2_git_merge_tree_opts_free(git_merge_tree_opts *options)
+{
+    // todo need to implementated
+}
+
+void php_git2_git_blame_options_free(git_blame_options *options)
+{
+    // todo need to implementated
+}

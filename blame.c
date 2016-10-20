@@ -101,7 +101,7 @@ PHP_FUNCTION(git_blame_file)
 	}
 
 	if (options != NULL) {
-		php_git2_array_to_git_blame_options(&_options, options TSRMLS_CC);
+		php_git2_array_to_git_blame_options(_options, options TSRMLS_CC);
 		should_free = 1;
 	}
 

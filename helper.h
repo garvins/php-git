@@ -56,9 +56,9 @@ void php_git2_git_checkout_opts_to_array(git_checkout_opts *opts, zval *out TSRM
 
 void php_git2_git_checkout_opts_free(git_checkout_opts *target TSRMLS_DC);
 
-int php_git2_array_to_git_checkout_opts(git_checkout_opts **out, zval *array TSRMLS_DC);
+int php_git2_array_to_git_checkout_opts(git_checkout_opts *out, zval *array TSRMLS_DC);
 
-int php_git2_multi_cb_init(php_git2_multi_cb_t **out, void *payload TSRMLS_DC, int num_callbacks, ...);
+int php_git2_multi_cb_init(php_git2_multi_cb_t **out, void *payload TSRMLS_DC, int num_args, ...);
 
 void php_git2_multi_cb_free(php_git2_multi_cb_t *target);
 
@@ -134,7 +134,7 @@ int php_git2_git_stash_cb(size_t index, const char* message, const git_oid *stas
 
 int php_git2_git_note_foreach_cb(const git_oid *blob_id, const git_oid *annotated_object_id, void *payload);
 
-void php_git2_array_to_git_transfer_progress(git_transfer_progress *progress, zval **array TSRMLS_DC);
+void php_git2_array_to_git_transfer_progress(git_transfer_progress *progress, zval *array TSRMLS_DC);
 
 int php_git2_git_cred_cb(git_cred **cred, const char *url, const char *username_from_url, unsigned int allowed_types, void *data);
 
@@ -208,7 +208,7 @@ void git_ex_cb(INTERNAL_FUNCTION_PARAMETERS);
 
 void php_git2_odb_backend_free(git_odb_backend *_backend);
 
-void php_git2_odb_refresh(git_odb_backend *_backend);
+int php_git2_odb_refresh(git_odb_backend *_backend);
 
 int php_git2_git_push_transfer_progress(unsigned int current, unsigned int total, size_t bytes, void* payload);
 
@@ -219,5 +219,17 @@ int php_git2_git_config_foreach_cb(const git_config_entry *entry, void *payload)
 int php_git2_git_config_backend_foreach_match_cb(const git_config_entry *entry, void * payload);
 
 void php_git2_array_to_git_cvar_map(git_cvar_map *map, zval *out TSRMLS_DC);
+
+void php_git2_git_repository_init_options_free(git_repository_init_options *options);
+
+void php_git2_git_clone_options_free(git_clone_options *options);
+
+void php_git2_git_status_options_free(git_status_options *options);
+
+void php_git2_array_to_git_merge_tree_opts(git_merge_tree_opts *options, zval *array TSRMLS_DC);
+
+void php_git2_git_merge_tree_opts_free(git_merge_tree_opts *options);
+
+void php_git2_git_blame_options_free(git_blame_options *options);
 
 #endif

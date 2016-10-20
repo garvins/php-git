@@ -213,18 +213,19 @@ PHP_FUNCTION(git_patch_line_stats)
 }
 /* }}} */
 
-/* {{{ proto resource git_patch_get_hunk(long $lines_in_hunk, resource $patch, long $hunk_idx)
+/* {{{ proto resource git_patch_get_hunk(resource $patch, long $hunk_idx)
  */
 PHP_FUNCTION(git_patch_get_hunk)
 {
 	php_git2_t *result = NULL, *_patch = NULL;
-	zend_long lines_in_hunk, hunk_idx;
 	const git_diff_hunk *out = NULL;
+	zend_long hunk_idx;
+	size_t lines_in_hunk;
 	zval *patch = NULL;
 	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"lrl", &lines_in_hunk, &patch, &hunk_idx) == FAILURE) {
+		"rl", &patch, &hunk_idx) == FAILURE) {
 		return;
 	}
 
@@ -232,7 +233,7 @@ PHP_FUNCTION(git_patch_get_hunk)
 		RETURN_FALSE;
 	}
 
-	error = git_patch_get_hunk(&out, lines_in_hunk, PHP_GIT2_V(_patch, patch), hunk_idx);
+	error = git_patch_get_hunk(&out, &lines_in_hunk, PHP_GIT2_V(_patch, patch), hunk_idx);
 
 	if (php_git2_check_error(error, "git_patch_get_hunk" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -347,7 +348,7 @@ PHP_FUNCTION(git_patch_print)
 		RETURN_FALSE;
 	}
 
-	php_git2_multi_cb_init(&cb, payload TSRMLS_CC, 3,
+	php_git2_multi_cb_init(&cb, payload TSRMLS_CC, 6,
 		&empty_fcall_info, &empty_fcall_info_cache,
 		&empty_fcall_info, &empty_fcall_info_cache,
 		&fci, &fcc

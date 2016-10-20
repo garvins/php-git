@@ -64,7 +64,7 @@ PHP_FUNCTION(git_object_lookup_prefix)
 		RETURN_FALSE;
 	}
 
-	if (git_oid_fromstrn(&__id, id, id_len)) {
+	if (git_oid_fromstrn(&__id, id, len)) {
 		RETURN_FALSE;
 	}
 

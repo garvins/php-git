@@ -97,18 +97,18 @@ PHP_FUNCTION(git_branch_iterator_new)
 }
 /* }}} */
 
-/* {{{ proto resource git_branch_next(long $out_type, resource $iter)
+/* {{{ proto resource git_branch_next(resource $iter)
  */
 PHP_FUNCTION(git_branch_next)
 {
 	php_git2_t *result = NULL, *_iter = NULL;
 	git_reference *out = NULL;
-	zend_long out_type;
+	git_branch_t out_type;
 	zval *iter = NULL;
 	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"lr", &out_type, &iter) == FAILURE) {
+		"r", &iter) == FAILURE) {
 		return;
 	}
 
@@ -116,7 +116,7 @@ PHP_FUNCTION(git_branch_next)
 		RETURN_FALSE;
 	}
 
-	error = git_branch_next(&out, out_type, PHP_GIT2_V(_iter, branch_iterator));
+	error = git_branch_next(&out, &out_type, PHP_GIT2_V(_iter, branch_iterator));
 
 	if (php_git2_check_error(error, "git_branch_next" TSRMLS_CC)) {
 		RETURN_FALSE;

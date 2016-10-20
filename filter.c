@@ -45,7 +45,7 @@ PHP_FUNCTION(git_filter_list_load)
  */
 PHP_FUNCTION(git_filter_list_apply_to_data)
 {
-	git_buf out = {0}, _in = {0};;
+	git_buf out = {0}, _in = {0};
 	zval *filters = NULL;
 	php_git2_t *_filters = NULL;
 	char *in = NULL;
@@ -491,7 +491,7 @@ PHP_FUNCTION(git_filter_new)
 	filter->cleanup = php_git2_git_filter_cleanup_fn;
 
 	Z_ADDREF_P(mixed);
-	php_git2_multi_cb_init(&_filter->multi, mixed TSRMLS_CC, 5,
+	php_git2_multi_cb_init(&_filter->multi, mixed TSRMLS_CC, 10,
 		&initialize_fci, &initialize_fcc,
 		&shutdown_fci, &shutdown_fcc,
 		&check_fci, &check_fcc,

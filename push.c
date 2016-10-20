@@ -49,7 +49,7 @@ PHP_FUNCTION(git_push_set_options)
 	}
 
 	if (opts != NULL) {
-		php_git2_array_to_git_push_options(&_opts, opts TSRMLS_CC);
+		php_git2_array_to_git_push_options(_opts, opts TSRMLS_CC);
 		should_free = 1;
 	}
 

@@ -186,7 +186,7 @@ PHP_FUNCTION(git_refspec_transform)
 		RETURN_FALSE;
 	}
 
-	error = git_refspec_transform(&out, outlen, PHP_GIT2_V(_spec, refspec), name);
+	error = git_refspec_transform(out, outlen, PHP_GIT2_V(_spec, refspec), name);
 
 	if (php_git2_check_error(error, "git_refspec_transform" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -215,7 +215,7 @@ PHP_FUNCTION(git_refspec_rtransform)
 		RETURN_FALSE;
 	}
 
-	error = git_refspec_rtransform(&out, outlen, PHP_GIT2_V(_spec, refspec), name);
+	error = git_refspec_rtransform(out, outlen, PHP_GIT2_V(_spec, refspec), name);
 
 	if (php_git2_check_error(error, "git_refspec_rtransform" TSRMLS_CC)) {
 		RETURN_FALSE;

@@ -236,7 +236,7 @@ PHP_FUNCTION(git_merge_trees)
 	}
 
 	if (opts != NULL) {
-		php_git2_array_to_git_merge_tree_opts(&_opts, opts TSRMLS_CC);
+		php_git2_array_to_git_merge_tree_opts(_opts, opts TSRMLS_CC);
 		should_free = 1;
 	}
 

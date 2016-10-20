@@ -43,7 +43,7 @@ PHP_FUNCTION(git_diff_tree_to_tree)
 	}
 
 	if (opts != NULL) {
-		php_git2_array_to_git_diff_options(&_opts, opts TSRMLS_CC);
+		php_git2_array_to_git_diff_options(_opts, opts TSRMLS_CC);
 		should_free = 1;
 	}
 
@@ -93,7 +93,7 @@ PHP_FUNCTION(git_diff_tree_to_index)
 	}
 
 	if (opts != NULL) {
-		php_git2_array_to_git_diff_options(&_opts, opts TSRMLS_CC);
+		php_git2_array_to_git_diff_options(_opts, opts TSRMLS_CC);
 		should_free = 1;
 	}
 
@@ -143,7 +143,7 @@ PHP_FUNCTION(git_diff_index_to_workdir)
 	}
 
 	if (opts != NULL) {
-		php_git2_array_to_git_diff_options(&_opts, opts TSRMLS_CC);
+		php_git2_array_to_git_diff_options(_opts, opts TSRMLS_CC);
 		should_free = 1;
 	}
 
@@ -189,7 +189,7 @@ PHP_FUNCTION(git_diff_tree_to_workdir)
 	}
 
 	if (opts != NULL) {
-		php_git2_array_to_git_diff_options(&_opts, opts TSRMLS_CC);
+		php_git2_array_to_git_diff_options(_opts, opts TSRMLS_CC);
 		should_free = 1;
 	}
 
@@ -235,7 +235,7 @@ PHP_FUNCTION(git_diff_tree_to_workdir_with_index)
 	}
 
 	if (opts != NULL) {
-		php_git2_array_to_git_diff_options(&_opts, opts TSRMLS_CC);
+		php_git2_array_to_git_diff_options(_opts, opts TSRMLS_CC);
 		should_free = 1;
 	}
 
@@ -307,7 +307,7 @@ PHP_FUNCTION(git_diff_find_similar)
 	}
 
 	if (options != NULL) {
-		php_git2_array_to_git_diff_find_options(&_options, options TSRMLS_CC);
+		php_git2_array_to_git_diff_find_options(_options, options TSRMLS_CC);
 		should_free = 1;
 	}
 
@@ -468,7 +468,7 @@ PHP_FUNCTION(git_diff_foreach)
 		RETURN_FALSE;
 	}
 
-	php_git2_multi_cb_init(&cb, payload TSRMLS_CC, 3,
+	php_git2_multi_cb_init(&cb, payload TSRMLS_CC, 6,
 		&file_fci, &file_fcc,
 		&hunk_fci, &hunk_fcc,
 		&line_fci, &line_fcc
@@ -519,7 +519,7 @@ PHP_FUNCTION(git_diff_print)
 		RETURN_FALSE;
 	}
 
-	if (php_git2_multi_cb_init(&cb, payload TSRMLS_CC, 3,
+	if (php_git2_multi_cb_init(&cb, payload TSRMLS_CC, 6,
                                &empty_fcall_info, &empty_fcall_info_cache,
                                &empty_fcall_info, &empty_fcall_info_cache,
                                &fci, &fcc)) {
@@ -567,7 +567,7 @@ PHP_FUNCTION(git_diff_blobs)
 
     }
     
-    php_git2_multi_cb_init(&cb, payload TSRMLS_CC, 3,
+    php_git2_multi_cb_init(&cb, payload TSRMLS_CC, 6,
     	&file_fci, &file_fcc,
     	&hunk_fci, &hunk_fcc,
     	&line_fci, &line_fcc
@@ -620,7 +620,7 @@ PHP_FUNCTION(git_diff_blob_to_buffer)
 		RETURN_FALSE;
 	}
 
-	php_git2_multi_cb_init(&cb, payload TSRMLS_CC, 3,
+	php_git2_multi_cb_init(&cb, payload TSRMLS_CC, 6,
 		&file_fci, &file_fcc,
 		&hunk_fci, &hunk_fcc,
 		&line_fci, &line_fcc

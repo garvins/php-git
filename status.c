@@ -51,7 +51,7 @@ PHP_FUNCTION(git_status_foreach_ext)
 	}
 
 	if (opts != NULL) {
-		php_git2_array_to_git_status_options(&_opts, opts TSRMLS_CC);
+		php_git2_array_to_git_status_options(_opts, opts TSRMLS_CC);
 		should_free = 1;
 	}
 
@@ -120,7 +120,7 @@ PHP_FUNCTION(git_status_list_new)
 	}
 
 	if (opts != NULL) {
-		php_git2_array_to_git_status_options(&_opts, opts TSRMLS_CC);
+		php_git2_array_to_git_status_options(_opts, opts TSRMLS_CC);
 		should_free = 1;
 	}
 

@@ -61,24 +61,21 @@ PHP_FUNCTION(git_note_iterator_free)
 }
 /* }}} */
 
-/* {{{ proto long git_note_next(string $note_id, string $annotated_id, resource $it)
+/* {{{ proto string git_note_next(string $annotated_id, resource $it)
  */
 PHP_FUNCTION(git_note_next)
 {
-	int result;
-	char *note_id = NULL, *annotated_id = NULL;
-	git_oid __note_id = {0}, __annotated_id = {0};
-	size_t note_id_len, annotated_id_len;
+	git_oid note_id, __annotated_id = {0};
+	char __note_id[GIT2_OID_HEXSIZE] = {0};
+	char *annotated_id = NULL;
+	size_t annotated_id_len;
 	zval *it = NULL;
 	php_git2_t *_it = NULL;
+	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"ssr", &note_id, &note_id_len, &annotated_id, &annotated_id_len, &it) == FAILURE) {
+		"sr", &annotated_id, &annotated_id_len, &it) == FAILURE) {
 		return;
-	}
-
-	if (git_oid_fromstrn(&__note_id, note_id, note_id_len)) {
-		RETURN_FALSE;
 	}
 
 	if (git_oid_fromstrn(&__annotated_id, annotated_id, annotated_id_len)) {
@@ -89,9 +86,15 @@ PHP_FUNCTION(git_note_next)
 		RETURN_FALSE;
 	}
 
-	result = git_note_next(&__note_id, &__annotated_id, PHP_GIT2_V(_it, note_iterator));
+	error = git_note_next(&note_id, &__annotated_id, PHP_GIT2_V(_it, note_iterator));
 
-	RETURN_LONG(result);
+	if (php_git2_check_error(error, "git_note_next" TSRMLS_CC)) {
+		RETURN_FALSE;
+	}
+
+	git_oid_fmt(__note_id, &note_id);
+
+	RETURN_STRING(__note_id);
 }
 /* }}} */
 

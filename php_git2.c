@@ -113,7 +113,7 @@ void static destruct_git2(zend_resource *rsrc TSRMLS_DC)
 			case PHP_GIT2_TYPE_FILTER:
 			{
 				php_git2_filter *filter = (php_git2_filter*)PHP_GIT2_V(resource, filter);
-				zval_ptr_dtor(&filter->multi->payload);
+				zval_ptr_dtor(filter->multi->payload);
 				php_git2_multi_cb_free(filter->multi);
 				efree(filter);
 				break;
@@ -124,7 +124,7 @@ void static destruct_git2(zend_resource *rsrc TSRMLS_DC)
 			case PHP_GIT2_TYPE_ODB_BACKEND:
 			{
 				php_git2_odb_backend *backend = (php_git2_odb_backend*)PHP_GIT2_V(resource, odb_backend);
-				zval_ptr_dtor(&backend->multi->payload);
+				zval_ptr_dtor(backend->multi->payload);
 				php_git2_multi_cb_free(backend->multi);
 				efree(PHP_GIT2_V(resource, odb_backend));
 				break;

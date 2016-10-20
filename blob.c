@@ -308,7 +308,7 @@ PHP_FUNCTION(git_blob_lookup_prefix)
 		RETURN_FALSE;
 	}
 
-	if (git_oid_fromstrn(&__id, id, id_len)) {
+	if (git_oid_fromstrn(&__id, id, len)) {
 		RETURN_FALSE;
 	}
 
@@ -360,6 +360,7 @@ PHP_FUNCTION(git_blob_rawcontent)
 	const char *buffer = NULL;
 	zval *blob = NULL;
 	php_git2_t *_blob = NULL;
+	git_off_t size;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r", &blob) == FAILURE) {
@@ -376,7 +377,6 @@ PHP_FUNCTION(git_blob_rawcontent)
 		RETURN_FALSE;
 	}
 
-	git_off_t size;
 	size = git_blob_rawsize(PHP_GIT2_V(_blob, blob));
 	RETURN_STRINGL(buffer, size);
 }

@@ -10,7 +10,7 @@ PHP_FUNCTION(git_config_find_global)
 	size_t length = GIT2_BUFFER_SIZE;
 	int error;
 	
-	error = git_config_find_global(&out, length);
+	error = git_config_find_global(out, length);
 
 	if (php_git2_check_error(error, "git_config_find_global" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -28,7 +28,7 @@ PHP_FUNCTION(git_config_find_xdg)
 	size_t length = GIT2_BUFFER_SIZE;
 	int error;
 	
-	error = git_config_find_xdg(&out, length);
+	error = git_config_find_xdg(out, length);
 
 	if (php_git2_check_error(error, "git_config_find_xdg" TSRMLS_CC)) {
 		RETURN_FALSE;
@@ -46,7 +46,7 @@ PHP_FUNCTION(git_config_find_system)
 	size_t length = GIT2_BUFFER_SIZE;
 	int error;
 	
-	error = git_config_find_system(&out, length);
+	error = git_config_find_system(out, length);
 
 	if (php_git2_check_error(error, "git_config_find_system" TSRMLS_CC)) {
 		RETURN_FALSE;

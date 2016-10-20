@@ -17,7 +17,7 @@ PHP_FUNCTION(git_checkout_head)
 	}
 
 	if (opts != NULL) {
-		php_git2_array_to_git_checkout_opts(&_opts, opts TSRMLS_CC);
+		php_git2_array_to_git_checkout_opts(_opts, opts TSRMLS_CC);
 		should_free = 1;
 	}
 
@@ -50,7 +50,7 @@ PHP_FUNCTION(git_checkout_index)
 	}
 
 	if (opts != NULL) {
-		php_git2_array_to_git_checkout_opts(&_opts, opts TSRMLS_CC);
+		php_git2_array_to_git_checkout_opts(_opts, opts TSRMLS_CC);
 		should_free = 1;
 	}
 
@@ -87,7 +87,7 @@ PHP_FUNCTION(git_checkout_tree)
 	}
 
 	if (opts != NULL) {
-		php_git2_array_to_git_checkout_opts(&_opts, opts TSRMLS_CC);
+		php_git2_array_to_git_checkout_opts(_opts, opts TSRMLS_CC);
 		should_free = 1;
 	}
 

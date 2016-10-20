@@ -144,7 +144,7 @@ PHP_FUNCTION(git_commit_lookup_prefix)
 		RETURN_FALSE;
 	}
 
-	if (git_oid_fromstrn(&__id, id, id_len)) {
+	if (git_oid_fromstrn(&__id, id, len)) {
 		RETURN_FALSE;
 	}
 
@@ -524,7 +524,7 @@ PHP_FUNCTION(git_commit_nth_gen_ancestor)
  */
 PHP_FUNCTION(git_commit_create)
 {
-	zval *repo, *tree, *parents, *committer, *author, **element;
+	zval *repo, *tree, *parents, *committer, *author, *element;
 	char *update_ref = {0}, *message_encoding = {0}, *message = {0};
 	int update_ref_len, message_encoding_len, message_len, parent_count = 0, error = 0, i;
 	php_git2_t *_repo, *_tree;
@@ -547,8 +547,8 @@ PHP_FUNCTION(git_commit_create)
 		committer = author;
 	}
 
-	php_git2_array_to_signature(&__author, author TSRMLS_CC);
-	php_git2_array_to_signature(&__committer, committer TSRMLS_CC);
+	php_git2_array_to_git_signature(&__author, author TSRMLS_CC);
+	php_git2_array_to_git_signature(&__committer, committer TSRMLS_CC);
 
 	if ((_repo = (php_git2_t *) zend_fetch_resource(Z_RES_P(repo), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
@@ -566,12 +566,12 @@ PHP_FUNCTION(git_commit_create)
 		git_commit *p = NULL;
 
         if (Z_TYPE_P(element) == IS_STRING) { //HASH_VAL_IS_STRING
-			error = git_oid_fromstr(&oid, Z_STRVAL_PP(element));
+			error = git_oid_fromstr(&oid, Z_STRVAL_P(element));
 			git_commit_lookup(&p, PHP_GIT2_V(_repo, repository), &oid);
         } else if (Z_TYPE_P(element) == IS_RESOURCE) { //HASH_VAL_IS_RESOURCE
 			php_git2_t *t;
 
-	        if ((t = (php_git2_t *) zend_fetch_resource(Z_RES_P(*element), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
+	        if ((t = (php_git2_t *) zend_fetch_resource(Z_RES_P(element), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		        RETURN_FALSE;
 	        }
 

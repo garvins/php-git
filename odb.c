@@ -163,7 +163,7 @@ PHP_FUNCTION(git_odb_read_prefix)
 		RETURN_FALSE;
 	}
 
-	if (git_oid_fromstrn(&__short_id, short_id, short_id_len)) {
+	if (git_oid_fromstrn(&__short_id, short_id, len)) {
 		RETURN_FALSE;
 	}
 
@@ -368,30 +368,26 @@ PHP_FUNCTION(git_odb_open_wstream)
 }
 /* }}} */
 
-/* {{{ proto resource git_odb_stream_write(string $buffer)
+/* {{{ proto long git_odb_stream_write(resource $stream, string $buffer)
  */
 PHP_FUNCTION(git_odb_stream_write)
 {
-	php_git2_t *result = NULL;
-	git_odb_stream stream = NULL;
+	int result;
+	zval *stream = NULL;
+	php_git2_t *_stream = NULL;
 	char *buffer = NULL;
 	size_t len;
-	int error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
-		"s", &buffer, &len) == FAILURE) {
+		"rs", &stream, &buffer, &len) == FAILURE) {
 		return;
 	}
 
-	error = git_odb_stream_write(&stream, buffer, len);
-
-	if (php_git2_check_error(error, "git_odb_stream_write" TSRMLS_CC)) {
+	if ((_stream = (php_git2_t *) zend_fetch_resource(Z_RES_P(stream), PHP_GIT2_RESOURCE_NAME, git2_resource_handle)) == NULL) {
 		RETURN_FALSE;
 	}
 
-	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_ODB_STREAM, stream, 1 TSRMLS_CC)) {
-		RETURN_FALSE;
-	}
+	result = git_odb_stream_write(PHP_GIT2_V(_stream, odb_stream), buffer, len);
 
 	RETURN_LONG(result);
 }
@@ -947,7 +943,7 @@ PHP_FUNCTION(git_odb_backend_new)
 	}
 
 	Z_ADDREF_P(callbacks);
-	php_git2_multi_cb_init(&backend->multi, callbacks TSRMLS_CC, 9,
+	php_git2_multi_cb_init(&backend->multi, callbacks TSRMLS_CC, 18,
 		&read_fci, &read_fcc,
 		&write_fci, &write_fcc,
 		&read_prefix_fci, &read_prefix_fcc,

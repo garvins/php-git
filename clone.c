@@ -20,7 +20,7 @@ PHP_FUNCTION(git_clone)
 	}
 
 	if (options != NULL) {
-		php_git2_array_to_git_clone_options(&_options, options TSRMLS_CC);
+		php_git2_array_to_git_clone_options(_options, options TSRMLS_CC);
 		should_free = 1;
 	}
 
@@ -59,7 +59,7 @@ PHP_FUNCTION(git_clone_into)
 	}
 
 	if (co_opts != NULL) {
-		php_git2_array_to_git_checkout_opts(&_co_opts, co_opts TSRMLS_CC);
+		php_git2_array_to_git_checkout_opts(_co_opts, co_opts TSRMLS_CC);
 		should_free = 1;
 	}
 
