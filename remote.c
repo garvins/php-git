@@ -32,7 +32,7 @@ PHP_FUNCTION(git_remote_create)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -66,7 +66,7 @@ PHP_FUNCTION(git_remote_create_with_fetchspec)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -100,7 +100,7 @@ PHP_FUNCTION(git_remote_create_inmemory)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -134,7 +134,7 @@ PHP_FUNCTION(git_remote_load)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -184,7 +184,7 @@ PHP_FUNCTION(git_remote_owner)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(__result));
+	RETURN_RES(GIT2_RVAL_P(__result));
 }
 /* }}} */
 
@@ -540,7 +540,7 @@ PHP_FUNCTION(git_remote_get_refspec)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(__result));
+	RETURN_RES(GIT2_RVAL_P(__result));
 }
 /* }}} */
 

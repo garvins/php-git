@@ -20,7 +20,7 @@ PHP_FUNCTION(git_odb_new)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -49,7 +49,7 @@ PHP_FUNCTION(git_odb_open)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -138,7 +138,7 @@ PHP_FUNCTION(git_odb_read)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -177,7 +177,7 @@ PHP_FUNCTION(git_odb_read_prefix)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -364,7 +364,7 @@ PHP_FUNCTION(git_odb_open_wstream)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -393,7 +393,7 @@ PHP_FUNCTION(git_odb_stream_write)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_LONG(result);
 }
 /* }}} */
 
@@ -513,7 +513,7 @@ PHP_FUNCTION(git_odb_open_rstream)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -553,7 +553,7 @@ PHP_FUNCTION(git_odb_write_pack)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -641,7 +641,7 @@ PHP_FUNCTION(git_odb_object_dup)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -873,7 +873,7 @@ PHP_FUNCTION(git_odb_get_backend)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -963,7 +963,7 @@ PHP_FUNCTION(git_odb_backend_new)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 

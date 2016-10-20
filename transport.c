@@ -32,7 +32,7 @@ PHP_FUNCTION(git_transport_new)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -113,7 +113,7 @@ PHP_FUNCTION(git_transport_dummy)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -145,7 +145,7 @@ PHP_FUNCTION(git_transport_local)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -177,7 +177,7 @@ PHP_FUNCTION(git_transport_smart)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -209,7 +209,7 @@ PHP_FUNCTION(git_smart_subtransport_http)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -241,7 +241,7 @@ PHP_FUNCTION(git_smart_subtransport_git)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -273,7 +273,7 @@ PHP_FUNCTION(git_smart_subtransport_ssh)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 

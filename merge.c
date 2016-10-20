@@ -113,7 +113,7 @@ PHP_FUNCTION(git_merge_head_from_ref)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -152,7 +152,7 @@ PHP_FUNCTION(git_merge_head_from_fetchhead)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -191,7 +191,7 @@ PHP_FUNCTION(git_merge_head_from_oid)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -270,7 +270,7 @@ PHP_FUNCTION(git_merge_trees)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -308,7 +308,7 @@ PHP_FUNCTION(git_merge)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 

@@ -37,7 +37,7 @@ PHP_FUNCTION(git_branch_create)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -93,7 +93,7 @@ PHP_FUNCTION(git_branch_iterator_new)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -126,7 +126,7 @@ PHP_FUNCTION(git_branch_next)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -186,7 +186,7 @@ PHP_FUNCTION(git_branch_move)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -221,7 +221,7 @@ PHP_FUNCTION(git_branch_lookup)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -281,7 +281,7 @@ PHP_FUNCTION(git_branch_upstream)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 

@@ -62,7 +62,7 @@ PHP_FUNCTION(git_commit_lookup)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -120,7 +120,7 @@ PHP_FUNCTION(git_commit_tree)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -159,7 +159,7 @@ PHP_FUNCTION(git_commit_lookup_prefix)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -212,7 +212,7 @@ PHP_FUNCTION(git_commit_owner)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(__result));
+	RETURN_RES(GIT2_RVAL_P(__result));
 }
 /* }}} */
 
@@ -458,7 +458,7 @@ PHP_FUNCTION(git_commit_parent)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -518,7 +518,7 @@ PHP_FUNCTION(git_commit_nth_gen_ancestor)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 

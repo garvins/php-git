@@ -896,9 +896,10 @@ int php_git2_git_transport_cb(git_transport **out, git_remote *owner, void *para
 	if (php_git2_make_resource(&_param_owner, PHP_GIT2_TYPE_REMOTE, owner, 0 TSRMLS_CC)) {
 		return 0;
 	}
-	ZVAL_RESOURCE(param_owner, GIT2_RVAL_P(_param_owner));
 
-	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 2, &param_owner, &p->payload)) {
+	ZVAL_RES(param_owner, GIT2_RVAL_P(_param_owner));
+
+	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 2, param_owner, p->payload)) {
 		return GIT_EUSER;
 	}
 
@@ -1040,7 +1041,8 @@ int php_git2_git_submodule_foreach_cb(git_submodule *sm, const char *name, void 
 	if (php_git2_make_resource(&submodule, PHP_GIT2_TYPE_SUBMODULE, sm, 0 TSRMLS_CC)) {
 		return GIT_EUSER;
 	}
-	ZVAL_RESOURCE(param_sm, GIT2_RVAL_P(submodule));
+
+	ZVAL_RES(param_sm, GIT2_RVAL_P(submodule));
 
 	ZVAL_STRING(param_name, name);
 	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 3,
@@ -1076,8 +1078,8 @@ int php_git2_git_treebuilder_filter_cb(const git_tree_entry *entry, void *payloa
 	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_TREE_ENTRY, entry, 0 TSRMLS_CC)) {
 		return 0;
 	}
-	ZVAL_RESOURCE(param_tree_entry, GIT2_RVAL_P(result));
 	zend_list_addref(GIT2_RVAL_P(result));
+	ZVAL_RES(param_tree_entry, GIT2_RVAL_P(result));
 	Z_ADDREF_P(p->payload);
 
 	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 2, &param_tree_entry, &p->payload)) {
@@ -1194,7 +1196,7 @@ int php_git2_git_reference_foreach_cb(git_reference *reference, void *payload)
 
 	php_git2_make_resource(&result, PHP_GIT2_TYPE_REFERENCE, reference, 0 TSRMLS_CC);
 	zend_list_addref(result->resource_id);
-	ZVAL_RESOURCE(param_reference, result->resource_id);
+	ZVAL_RES(param_reference, GIT2_RVAL_P(result));
 
 	if (php_git2_call_function_v(p->fci, p->fcc TSRMLS_CC, retval_ptr, 2, &param_reference, &p->payload)) {
 		zend_list_delete(result->resource_id);
@@ -1530,7 +1532,8 @@ int php_git2_git_filter_check_fn(git_filter  *self, void **payload, const git_fi
 	if (php_git2_make_resource(&filter_source, PHP_GIT2_TYPE_FILTER_SOURCE, src, 0 TSRMLS_CC)) {
 		return GIT_EUSER;
 	}
-	ZVAL_RESOURCE(param_source, GIT2_RVAL_P(filter_source));
+
+	ZVAL_RES(param_source, GIT2_RVAL_P(filter_source));
 
 	array_init(param_attr);
 
@@ -1616,7 +1619,7 @@ int php_git2_git_filter_apply_fn(git_filter *self, void **payload, git_buf *to, 
 		return GIT_EUSER;
 	}
 
-	ZVAL_RESOURCE(param_src, GIT2_RVAL_P(filter_source));
+	ZVAL_RES(param_src, GIT2_RVAL_P(filter_source));
 
 	if (php_git2_call_function_v(&p->callbacks[3].fci, &p->callbacks[3].fcc TSRMLS_CC, retval_ptr, 3,
 		&param_payload, &param_from, &param_src)) {

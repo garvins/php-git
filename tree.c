@@ -26,7 +26,7 @@ PHP_FUNCTION(git_tree_entry_byindex)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(__result));
+	RETURN_RES(GIT2_RVAL_P(__result));
 }
 /* }}} */
 
@@ -60,7 +60,7 @@ PHP_FUNCTION(git_tree_entry_byoid)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(__result));
+	RETURN_RES(GIT2_RVAL_P(__result));
 }
 /* }}} */
 
@@ -89,7 +89,7 @@ PHP_FUNCTION(git_tree_entry_byname)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(__result));
+	RETURN_RES(GIT2_RVAL_P(__result));
 }
 /* }}} */
 
@@ -123,7 +123,7 @@ PHP_FUNCTION(git_tree_entry_bypath)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -368,7 +368,7 @@ PHP_FUNCTION(git_tree_entry_dup)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(__result));
+	RETURN_RES(GIT2_RVAL_P(__result));
 }
 /* }}} */
 
@@ -433,7 +433,7 @@ PHP_FUNCTION(git_tree_lookup)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -460,7 +460,7 @@ PHP_FUNCTION(git_tree_owner)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(__result));
+	RETURN_RES(GIT2_RVAL_P(__result));
 }
 /* }}} */
 

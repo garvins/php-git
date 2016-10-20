@@ -451,9 +451,9 @@ function printFile($table, $file) {
                 if ($func['retval']['type'] != "void") {
                     if (isResource($func['retval'])) {
                         if (hasOutValue($func)) {
-                            $str = "return_value, GIT2_RVAL_P(result)";
+                            $str = "GIT2_RVAL_P(result)";
                         } else {
-                            $str = "return_value, GIT2_RVAL_P(__result)";
+                            $str = "GIT2_RVAL_P(__result)";
                         }
                     } else if (isArray($func['retval'], true)) {
                         $zvalName = (isset($func['retval']['name']) && $func['retval']['name'] == "array") ?
@@ -867,7 +867,7 @@ function getReturnMacro($cType)
         case "void":
             return "RETURN_STRINGL";
         default:
-            return "ZVAL_RESOURCE";
+            return "RETURN_RES";
     }
 }
 
@@ -1015,7 +1015,7 @@ function additionalFunctioToFile($fileName)
         $func .= "\tif (php_git2_make_resource(&result, PHP_GIT2_TYPE_FILTER, filter, 1 TSRMLS_CC)) {\n";
         $func .= "\t\tRETURN_FALSE;\n";
         $func .= "\t}\n\n";
-        $func .= "\tZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));\n";
+        $func .= "\tRETURN_RES(GIT2_RVAL_P(result));\n";
 
 
         $functions = array('git_filter_new' => array('body' => $func, 'params' => "", 'rettype' => "array"));
@@ -1089,7 +1089,7 @@ function additionalFunctioToFile($fileName)
         $func .= "\tif (php_git2_make_resource(&result, PHP_GIT2_TYPE_ODB_BACKEND, backend, 1 TSRMLS_CC)) {\n";
         $func .= "\t\tRETURN_FALSE;\n";
         $func .= "\t}\n\n";
-        $func .= "\tZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));\n";
+        $func .= "\tRETURN_RES(GIT2_RVAL_P(result));\n";
 
         $functions = array('git_odb_backend_new' => array('body' => $func, 'params' => "", 'rettype' => "array"));
     }

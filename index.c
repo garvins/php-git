@@ -27,7 +27,7 @@ PHP_FUNCTION(git_index_open)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -49,7 +49,7 @@ PHP_FUNCTION(git_index_new)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -101,7 +101,7 @@ PHP_FUNCTION(git_index_owner)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(__result));
+	RETURN_RES(GIT2_RVAL_P(__result));
 }
 /* }}} */
 
@@ -866,7 +866,7 @@ PHP_FUNCTION(git_index_conflict_iterator_new)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 

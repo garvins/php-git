@@ -37,7 +37,7 @@ PHP_FUNCTION(git_filter_list_load)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -189,7 +189,7 @@ PHP_FUNCTION(git_filter_lookup)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(__result));
+	RETURN_RES(GIT2_RVAL_P(__result));
 }
 /* }}} */
 
@@ -222,7 +222,7 @@ PHP_FUNCTION(git_filter_list_new)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -299,7 +299,7 @@ PHP_FUNCTION(git_filter_source_repo)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(__result));
+	RETURN_RES(GIT2_RVAL_P(__result));
 }
 /* }}} */
 
@@ -503,7 +503,7 @@ PHP_FUNCTION(git_filter_new)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 

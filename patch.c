@@ -31,7 +31,7 @@ PHP_FUNCTION(git_patch_from_diff)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -68,7 +68,8 @@ PHP_FUNCTION(git_patch_from_blobs)
 	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_PATCH, out, 1 TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -104,7 +105,7 @@ PHP_FUNCTION(git_patch_from_blob_and_buffer)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -241,7 +242,7 @@ PHP_FUNCTION(git_patch_get_hunk)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -298,7 +299,7 @@ PHP_FUNCTION(git_patch_get_line_in_hunk)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 

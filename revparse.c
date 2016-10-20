@@ -32,7 +32,7 @@ PHP_FUNCTION(git_revparse_single)
 		RETURN_FALSE;
 	}
 
-	ZVAL_RESOURCE(return_value, GIT2_RVAL_P(result));
+	RETURN_RES(GIT2_RVAL_P(result));
 }
 /* }}} */
 
@@ -68,12 +68,14 @@ PHP_FUNCTION(git_revparse_ext)
 	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_OBJECT, object_out, 0 TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	ZVAL_RESOURCE(a, GIT2_RVAL_P(result));
+
+	ZVAL_RES(a, GIT2_RVAL_P(result));
 
 	if (php_git2_make_resource(&result2, PHP_GIT2_TYPE_REFERENCE, reference_out, 0 TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
-	ZVAL_RESOURCE(b, GIT2_RVAL_P(result2));
+
+	ZVAL_RES(b, GIT2_RVAL_P(result2));
 
 	array_init(array);
 	add_next_index_zval(array, a);
