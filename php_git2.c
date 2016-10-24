@@ -1541,9 +1541,7 @@ PHP_RSHUTDOWN_FUNCTION(git2)
 }
 
 zend_module_entry git2_module_entry = {
-#if ZEND_MODULE_API_NO >= 20010901
 	STANDARD_MODULE_HEADER,
-#endif
 	PHP_GIT2_EXTNAME,
 	php_git2_functions,					/* Functions */
 	PHP_MINIT(git2),	/* MINIT */
@@ -1551,9 +1549,7 @@ zend_module_entry git2_module_entry = {
 	PHP_RINIT(git2),	/* RINIT */
 	PHP_RSHUTDOWN(git2),		/* RSHUTDOWN */
 	PHP_MINFO(git2),	/* MINFO */
-#if ZEND_MODULE_API_NO >= 20010901
 	PHP_GIT2_EXTVER,
-#endif
 	PHP_MODULE_GLOBALS(git2),
 	PHP_GINIT(git2),
 	PHP_GSHUTDOWN(git2),
@@ -1561,6 +1557,4 @@ zend_module_entry git2_module_entry = {
 	STANDARD_MODULE_PROPERTIES_EX
 };
 
-#ifdef COMPILE_DL_GIT2
 ZEND_GET_MODULE(git2)
-#endif
