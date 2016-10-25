@@ -763,9 +763,9 @@ PHP_FUNCTION(git_index_conflict_get)
 	php_git2_git_index_entry_to_array(their_out, their TSRMLS_CC);
 
     array_init(container);
-    add_assoc_zval_ex(container, ZEND_STRS("ancestor"), ancestor);
-    add_assoc_zval_ex(container, ZEND_STRS("our"), our);
-    add_assoc_zval_ex(container, ZEND_STRS("their"), their);
+    add_assoc_zval_ex(container, ZEND_STRL("ancestor"), ancestor);
+    add_assoc_zval_ex(container, ZEND_STRL("our"), our);
+    add_assoc_zval_ex(container, ZEND_STRL("their"), their);
 	RETURN_ZVAL(container, 0, 1);
 }
 /* }}} */
@@ -900,9 +900,9 @@ PHP_FUNCTION(git_index_conflict_next)
 	php_git2_git_index_entry_to_array(their_out, their TSRMLS_CC);
 
 	array_init(container);
-    add_assoc_zval_ex(container, ZEND_STRS("ancestor"), ancestor);
-    add_assoc_zval_ex(container, ZEND_STRS("our"), our);
-    add_assoc_zval_ex(container, ZEND_STRS("their"), their);
+    add_assoc_zval_ex(container, ZEND_STRL("ancestor"), ancestor);
+    add_assoc_zval_ex(container, ZEND_STRL("our"), our);
+    add_assoc_zval_ex(container, ZEND_STRL("their"), their);
 	RETURN_ZVAL(container, 0, 1);
 }
 /* }}} */

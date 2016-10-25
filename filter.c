@@ -462,25 +462,25 @@ PHP_FUNCTION(git_filter_new)
 	_filter = (php_git2_filter*)ecalloc(1, sizeof(php_git2_filter));
 	filter = (git_filter*)&_filter->super;
 	filter->version = GIT_FILTER_VERSION;
-	filter->attributes = php_git2_read_arrval_string(mixed, ZEND_STRS("attributes") TSRMLS_CC);
+	filter->attributes = php_git2_read_arrval_string(mixed, ZEND_STRL("attributes") TSRMLS_CC);
 
-	if (tmp = php_git2_read_arrval(mixed, ZEND_STRS("initialize") TSRMLS_CC)) {
+	if (tmp = php_git2_read_arrval(mixed, ZEND_STRL("initialize") TSRMLS_CC)) {
 		php_git2_fcall_info_wrapper2(tmp, &initialize_fci, &initialize_fcc TSRMLS_CC);
 	}
 
-	if (tmp = php_git2_read_arrval(mixed, ZEND_STRS("shutdown") TSRMLS_CC)) {
+	if (tmp = php_git2_read_arrval(mixed, ZEND_STRL("shutdown") TSRMLS_CC)) {
 		php_git2_fcall_info_wrapper2(tmp, &shutdown_fci, &shutdown_fcc TSRMLS_CC);
 	}
 
-	if (tmp = php_git2_read_arrval(mixed, ZEND_STRS("check") TSRMLS_CC)) {
+	if (tmp = php_git2_read_arrval(mixed, ZEND_STRL("check") TSRMLS_CC)) {
 		php_git2_fcall_info_wrapper2(tmp, &check_fci, &check_fcc TSRMLS_CC);
 	}
 
-	if (tmp = php_git2_read_arrval(mixed, ZEND_STRS("apply") TSRMLS_CC)) {
+	if (tmp = php_git2_read_arrval(mixed, ZEND_STRL("apply") TSRMLS_CC)) {
 		php_git2_fcall_info_wrapper2(tmp, &apply_fci, &apply_fcc TSRMLS_CC);
 	}
 
-	if (tmp = php_git2_read_arrval(mixed, ZEND_STRS("cleanup") TSRMLS_CC)) {
+	if (tmp = php_git2_read_arrval(mixed, ZEND_STRL("cleanup") TSRMLS_CC)) {
 		php_git2_fcall_info_wrapper2(tmp, &cleanup_fci, &cleanup_fcc TSRMLS_CC);
 	}
 

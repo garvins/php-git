@@ -206,9 +206,9 @@ PHP_FUNCTION(git_patch_line_stats)
 	result = git_patch_line_stats(&total_context, &total_additions, &total_deletions, PHP_GIT2_V(_patch, patch));
 
 	array_init(out);
-	add_assoc_long_ex(out, ZEND_STRS("total_context"), total_context);
-	add_assoc_long_ex(out, ZEND_STRS("total_additions"), total_additions);
-	add_assoc_long_ex(out, ZEND_STRS("total_deletions"), total_deletions);
+	add_assoc_long_ex(out, ZEND_STRL("total_context"), total_context);
+	add_assoc_long_ex(out, ZEND_STRL("total_additions"), total_additions);
+	add_assoc_long_ex(out, ZEND_STRL("total_deletions"), total_deletions);
 	RETURN_ZVAL(out, 0, 1);
 }
 /* }}} */

@@ -902,42 +902,42 @@ PHP_FUNCTION(git_odb_backend_new)
 	backend->parent.free = &php_git2_odb_backend_free;
 	backend->parent.refresh = &php_git2_odb_refresh;
 
-	tmp = php_git2_read_arrval(callbacks, ZEND_STRS("read") TSRMLS_CC);
+	tmp = php_git2_read_arrval(callbacks, ZEND_STRL("read") TSRMLS_CC);
 	if (tmp) {
 		php_git2_fcall_info_wrapper2(tmp, &read_fci, &read_fcc TSRMLS_CC);
 	}
 
-	tmp = php_git2_read_arrval(callbacks, ZEND_STRS("write") TSRMLS_CC);
+	tmp = php_git2_read_arrval(callbacks, ZEND_STRL("write") TSRMLS_CC);
 	if (tmp) {
 		php_git2_fcall_info_wrapper2(tmp, &write_fci, &write_fcc TSRMLS_CC);
 	}
 
-	tmp = php_git2_read_arrval(callbacks, ZEND_STRS("read_header") TSRMLS_CC);
+	tmp = php_git2_read_arrval(callbacks, ZEND_STRL("read_header") TSRMLS_CC);
 	if (tmp) {
 		php_git2_fcall_info_wrapper2(tmp, &read_header_fci, &read_header_fcc TSRMLS_CC);
 	}
 
-	tmp = php_git2_read_arrval(callbacks, ZEND_STRS("read_prefix") TSRMLS_CC);
+	tmp = php_git2_read_arrval(callbacks, ZEND_STRL("read_prefix") TSRMLS_CC);
 	if (tmp) {
 		php_git2_fcall_info_wrapper2(tmp, &read_prefix_fci, &read_prefix_fcc TSRMLS_CC);
 	}
 
-	tmp = php_git2_read_arrval(callbacks, ZEND_STRS("exists") TSRMLS_CC);
+	tmp = php_git2_read_arrval(callbacks, ZEND_STRL("exists") TSRMLS_CC);
 	if (tmp) {
 		php_git2_fcall_info_wrapper2(tmp, &exists_fci, &exists_fcc TSRMLS_CC);
 	}
 
-	tmp = php_git2_read_arrval(callbacks, ZEND_STRS("foreach") TSRMLS_CC);
+	tmp = php_git2_read_arrval(callbacks, ZEND_STRL("foreach") TSRMLS_CC);
 	if (tmp) {
 		php_git2_fcall_info_wrapper2(tmp, &foreach_fci, &foreach_fcc TSRMLS_CC);
 	}
 
-	tmp = php_git2_read_arrval(callbacks, ZEND_STRS("free") TSRMLS_CC);
+	tmp = php_git2_read_arrval(callbacks, ZEND_STRL("free") TSRMLS_CC);
 	if (tmp) {
 		php_git2_fcall_info_wrapper2(tmp, &free_fci, &free_fcc TSRMLS_CC);
 	}
 
-	tmp = php_git2_read_arrval(callbacks, ZEND_STRS("refresh") TSRMLS_CC);
+	tmp = php_git2_read_arrval(callbacks, ZEND_STRL("refresh") TSRMLS_CC);
 	if (tmp) {
 		php_git2_fcall_info_wrapper2(tmp, &refresh_fci, &refresh_fcc TSRMLS_CC);
 	}

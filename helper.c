@@ -73,9 +73,9 @@ void php_git2_array_to_git_signature(git_signature *signature, zval *author TSRM
 {
 	zval *name = NULL, *email = NULL, *time = NULL;
 
-	name  = php_git2_read_arrval(author, ZEND_STRS("name") TSRMLS_CC);
-	email = php_git2_read_arrval(author, ZEND_STRS("email") TSRMLS_CC);
-	time  = php_git2_read_arrval(author, ZEND_STRS("time") TSRMLS_CC);
+	name  = php_git2_read_arrval(author, ZEND_STRL("name") TSRMLS_CC);
+	email = php_git2_read_arrval(author, ZEND_STRL("email") TSRMLS_CC);
+	time  = php_git2_read_arrval(author, ZEND_STRL("time") TSRMLS_CC);
 
 	signature->name = Z_STRVAL_P(name);
 	signature->email = Z_STRVAL_P(email);
@@ -94,37 +94,19 @@ void php_git2_array_to_git_signature(git_signature *signature, zval *author TSRM
 
 void php_git2_git_signature_to_array(const git_signature *signature, zval *out TSRMLS_DC)
 {
-	zval *datetime, *timezone;
-	php_timezone_obj *tzobj;
-	char time_str[12] = {0};
-
-	array_init(out);
-
-    php_date_instantiate(php_date_get_date_ce(), datetime TSRMLS_CC);
-	snprintf(time_str,12,"%c%ld",'@', signature->when.time);
-
-    php_date_instantiate(php_date_get_timezone_ce(), timezone TSRMLS_CC);
-	tzobj = (php_timezone_obj *) Z_OBJ_P(timezone);
-	tzobj->initialized = 1;
-	tzobj->type = TIMELIB_ZONETYPE_OFFSET;
-	tzobj->tzi.utc_offset = -signature->when.offset; // doesn't work
-
-	/* TODO(chobie): how do i set offset? */
-	php_date_initialize(Z_PHPDATE_P(datetime), time_str, strlen(time_str), NULL, timezone, 0 TSRMLS_CC);
-
 	if (signature->name == NULL) {
-		add_assoc_null_ex(out, ZEND_STRS("name"));
+		add_assoc_null_ex(out, ZEND_STRL("name"));
 	} else {
-		add_assoc_string_ex(out, ZEND_STRS("name"), signature->name);
+		add_assoc_string_ex(out, ZEND_STRL("name"), signature->name);
 	}
-	if (signature->email == NULL) {
-		add_assoc_null_ex(out, ZEND_STRS("email"));
-	} else {
-		add_assoc_string_ex(out, ZEND_STRS("email"), signature->email);
-	}
-	add_assoc_zval_ex(out, ZEND_STRS("time"), datetime);
 
-	zval_ptr_dtor(timezone);
+	if (signature->email == NULL) {
+		add_assoc_null_ex(out, ZEND_STRL("email"));
+	} else {
+		add_assoc_string_ex(out, ZEND_STRL("email"), signature->email);
+	}
+
+	add_assoc_long_ex(out, ZEND_STRL("time"), signature->when.time);
 }
 
 void php_git2_git_strarray_to_array(git_strarray *array, zval *out TSRMLS_DC)
@@ -251,66 +233,67 @@ void php_git2_git_strarray_free(git_strarray *out)
 
 void php_git2_git_checkout_opts_to_array(git_checkout_opts *opts, zval *out TSRMLS_DC)
 {
-	git_checkout_opts tmp = GIT_CHECKOUT_OPTS_INIT;
-	opts = &tmp;
+    git_checkout_opts tmp = GIT_CHECKOUT_OPTS_INIT;
+    zval paths;
 
-	array_init(out);
+	if (!opts) {
+	    opts = &tmp;
+	}
 
-	add_assoc_long_ex(out, ZEND_STRS("version"), opts->version);
-	add_assoc_long_ex(out, ZEND_STRS("checkout_strategy"), opts->checkout_strategy);
-	add_assoc_long_ex(out, ZEND_STRS("disable_filters"), opts->disable_filters);
-	add_assoc_long_ex(out, ZEND_STRS("dir_mode"), opts->dir_mode);
-	add_assoc_long_ex(out, ZEND_STRS("file_mode"), opts->file_mode);
-	add_assoc_long_ex(out, ZEND_STRS("file_open_flags"), opts->file_open_flags);
-	add_assoc_long_ex(out, ZEND_STRS("notify_flags"), opts->notify_flags);
+	add_assoc_long_ex(out, ZEND_STRL("version"), opts->version);
+	add_assoc_long_ex(out, ZEND_STRL("checkout_strategy"), opts->checkout_strategy);
+	add_assoc_long_ex(out, ZEND_STRL("disable_filters"), opts->disable_filters);
+	add_assoc_long_ex(out, ZEND_STRL("dir_mode"), opts->dir_mode);
+	add_assoc_long_ex(out, ZEND_STRL("file_mode"), opts->file_mode);
+	add_assoc_long_ex(out, ZEND_STRL("file_open_flags"), opts->file_open_flags);
+	add_assoc_long_ex(out, ZEND_STRL("notify_flags"), opts->notify_flags);
 
 	if (opts->notify_payload != NULL) {
 
 	} else {
-		add_assoc_null_ex(out, ZEND_STRS("notify_cb"));
+		add_assoc_null_ex(out, ZEND_STRL("notify_cb"));
 	}
 
 	if (opts->notify_payload != NULL) {
 
 	} else {
-		add_assoc_null_ex(out, ZEND_STRS("notify_payload"));
+		add_assoc_null_ex(out, ZEND_STRL("notify_payload"));
 	}
 
 	if (opts->progress_cb != NULL) {
 
 	} else {
-		add_assoc_null_ex(out, ZEND_STRS("progress_cb"));
+		add_assoc_null_ex(out, ZEND_STRL("progress_cb"));
 	}
 
 	if (opts->progress_payload != NULL) {
 
 	} else {
-		add_assoc_null_ex(out, ZEND_STRS("progress_payload"));
+		add_assoc_null_ex(out, ZEND_STRL("progress_payload"));
 	}
 
 	if (opts->paths.count > 0) {
-		zval *paths;
-		php_git2_git_strarray_to_array(&opts->paths, paths TSRMLS_CC);
-		add_assoc_zval_ex(out, ZEND_STRS("paths"), paths);
+		php_git2_git_strarray_to_array(&opts->paths, &paths TSRMLS_CC);
 	} else {
-		zval *paths;
-		array_init(paths);
-		add_assoc_zval_ex(out, ZEND_STRS("paths"), paths);
+		array_init(&paths);
 	}
+	add_assoc_zval_ex(out, ZEND_STRL("paths"), &paths);
 
 	if (opts->baseline != NULL) {
 		// git_tree
 	} else {
-		add_assoc_null_ex(out, ZEND_STRS("baseline"));
+		add_assoc_null_ex(out, ZEND_STRL("baseline"));
 	}
-	add_assoc_string_ex(out, ZEND_STRS("target_directory"), (opts->target_directory) ? strdup(opts->target_directory) : "");
-	add_assoc_string_ex(out, ZEND_STRS("our_label"), (opts->our_label) ? strdup(opts->our_label) : "");
-	add_assoc_string_ex(out, ZEND_STRS("their_label"), (opts->their_label) ? strdup(opts->their_label) : "");
+
+	add_assoc_string_ex(out, ZEND_STRL("target_directory"), (opts->target_directory) ? strdup(opts->target_directory) : "");
+	add_assoc_string_ex(out, ZEND_STRL("our_label"), (opts->our_label) ? strdup(opts->our_label) : "");
+	add_assoc_string_ex(out, ZEND_STRL("their_label"), (opts->their_label) ? strdup(opts->their_label) : "");
 }
 
 void php_git2_git_checkout_opts_free(git_checkout_opts *target TSRMLS_DC)
 {
-	php_git2_cb_t *tmp;
+    // todo rework needed
+	/* php_git2_cb_t *tmp;
 
 	if (target->notify_payload) {
 		tmp = (php_git2_cb_t*)target->notify_payload;
@@ -334,7 +317,7 @@ void php_git2_git_checkout_opts_free(git_checkout_opts *target TSRMLS_DC)
 	}
 
 	php_git2_git_strarray_free(&target->paths);
-	efree(target);
+	efree(target); */
 }
 
 int php_git2_git_checkout_notify_cb(git_checkout_notify_t why, const char *path, const git_diff_file *baseline,
@@ -418,36 +401,30 @@ void php_git2_fcall_info_wrapper2(zval *target, zend_fcall_info *fci, zend_fcall
 
 int php_git2_array_to_git_checkout_opts(git_checkout_opts *out, zval *array TSRMLS_DC)
 {
-	const char *target_directory, *our_label, *their_label;
-	git_checkout_opts *opts = NULL, def = GIT_CHECKOUT_OPTS_INIT;
-	php_git2_cb_t *notify_payload = NULL, *progress_payload= NULL;
+	/*php_git2_cb_t *notify_payload = NULL, *progress_payload= NULL;
 	zval *notify_cb = NULL, *progress_cb = NULL;
 
-	opts = (git_checkout_opts*)emalloc(sizeof(struct git_checkout_opts));
-	memcpy(opts, &def, sizeof(git_checkout_opts));
+	notify_cb = php_git2_read_arrval(array, ZEND_STRL("notify_cb") TSRMLS_CC);
+	progress_cb = php_git2_read_arrval(array, ZEND_STRL("progress_cb") TSRMLS_CC);
+	out->notify_cb = php_git2_git_checkout_notify_cb;
+	out->progress_cb = php_git2_git_checkout_progress_cb;*/
 
-	notify_cb = php_git2_read_arrval(array, ZEND_STRS("notify_cb") TSRMLS_CC);
-	progress_cb = php_git2_read_arrval(array, ZEND_STRS("progress_cb") TSRMLS_CC);
+	out->version = php_git2_read_arrval_long(array, ZEND_STRL("version") TSRMLS_CC);
+	out->checkout_strategy = php_git2_read_arrval_long(array, ZEND_STRL("checkout_strategy") TSRMLS_CC);
+	out->disable_filters = php_git2_read_arrval_long(array, ZEND_STRL("disable_filters") TSRMLS_CC);
+	out->dir_mode = php_git2_read_arrval_long(array, ZEND_STRL("dir_mode") TSRMLS_CC);
+	out->file_mode = php_git2_read_arrval_long(array, ZEND_STRL("file_mode") TSRMLS_CC);
+	out->file_open_flags = php_git2_read_arrval_long(array, ZEND_STRL("file_open_flags") TSRMLS_CC);
+	out->notify_flags = php_git2_read_arrval_long(array, ZEND_STRL("notify_flags") TSRMLS_CC);
 
-
-	opts->notify_cb = php_git2_git_checkout_notify_cb;
-	opts->progress_cb = php_git2_git_checkout_progress_cb;
-	opts->version = php_git2_read_arrval_long(array, ZEND_STRS("version") TSRMLS_CC);
-	opts->checkout_strategy = php_git2_read_arrval_long(array, ZEND_STRS("checkout_strategy") TSRMLS_CC);
-	opts->disable_filters = php_git2_read_arrval_long(array, ZEND_STRS("disable_filters") TSRMLS_CC);
-	opts->dir_mode = php_git2_read_arrval_long(array, ZEND_STRS("dir_mode") TSRMLS_CC);
-	opts->file_mode = php_git2_read_arrval_long(array, ZEND_STRS("file_mode") TSRMLS_CC);
-	opts->file_open_flags = php_git2_read_arrval_long(array, ZEND_STRS("file_open_flags") TSRMLS_CC);
-	opts->notify_flags = php_git2_read_arrval_long(array, ZEND_STRS("notify_flags") TSRMLS_CC);
-
-	//notify_cb
+	/*//notify_cb
 	if (Z_TYPE_P(notify_cb) != IS_NULL) {
 		zend_fcall_info *fci;
 		zend_fcall_info_cache *fcc;
 
 		php_git2_fcall_info_wrapper(notify_cb, &fci, &fcc TSRMLS_CC);
 		if (php_git2_cb_init(&notify_payload, fci, fcc,
-		 	php_git2_read_arrval(array, ZEND_STRS("notify_payload") TSRMLS_CC) TSRMLS_CC)) {
+		 	php_git2_read_arrval(array, ZEND_STRL("notify_payload") TSRMLS_CC) TSRMLS_CC)) {
 		}
 		opts->notify_payload = notify_payload;
 	} else {
@@ -461,26 +438,19 @@ int php_git2_array_to_git_checkout_opts(git_checkout_opts *out, zval *array TSRM
 
 		php_git2_fcall_info_wrapper(progress_cb, &fci, &fcc TSRMLS_CC);
 		if (php_git2_cb_init(&progress_payload, fci, fcc,
-		 	php_git2_read_arrval(array, ZEND_STRS("progress_payload") TSRMLS_CC) TSRMLS_CC)) {
+		 	php_git2_read_arrval(array, ZEND_STRL("progress_payload") TSRMLS_CC) TSRMLS_CC)) {
 		}
 		opts->progress_payload = progress_payload;
 	} else {
 		opts->progress_cb = NULL;
 	}
 
+	php_git2_array_to_git_strarray(&opts->paths, php_git2_read_arrval(array, ZEND_STRL("paths") TSRMLS_CC) TSRMLS_CC);*/
 
-	php_git2_array_to_git_strarray(&opts->paths, php_git2_read_arrval(array, ZEND_STRS("paths") TSRMLS_CC) TSRMLS_CC);
+	out->target_directory = php_git2_read_arrval_string(array, ZEND_STRL("target_directory") TSRMLS_CC);
+	out->our_label = php_git2_read_arrval_string(array, ZEND_STRL("our_label") TSRMLS_CC);
+	out->their_label = php_git2_read_arrval_string(array, ZEND_STRL("their_label") TSRMLS_CC);
 
-	// TODO: assign baseline(git_tree)
-
-	target_directory = php_git2_read_arrval_string(array, ZEND_STRS("target_directory") TSRMLS_CC);
-	our_label = php_git2_read_arrval_string(array, ZEND_STRS("our_label") TSRMLS_CC);
-	their_label = php_git2_read_arrval_string(array, ZEND_STRS("their_label") TSRMLS_CC);
-	opts->target_directory = target_directory;
-	opts->our_label = our_label;
-	opts->their_label = their_label;
-
-	out = opts;
 	return 0;
 }
 
@@ -537,13 +507,13 @@ void php_git2_multi_cb_free(php_git2_multi_cb_t *target)
 void php_git2_diff_line_to_array(const git_diff_line *line, zval *out TSRMLS_DC)
 {
 	array_init(out);
-	add_assoc_stringl_ex(out, ZEND_STRS("origin"), strdup(&line->origin), 1);
-	add_assoc_long_ex(out, ZEND_STRS("old_lineno"), line->old_lineno);
-	add_assoc_long_ex(out, ZEND_STRS("new_lineno"), line->new_lineno);
-	add_assoc_long_ex(out, ZEND_STRS("num_lines"), line->num_lines);
-	add_assoc_long_ex(out, ZEND_STRS("content_len"), line->content_len);
-	add_assoc_long_ex(out, ZEND_STRS("content_offset"), line->content_offset);
-	add_assoc_stringl_ex(out, ZEND_STRS("content"), strdup(line->content), line->content_len);
+	add_assoc_stringl_ex(out, ZEND_STRL("origin"), strdup(&line->origin), 1);
+	add_assoc_long_ex(out, ZEND_STRL("old_lineno"), line->old_lineno);
+	add_assoc_long_ex(out, ZEND_STRL("new_lineno"), line->new_lineno);
+	add_assoc_long_ex(out, ZEND_STRL("num_lines"), line->num_lines);
+	add_assoc_long_ex(out, ZEND_STRL("content_len"), line->content_len);
+	add_assoc_long_ex(out, ZEND_STRL("content_offset"), line->content_offset);
+	add_assoc_stringl_ex(out, ZEND_STRL("content"), strdup(line->content), line->content_len);
 }
 
 void php_git2_diff_hunk_to_array(const git_diff_hunk *hunk, zval *out TSRMLS_DC)
@@ -552,11 +522,11 @@ void php_git2_diff_hunk_to_array(const git_diff_hunk *hunk, zval *out TSRMLS_DC)
 		ZVAL_NULL(out);
 	} else {
 		array_init(out);
-		add_assoc_long_ex(out, ZEND_STRS("old_start"), hunk->old_start);
-		add_assoc_long_ex(out, ZEND_STRS("old_lines"), hunk->old_lines);
-		add_assoc_long_ex(out, ZEND_STRS("new_start"), hunk->new_start);
-		add_assoc_long_ex(out, ZEND_STRS("new_lines"), hunk->new_lines);
-		add_assoc_stringl_ex(out, ZEND_STRS("header"), strdup(hunk->header), 128);
+		add_assoc_long_ex(out, ZEND_STRL("old_start"), hunk->old_start);
+		add_assoc_long_ex(out, ZEND_STRL("old_lines"), hunk->old_lines);
+		add_assoc_long_ex(out, ZEND_STRL("new_start"), hunk->new_start);
+		add_assoc_long_ex(out, ZEND_STRL("new_lines"), hunk->new_lines);
+		add_assoc_stringl_ex(out, ZEND_STRL("header"), strdup(hunk->header), 128);
 	}
 }
 
@@ -567,11 +537,11 @@ void php_git2_diff_file_to_array(const git_diff_file *file, zval *out TSRMLS_DC)
 	array_init(out);
 	git_oid_fmt(buf, &file->oid);
 
-	add_assoc_string_ex(out, ZEND_STRS("oid"), buf);
-	add_assoc_string_ex(out, ZEND_STRS("path"), strdup(file->path));
-	add_assoc_long_ex(out, ZEND_STRS("size"), file->size);
-	add_assoc_long_ex(out, ZEND_STRS("flags"), file->flags);
-	add_assoc_long_ex(out, ZEND_STRS("mode"), file->mode);
+	add_assoc_string_ex(out, ZEND_STRL("oid"), buf);
+	add_assoc_string_ex(out, ZEND_STRL("path"), strdup(file->path));
+	add_assoc_long_ex(out, ZEND_STRL("size"), file->size);
+	add_assoc_long_ex(out, ZEND_STRL("flags"), file->flags);
+	add_assoc_long_ex(out, ZEND_STRL("mode"), file->mode);
 }
 
 void php_git2_git_diff_delta_to_array(const git_diff_delta *delta, zval *out TSRMLS_DC)
@@ -580,16 +550,16 @@ void php_git2_git_diff_delta_to_array(const git_diff_delta *delta, zval *out TSR
 
 	array_init(out);
 
-	add_assoc_long_ex(out, ZEND_STRS("status"), delta->status);
-	add_assoc_long_ex(out, ZEND_STRS("flags"), delta->flags);
-	add_assoc_long_ex(out, ZEND_STRS("similarity"), delta->similarity);
-	add_assoc_long_ex(out, ZEND_STRS("nfiles"), delta->nfiles);
+	add_assoc_long_ex(out, ZEND_STRL("status"), delta->status);
+	add_assoc_long_ex(out, ZEND_STRL("flags"), delta->flags);
+	add_assoc_long_ex(out, ZEND_STRL("similarity"), delta->similarity);
+	add_assoc_long_ex(out, ZEND_STRL("nfiles"), delta->nfiles);
 
 	php_git2_diff_file_to_array(&delta->old_file, old TSRMLS_CC);
 	php_git2_diff_file_to_array(&delta->new_file, new TSRMLS_CC);
 
-	add_assoc_zval_ex(out, ZEND_STRS("old_file"), old);
-	add_assoc_zval_ex(out, ZEND_STRS("new_file"), new);
+	add_assoc_zval_ex(out, ZEND_STRL("old_file"), old);
+	add_assoc_zval_ex(out, ZEND_STRL("new_file"), new);
 }
 
 void php_git2_array_to_git_diff_options(git_diff_options *options, zval *array TSRMLS_DC)
@@ -600,26 +570,28 @@ void php_git2_array_to_git_diff_options(git_diff_options *options, zval *array T
         
 	git_diff_options_init(options, GIT_DIFF_OPTIONS_VERSION);
 
-	options->version = php_git2_read_arrval_long(array, ZEND_STRS("version") TSRMLS_CC);
-	options->flags = php_git2_read_arrval_long(array, ZEND_STRS("flags") TSRMLS_CC);
-	options->ignore_submodules = php_git2_read_arrval_long(array, ZEND_STRS("ignore_submodules") TSRMLS_CC);
+	options->version = php_git2_read_arrval_long(array, ZEND_STRL("version") TSRMLS_CC);
+	options->flags = php_git2_read_arrval_long(array, ZEND_STRL("flags") TSRMLS_CC);
+	options->ignore_submodules = php_git2_read_arrval_long(array, ZEND_STRL("ignore_submodules") TSRMLS_CC);
 
-	php_git2_array_to_git_strarray(&options->pathspec, php_git2_read_arrval(array, ZEND_STRS("pathspec") TSRMLS_CC) TSRMLS_CC);
+	php_git2_array_to_git_strarray(&options->pathspec, php_git2_read_arrval(array, ZEND_STRL("pathspec") TSRMLS_CC) TSRMLS_CC);
 	// TODO(chobie): support notify cb
 
-	options->context_lines = php_git2_read_arrval_long(array, ZEND_STRS("context_lines") TSRMLS_CC);
-	options->interhunk_lines = php_git2_read_arrval_long(array, ZEND_STRS("interhunk_lines") TSRMLS_CC);
-	options->oid_abbrev = php_git2_read_arrval_long(array, ZEND_STRS("oid_abbrev") TSRMLS_CC);
-	options->max_size = php_git2_read_arrval_long(array, ZEND_STRS("max_size") TSRMLS_CC);
-	options->old_prefix = php_git2_read_arrval_string(array, ZEND_STRS("old_prefix") TSRMLS_CC);
-	options->new_prefix = php_git2_read_arrval_string(array, ZEND_STRS("new_prefix") TSRMLS_CC);
+	options->context_lines = php_git2_read_arrval_long(array, ZEND_STRL("context_lines") TSRMLS_CC);
+	options->interhunk_lines = php_git2_read_arrval_long(array, ZEND_STRL("interhunk_lines") TSRMLS_CC);
+	options->oid_abbrev = php_git2_read_arrval_long(array, ZEND_STRL("oid_abbrev") TSRMLS_CC);
+	options->max_size = php_git2_read_arrval_long(array, ZEND_STRL("max_size") TSRMLS_CC);
+	options->old_prefix = php_git2_read_arrval_string(array, ZEND_STRL("old_prefix") TSRMLS_CC);
+	options->new_prefix = php_git2_read_arrval_string(array, ZEND_STRL("new_prefix") TSRMLS_CC);
 }
 
 void php_git2_git_diff_options_free(git_diff_options *options)
 {
-	if (options != NULL && options->pathspec.count > 0) {
+    // todo rework needed
+
+	/* if (options != NULL && options->pathspec.count > 0) {
 		efree(options->pathspec.strings);
-	}
+	} */
 }
 
 void php_git2_git_diff_options_to_array(const git_diff_options *options, zval *out TSRMLS_DC)
@@ -628,38 +600,38 @@ void php_git2_git_diff_options_to_array(const git_diff_options *options, zval *o
 
 
 	array_init(out);
-	add_assoc_long_ex(out, ZEND_STRS("version"), options->version);
-	add_assoc_long_ex(out, ZEND_STRS("flags"), options->flags);
-	add_assoc_long_ex(out, ZEND_STRS("ignore_submodules"), options->ignore_submodules);
+	add_assoc_long_ex(out, ZEND_STRL("version"), options->version);
+	add_assoc_long_ex(out, ZEND_STRL("flags"), options->flags);
+	add_assoc_long_ex(out, ZEND_STRL("ignore_submodules"), options->ignore_submodules);
 
 	array_init(pathspec);
 	if (options->pathspec.count > 0) {
 	} else {
-		add_assoc_zval_ex(out, ZEND_STRS("pathspec"), pathspec);
+		add_assoc_zval_ex(out, ZEND_STRL("pathspec"), pathspec);
 	}
 
 	if (options->notify_cb) {
 	} else {
-		add_assoc_null_ex(out, ZEND_STRS("notify_cb"));
+		add_assoc_null_ex(out, ZEND_STRL("notify_cb"));
 	}
 
-	add_assoc_long_ex(out, ZEND_STRS("context_lines"), options->context_lines);
-	add_assoc_long_ex(out, ZEND_STRS("interhunk_lines"), options->interhunk_lines);
-	add_assoc_long_ex(out, ZEND_STRS("oid_abbrev"), options->oid_abbrev);
-	add_assoc_long_ex(out, ZEND_STRS("max_size"), options->max_size);
+	add_assoc_long_ex(out, ZEND_STRL("context_lines"), options->context_lines);
+	add_assoc_long_ex(out, ZEND_STRL("interhunk_lines"), options->interhunk_lines);
+	add_assoc_long_ex(out, ZEND_STRL("oid_abbrev"), options->oid_abbrev);
+	add_assoc_long_ex(out, ZEND_STRL("max_size"), options->max_size);
 	if (options->notify_payload) {
 	} else {
-		add_assoc_null_ex(out, ZEND_STRS("notify_payload"));
+		add_assoc_null_ex(out, ZEND_STRL("notify_payload"));
 	}
 	if (options->old_prefix) {
-		add_assoc_string_ex(out, ZEND_STRS("old_prefix"), strdup(options->old_prefix));
+		add_assoc_string_ex(out, ZEND_STRL("old_prefix"), strdup(options->old_prefix));
 	} else {
-		add_assoc_null_ex(out, ZEND_STRS("old_prefix"));
+		add_assoc_null_ex(out, ZEND_STRL("old_prefix"));
 	}
 	if (options->new_prefix) {
-		add_assoc_string_ex(out, ZEND_STRS("new_prefix"), strdup(options->new_prefix));
+		add_assoc_string_ex(out, ZEND_STRL("new_prefix"), strdup(options->new_prefix));
 	} else {
-		add_assoc_null_ex(out, ZEND_STRS("new_prefix"));
+		add_assoc_null_ex(out, ZEND_STRL("new_prefix"));
 	}
 }
 
@@ -736,23 +708,23 @@ void php_git2_git_transfer_progress_to_array(const git_transfer_progress *progre
 {
 	array_init(out);
 
-	add_assoc_long_ex(out, ZEND_STRS("total_objects"), progress->total_objects);
-	add_assoc_long_ex(out, ZEND_STRS("indexed_objects"), progress->indexed_objects);
-	add_assoc_long_ex(out, ZEND_STRS("received_objects"), progress->received_objects);
-	add_assoc_long_ex(out, ZEND_STRS("local_objects"), progress->local_objects);
-	add_assoc_long_ex(out, ZEND_STRS("total_deltas"), progress->total_deltas);
-	add_assoc_long_ex(out, ZEND_STRS("indexed_deltas"), progress->indexed_deltas);
-	add_assoc_long_ex(out, ZEND_STRS("received_bytes"), progress->received_bytes);
+	add_assoc_long_ex(out, ZEND_STRL("total_objects"), progress->total_objects);
+	add_assoc_long_ex(out, ZEND_STRL("indexed_objects"), progress->indexed_objects);
+	add_assoc_long_ex(out, ZEND_STRL("received_objects"), progress->received_objects);
+	add_assoc_long_ex(out, ZEND_STRL("local_objects"), progress->local_objects);
+	add_assoc_long_ex(out, ZEND_STRL("total_deltas"), progress->total_deltas);
+	add_assoc_long_ex(out, ZEND_STRL("indexed_deltas"), progress->indexed_deltas);
+	add_assoc_long_ex(out, ZEND_STRL("received_bytes"), progress->received_bytes);
 }
 
 void php_git2_array_to_git_blame_options(git_blame_options *options, zval *array TSRMLS_DC)
 {
 	zval *tmp;
 
-	options->version = php_git2_read_arrval_long(array, ZEND_STRS("version") TSRMLS_CC);
-	options->flags = php_git2_read_arrval_long(array, ZEND_STRS("flags") TSRMLS_CC);
-	options->min_match_characters = php_git2_read_arrval_long(array, ZEND_STRS("min_match_characters") TSRMLS_CC);
-	tmp = php_git2_read_arrval(array, ZEND_STRS("newest_commit") TSRMLS_CC);
+	options->version = php_git2_read_arrval_long(array, ZEND_STRL("version") TSRMLS_CC);
+	options->flags = php_git2_read_arrval_long(array, ZEND_STRL("flags") TSRMLS_CC);
+	options->min_match_characters = php_git2_read_arrval_long(array, ZEND_STRL("min_match_characters") TSRMLS_CC);
+	tmp = php_git2_read_arrval(array, ZEND_STRL("newest_commit") TSRMLS_CC);
 	if (Z_ISREF_P(tmp)) {
 		if (Z_TYPE_P(tmp) != IS_STRING) {
 			convert_to_string(tmp);
@@ -762,7 +734,7 @@ void php_git2_array_to_git_blame_options(git_blame_options *options, zval *array
 		}
 	}
 
-	tmp = php_git2_read_arrval(array, ZEND_STRS("oldest_commit") TSRMLS_CC);
+	tmp = php_git2_read_arrval(array, ZEND_STRL("oldest_commit") TSRMLS_CC);
 	if (Z_ISREF_P(tmp)) {
 		if (Z_TYPE_P(tmp) != IS_STRING) {
 			convert_to_string(tmp);
@@ -772,8 +744,8 @@ void php_git2_array_to_git_blame_options(git_blame_options *options, zval *array
 		}
 	}
 
-	options->min_line = php_git2_read_arrval_long(array, ZEND_STRS("min_line") TSRMLS_CC);
-	options->max_line = php_git2_read_arrval_long(array, ZEND_STRS("max_line") TSRMLS_CC);
+	options->min_line = php_git2_read_arrval_long(array, ZEND_STRL("min_line") TSRMLS_CC);
+	options->max_line = php_git2_read_arrval_long(array, ZEND_STRL("max_line") TSRMLS_CC);
 
 }
 
@@ -783,26 +755,26 @@ void php_git2_git_blame_options_to_array(git_blame_options *options, zval *out T
 
 	array_init(out);
 
-	add_assoc_long_ex(out, ZEND_STRS("version"), options->version);
-	add_assoc_long_ex(out, ZEND_STRS("flags"), options->flags);
-	add_assoc_long_ex(out, ZEND_STRS("min_match_characters"), options->min_match_characters);
+	add_assoc_long_ex(out, ZEND_STRL("version"), options->version);
+	add_assoc_long_ex(out, ZEND_STRL("flags"), options->flags);
+	add_assoc_long_ex(out, ZEND_STRL("min_match_characters"), options->min_match_characters);
 
 	if (git_oid_iszero(&options->newest_commit) != 1) {
 		git_oid_fmt(buf, &options->newest_commit);
-		add_assoc_str_ex(out, ZEND_STRS("newest_commit"), zval_get_string(out));
+		add_assoc_str_ex(out, ZEND_STRL("newest_commit"), zval_get_string(out));
 	} else {
-		add_assoc_null_ex(out, ZEND_STRS("newest_commit"));
+		add_assoc_null_ex(out, ZEND_STRL("newest_commit"));
 	}
 
 	if (git_oid_iszero(&options->oldest_commit) != 1) {
 		git_oid_fmt(buf, &options->oldest_commit);
-		add_assoc_str_ex(out, ZEND_STRS("oldest_commit"), zval_get_string(out));
+		add_assoc_str_ex(out, ZEND_STRL("oldest_commit"), zval_get_string(out));
 	} else {
-		add_assoc_null_ex(out, ZEND_STRS("oldest_commit"));
+		add_assoc_null_ex(out, ZEND_STRL("oldest_commit"));
 	}
 
-	add_assoc_long_ex(out, ZEND_STRS("min_line"), options->min_line);
-	add_assoc_long_ex(out, ZEND_STRS("max_line"), options->max_line);
+	add_assoc_long_ex(out, ZEND_STRL("min_line"), options->min_line);
+	add_assoc_long_ex(out, ZEND_STRL("max_line"), options->max_line);
 }
 
 void php_git2_git_blame_hunk_to_array(const git_blame_hunk *hunk, zval *out TSRMLS_DC)
@@ -812,47 +784,47 @@ void php_git2_git_blame_hunk_to_array(const git_blame_hunk *hunk, zval *out TSRM
 
 	array_init(out);
 
-	add_assoc_long_ex(out, ZEND_STRS("lines_in_hunk"), hunk->lines_in_hunk);
+	add_assoc_long_ex(out, ZEND_STRL("lines_in_hunk"), hunk->lines_in_hunk);
 
 	git_oid_fmt(buf, &hunk->final_commit_id);
-	add_assoc_string_ex(out, ZEND_STRS("final_commit_id"), buf);
+	add_assoc_string_ex(out, ZEND_STRL("final_commit_id"), buf);
 
 	php_git2_git_signature_to_array(hunk->final_signature, final TSRMLS_CC);
-	add_assoc_zval_ex(out, ZEND_STRS("final_signature"), final);
+	add_assoc_zval_ex(out, ZEND_STRL("final_signature"), final);
 
-	add_assoc_long_ex(out, ZEND_STRS("final_start_line_number"), hunk->final_start_line_number);
+	add_assoc_long_ex(out, ZEND_STRL("final_start_line_number"), hunk->final_start_line_number);
 
 	git_oid_fmt(buf, &hunk->orig_commit_id);
-	add_assoc_string_ex(out, ZEND_STRS("orig_commit_id"), buf);
-	add_assoc_string_ex(out, ZEND_STRS("orig_path"), strdup(hunk->orig_path));
+	add_assoc_string_ex(out, ZEND_STRL("orig_commit_id"), buf);
+	add_assoc_string_ex(out, ZEND_STRL("orig_path"), strdup(hunk->orig_path));
 
-	add_assoc_long_ex(out, ZEND_STRS("orig_start_line_number"), hunk->orig_start_line_number);
+	add_assoc_long_ex(out, ZEND_STRL("orig_start_line_number"), hunk->orig_start_line_number);
 	if (hunk->orig_signature) {
 		php_git2_git_signature_to_array(hunk->orig_signature, orig TSRMLS_CC);
 	} else {
 		ZVAL_NULL(orig);
 	}
-	add_assoc_zval_ex(out, ZEND_STRS("orig_signature"), orig);
+	add_assoc_zval_ex(out, ZEND_STRL("orig_signature"), orig);
 
-	add_assoc_stringl_ex(out, ZEND_STRS("boundary"), strdup(&hunk->boundary), 1);
+	add_assoc_stringl_ex(out, ZEND_STRL("boundary"), strdup(&hunk->boundary), 1);
 }
 
 void php_git2_git_clone_options_to_array(git_clone_options *options, zval *out TSRMLS_DC)
 {
     array_init(out);
 
-    add_assoc_long_ex(out, ZEND_STRS("version"), options->version);
-    add_assoc_long_ex(out, ZEND_STRS("bare"), options->bare);
-    add_assoc_long_ex(out, ZEND_STRS("ignore_cert_errors"), options->ignore_cert_errors);
+    add_assoc_long_ex(out, ZEND_STRL("version"), options->version);
+    add_assoc_long_ex(out, ZEND_STRL("bare"), options->bare);
+    add_assoc_long_ex(out, ZEND_STRL("ignore_cert_errors"), options->ignore_cert_errors);
 
     /* TODO: make other options available */
 }
 
 void php_git2_array_to_git_clone_options(git_clone_options *options, zval *array TSRMLS_DC)
 {
-    options->version = php_git2_read_arrval_long2(array, ZEND_STRS("version"), 1 TSRMLS_CC);
-    options->bare = php_git2_read_arrval_long2(array, ZEND_STRS("bare"), 0 TSRMLS_CC);
-    options->ignore_cert_errors = php_git2_read_arrval_long2(array, ZEND_STRS("ignore_cert_errors"), 0 TSRMLS_CC);
+    options->version = php_git2_read_arrval_long2(array, ZEND_STRL("version"), 1 TSRMLS_CC);
+    options->bare = php_git2_read_arrval_long2(array, ZEND_STRL("bare"), 0 TSRMLS_CC);
+    options->ignore_cert_errors = php_git2_read_arrval_long2(array, ZEND_STRL("ignore_cert_errors"), 0 TSRMLS_CC);
 }
 
 void php_git2_git_diff_find_options_to_array(git_diff_find_options *options, zval *out TSRMLS_DC)
@@ -939,27 +911,27 @@ int php_git2_array_to_git_index_entry(git_index_entry *entry, zval *array TSRMLS
 	zval *ctime, *mtime, *oid;
 	memset(entry, '\0', sizeof(git_index_entry));
 
-	ctime = php_git2_read_arrval(array, ZEND_STRS("ctime") TSRMLS_CC);
-	mtime = php_git2_read_arrval(array, ZEND_STRS("mtime") TSRMLS_CC);
+	ctime = php_git2_read_arrval(array, ZEND_STRL("ctime") TSRMLS_CC);
+	mtime = php_git2_read_arrval(array, ZEND_STRL("mtime") TSRMLS_CC);
 
-	oid = php_git2_read_arrval(array, ZEND_STRS("oid") TSRMLS_CC);
+	oid = php_git2_read_arrval(array, ZEND_STRL("oid") TSRMLS_CC);
 	if (git_oid_fromstrn(&entry->oid, Z_STRVAL_P(oid), Z_STRLEN_P(oid)) != GIT_OK) {
 		return 0;
 	}
 
-	entry->ctime.seconds = php_git2_read_arrval_long(ctime, ZEND_STRS("seconds") TSRMLS_CC);
-	entry->ctime.nanoseconds = php_git2_read_arrval_long(ctime, ZEND_STRS("nanoseconds") TSRMLS_CC);
-	entry->mtime.seconds = php_git2_read_arrval_long(mtime, ZEND_STRS("seconds") TSRMLS_CC);
-	entry->mtime.nanoseconds = php_git2_read_arrval_long(mtime, ZEND_STRS("nanoseconds") TSRMLS_CC);
-	entry->dev = php_git2_read_arrval_long(array, ZEND_STRS("dev") TSRMLS_CC);
-	entry->ino = php_git2_read_arrval_long(array, ZEND_STRS("ino") TSRMLS_CC);
-	entry->mode = php_git2_read_arrval_long(array, ZEND_STRS("mode") TSRMLS_CC);
-	entry->uid = php_git2_read_arrval_long(array, ZEND_STRS("uid") TSRMLS_CC);
-	entry->gid = php_git2_read_arrval_long(array, ZEND_STRS("gid") TSRMLS_CC);
-	entry->file_size = php_git2_read_arrval_long(array, ZEND_STRS("file_size") TSRMLS_CC);
-	entry->flags = php_git2_read_arrval_long(array, ZEND_STRS("flags") TSRMLS_CC);
-	entry->flags_extended = php_git2_read_arrval_long(array, ZEND_STRS("flags_extended") TSRMLS_CC);
-	entry->path = php_git2_read_arrval_string(array, ZEND_STRS("path") TSRMLS_CC);
+	entry->ctime.seconds = php_git2_read_arrval_long(ctime, ZEND_STRL("seconds") TSRMLS_CC);
+	entry->ctime.nanoseconds = php_git2_read_arrval_long(ctime, ZEND_STRL("nanoseconds") TSRMLS_CC);
+	entry->mtime.seconds = php_git2_read_arrval_long(mtime, ZEND_STRL("seconds") TSRMLS_CC);
+	entry->mtime.nanoseconds = php_git2_read_arrval_long(mtime, ZEND_STRL("nanoseconds") TSRMLS_CC);
+	entry->dev = php_git2_read_arrval_long(array, ZEND_STRL("dev") TSRMLS_CC);
+	entry->ino = php_git2_read_arrval_long(array, ZEND_STRL("ino") TSRMLS_CC);
+	entry->mode = php_git2_read_arrval_long(array, ZEND_STRL("mode") TSRMLS_CC);
+	entry->uid = php_git2_read_arrval_long(array, ZEND_STRL("uid") TSRMLS_CC);
+	entry->gid = php_git2_read_arrval_long(array, ZEND_STRL("gid") TSRMLS_CC);
+	entry->file_size = php_git2_read_arrval_long(array, ZEND_STRL("file_size") TSRMLS_CC);
+	entry->flags = php_git2_read_arrval_long(array, ZEND_STRL("flags") TSRMLS_CC);
+	entry->flags_extended = php_git2_read_arrval_long(array, ZEND_STRL("flags_extended") TSRMLS_CC);
+	entry->path = php_git2_read_arrval_string(array, ZEND_STRL("path") TSRMLS_CC);
 
 	return 1;
 }
@@ -975,24 +947,24 @@ void php_git2_git_index_entry_to_array(const git_index_entry *entry, zval *out T
 
 	git_oid_fmt(buf, &entry->oid);
 
-	add_assoc_long_ex(ctime, ZEND_STRS("seconds"), entry->ctime.seconds);
-	add_assoc_long_ex(ctime, ZEND_STRS("nanoseconds"), entry->ctime.nanoseconds);
-	add_assoc_long_ex(mtime, ZEND_STRS("seconds"), entry->mtime.seconds);
-	add_assoc_long_ex(mtime, ZEND_STRS("nanoseconds"), entry->mtime.nanoseconds);
+	add_assoc_long_ex(ctime, ZEND_STRL("seconds"), entry->ctime.seconds);
+	add_assoc_long_ex(ctime, ZEND_STRL("nanoseconds"), entry->ctime.nanoseconds);
+	add_assoc_long_ex(mtime, ZEND_STRL("seconds"), entry->mtime.seconds);
+	add_assoc_long_ex(mtime, ZEND_STRL("nanoseconds"), entry->mtime.nanoseconds);
 
-	add_assoc_zval_ex(out, ZEND_STRS("ctime"), ctime);
-	add_assoc_zval_ex(out, ZEND_STRS("mtime"), mtime);
+	add_assoc_zval_ex(out, ZEND_STRL("ctime"), ctime);
+	add_assoc_zval_ex(out, ZEND_STRL("mtime"), mtime);
 
-	add_assoc_long_ex(out, ZEND_STRS("dev"), entry->dev);
-	add_assoc_long_ex(out, ZEND_STRS("ino"), entry->ino);
-	add_assoc_long_ex(out, ZEND_STRS("mode"), entry->mode);
-	add_assoc_long_ex(out, ZEND_STRS("uid"), entry->uid);
-	add_assoc_long_ex(out, ZEND_STRS("gid"), entry->gid);
-	add_assoc_long_ex(out, ZEND_STRS("file_size"), entry->file_size);
-	add_assoc_string_ex(out, ZEND_STRS("oid"), buf);
-	add_assoc_long_ex(out, ZEND_STRS("flags"), entry->flags);
-	add_assoc_long_ex(out, ZEND_STRS("flags_extended"), entry->flags_extended);
-	add_assoc_string_ex(out, ZEND_STRS("path"), entry->path);
+	add_assoc_long_ex(out, ZEND_STRL("dev"), entry->dev);
+	add_assoc_long_ex(out, ZEND_STRL("ino"), entry->ino);
+	add_assoc_long_ex(out, ZEND_STRL("mode"), entry->mode);
+	add_assoc_long_ex(out, ZEND_STRL("uid"), entry->uid);
+	add_assoc_long_ex(out, ZEND_STRL("gid"), entry->gid);
+	add_assoc_long_ex(out, ZEND_STRL("file_size"), entry->file_size);
+	add_assoc_string_ex(out, ZEND_STRL("oid"), buf);
+	add_assoc_long_ex(out, ZEND_STRL("flags"), entry->flags);
+	add_assoc_long_ex(out, ZEND_STRL("flags_extended"), entry->flags_extended);
+	add_assoc_string_ex(out, ZEND_STRL("path"), entry->path);
 }
 
 int php_git2_git_tag_foreach_cb(const char *name, git_oid *oid, void *payload)
@@ -1182,10 +1154,10 @@ void php_git2_git_remote_head_to_array(const git_remote_head *head, zval *out TS
 	git_oid_fmt(loid, &head->loid);
 
 	array_init(out);
-	add_assoc_long_ex(out, ZEND_STRS("local"), head->local);
-	add_assoc_string_ex(out, ZEND_STRS("oid"), oid);
-	add_assoc_string_ex(out, ZEND_STRS("loid"), loid);
-	add_assoc_string_ex(out, ZEND_STRS("name"), head->name);
+	add_assoc_long_ex(out, ZEND_STRL("local"), head->local);
+	add_assoc_string_ex(out, ZEND_STRL("oid"), oid);
+	add_assoc_string_ex(out, ZEND_STRL("loid"), loid);
+	add_assoc_string_ex(out, ZEND_STRL("name"), head->name);
 }
 
 int php_git2_git_reference_foreach_cb(git_reference *reference, void *payload)
@@ -1305,7 +1277,7 @@ void php_git2_array_to_git_remote_callbacks(git_remote_callbacks *cb, zval *call
 
 	/* TODO(chobie): support other callbacks */
     cb->credentials = php_git2_git_cred_cb;
-    credentials_cb = php_git2_read_arrval(callbacks, ZEND_STRS("credentials") TSRMLS_CC);
+    credentials_cb = php_git2_read_arrval(callbacks, ZEND_STRL("credentials") TSRMLS_CC);
 
     /* TODO(chobie): can we free payload? */
     _payload = ecalloc(1, sizeof(php_git2_remote_cb_t));
@@ -1356,20 +1328,20 @@ void php_git2_git_status_options_to_array(git_status_options *options, zval *out
 
 	array_init(out);
 
-	add_assoc_long_ex(out, ZEND_STRS("version"), options->version);
-	add_assoc_long_ex(out, ZEND_STRS("show"), options->show);
-	add_assoc_long_ex(out, ZEND_STRS("flags"), options->flags);
+	add_assoc_long_ex(out, ZEND_STRL("version"), options->version);
+	add_assoc_long_ex(out, ZEND_STRL("show"), options->show);
+	add_assoc_long_ex(out, ZEND_STRL("flags"), options->flags);
 	php_git2_git_strarray_to_array(&options->pathspec, pathspec TSRMLS_CC);
-	add_assoc_zval_ex(out, ZEND_STRS("pathspec"), pathspec);
+	add_assoc_zval_ex(out, ZEND_STRL("pathspec"), pathspec);
 }
 
 void php_git2_array_to_git_status_options(git_status_options *options, zval *array TSRMLS_DC)
 {
-	options->version = php_git2_read_arrval_long2(array, ZEND_STRS("version"), 1 TSRMLS_CC);
-	options->show = php_git2_read_arrval_long2(array, ZEND_STRS("version"), 0 TSRMLS_CC);
-	options->flags = php_git2_read_arrval_long2(array, ZEND_STRS("version"), 0 TSRMLS_CC);
+	options->version = php_git2_read_arrval_long2(array, ZEND_STRL("version"), 1 TSRMLS_CC);
+	options->show = php_git2_read_arrval_long2(array, ZEND_STRL("version"), 0 TSRMLS_CC);
+	options->flags = php_git2_read_arrval_long2(array, ZEND_STRL("version"), 0 TSRMLS_CC);
 
-	php_git2_array_to_git_strarray(&options->pathspec, php_git2_read_arrval(array, ZEND_STRS("pathspec") TSRMLS_CC) TSRMLS_CC);
+	php_git2_array_to_git_strarray(&options->pathspec, php_git2_read_arrval(array, ZEND_STRL("pathspec") TSRMLS_CC) TSRMLS_CC);
 }
 
 void php_git2_git_status_entry_to_array(const git_status_entry *entry, zval *out TSRMLS_DC)
@@ -1390,9 +1362,9 @@ void php_git2_git_status_entry_to_array(const git_status_entry *entry, zval *out
 		ZVAL_NULL(index_to_workdir);
 	}
 
-	add_assoc_long_ex(out, ZEND_STRS("status"), entry->status);
-	add_assoc_zval_ex(out, ZEND_STRS("head_to_index"), head_to_index);
-	add_assoc_zval_ex(out, ZEND_STRS("index_to_workdir"), index_to_workdir);
+	add_assoc_long_ex(out, ZEND_STRL("status"), entry->status);
+	add_assoc_zval_ex(out, ZEND_STRL("head_to_index"), head_to_index);
+	add_assoc_zval_ex(out, ZEND_STRL("index_to_workdir"), index_to_workdir);
 }
 
 int php_git2_git_status_cb(const char *path, unsigned int status_flags, void *payload)
@@ -1428,56 +1400,56 @@ void php_git2_array_to_git_repository_init_options(git_repository_init_options *
 {
 	long lval;
 
-	lval = php_git2_read_arrval_long(array, ZEND_STRS("version") TSRMLS_CC);
+	lval = php_git2_read_arrval_long(array, ZEND_STRL("version") TSRMLS_CC);
 	if (lval > 0) {
 		opts->version = lval;
 	}
-	opts->flags = php_git2_read_arrval_long(array, ZEND_STRS("flags") TSRMLS_CC);
-	opts->mode = php_git2_read_arrval_long(array, ZEND_STRS("mode") TSRMLS_CC);
+	opts->flags = php_git2_read_arrval_long(array, ZEND_STRL("flags") TSRMLS_CC);
+	opts->mode = php_git2_read_arrval_long(array, ZEND_STRL("mode") TSRMLS_CC);
 
-	opts->workdir_path = php_git2_read_arrval_string(array, ZEND_STRS("workdir_path") TSRMLS_CC);
-	opts->description = php_git2_read_arrval_string(array, ZEND_STRS("description") TSRMLS_CC);
-	opts->template_path = php_git2_read_arrval_string(array, ZEND_STRS("template_path") TSRMLS_CC);
-	opts->initial_head = php_git2_read_arrval_string(array, ZEND_STRS("initial_head") TSRMLS_CC);
-	opts->origin_url = php_git2_read_arrval_string(array, ZEND_STRS("origin_url") TSRMLS_CC);
+	opts->workdir_path = php_git2_read_arrval_string(array, ZEND_STRL("workdir_path") TSRMLS_CC);
+	opts->description = php_git2_read_arrval_string(array, ZEND_STRL("description") TSRMLS_CC);
+	opts->template_path = php_git2_read_arrval_string(array, ZEND_STRL("template_path") TSRMLS_CC);
+	opts->initial_head = php_git2_read_arrval_string(array, ZEND_STRL("initial_head") TSRMLS_CC);
+	opts->origin_url = php_git2_read_arrval_string(array, ZEND_STRL("origin_url") TSRMLS_CC);
 }
 
 void php_git2_git_repository_init_options_to_array(git_repository_init_options *opts, zval *out TSRMLS_DC)
 {
 	array_init(out);
 
-	add_assoc_long_ex(out, ZEND_STRS("version"), opts->version);
-	add_assoc_long_ex(out, ZEND_STRS("flags"), opts->flags);
-	add_assoc_long_ex(out, ZEND_STRS("mode"), opts->mode);
+	add_assoc_long_ex(out, ZEND_STRL("version"), opts->version);
+	add_assoc_long_ex(out, ZEND_STRL("flags"), opts->flags);
+	add_assoc_long_ex(out, ZEND_STRL("mode"), opts->mode);
 
 	if (opts->workdir_path != NULL) {
-		add_assoc_string_ex(out, ZEND_STRS("workdir_path"), strdup(opts->workdir_path));
+		add_assoc_string_ex(out, ZEND_STRL("workdir_path"), strdup(opts->workdir_path));
 	} else {
-		add_assoc_null_ex(out, ZEND_STRS("workdir_path"));
+		add_assoc_null_ex(out, ZEND_STRL("workdir_path"));
 	}
 
 	if (opts->workdir_path != NULL) {
-		add_assoc_string_ex(out, ZEND_STRS("description"), strdup(opts->description));
+		add_assoc_string_ex(out, ZEND_STRL("description"), strdup(opts->description));
 	} else {
-		add_assoc_null_ex(out, ZEND_STRS("description"));
+		add_assoc_null_ex(out, ZEND_STRL("description"));
 	}
 
 	if (opts->workdir_path != NULL) {
-		add_assoc_string_ex(out, ZEND_STRS("template_path"), strdup(opts->template_path));
+		add_assoc_string_ex(out, ZEND_STRL("template_path"), strdup(opts->template_path));
 	} else {
-		add_assoc_null_ex(out, ZEND_STRS("template_path"));
+		add_assoc_null_ex(out, ZEND_STRL("template_path"));
 	}
 
 	if (opts->workdir_path != NULL) {
-		add_assoc_string_ex(out, ZEND_STRS("initial_head"), strdup(opts->initial_head));
+		add_assoc_string_ex(out, ZEND_STRL("initial_head"), strdup(opts->initial_head));
 	} else {
-		add_assoc_null_ex(out, ZEND_STRS("initial_head"));
+		add_assoc_null_ex(out, ZEND_STRL("initial_head"));
 	}
 
 	if (opts->workdir_path != NULL) {
-		add_assoc_string_ex(out, ZEND_STRS("origin_url"), strdup(opts->origin_url));
+		add_assoc_string_ex(out, ZEND_STRL("origin_url"), strdup(opts->origin_url));
 	} else {
-		add_assoc_null_ex(out, ZEND_STRS("origin_url"));
+		add_assoc_null_ex(out, ZEND_STRL("origin_url"));
 	}
 }
 
@@ -1777,9 +1749,9 @@ void php_git2_git_revspec_to_array(const git_revspec *revspec, zval *out TSRMLS_
 		return;
 	}
 
-	add_assoc_resource_ex(out, ZEND_STRS("from"), GIT2_RVAL_P(from));
-	add_assoc_resource_ex(out, ZEND_STRS("to"), GIT2_RVAL_P(to));
-	add_assoc_long_ex(out, ZEND_STRS("flags"), revspec->flags);
+	add_assoc_resource_ex(out, ZEND_STRL("from"), GIT2_RVAL_P(from));
+	add_assoc_resource_ex(out, ZEND_STRL("to"), GIT2_RVAL_P(to));
+	add_assoc_long_ex(out, ZEND_STRL("flags"), revspec->flags);
 }
 
 int php_git2_odb_backend_foreach(git_odb_backend *backend, git_odb_foreach_cb cb, void *data)
@@ -2086,9 +2058,9 @@ void php_git2_git_config_entry_to_array(const git_config_entry *entry, zval *res
 {
 	array_init(result);
 
-	add_assoc_string_ex(result, ZEND_STRS("name"), strdup(entry->name));
-	add_assoc_string_ex(result, ZEND_STRS("value"), strdup(entry->value));
-	add_assoc_long_ex(result, ZEND_STRS("level"), entry->level);
+	add_assoc_string_ex(result, ZEND_STRL("name"), strdup(entry->name));
+	add_assoc_string_ex(result, ZEND_STRL("value"), strdup(entry->value));
+	add_assoc_long_ex(result, ZEND_STRL("level"), entry->level);
 }
 
 int php_git2_git_config_foreach_cb(const git_config_entry *entry, void *payload)
