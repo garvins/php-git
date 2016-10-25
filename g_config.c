@@ -259,12 +259,13 @@ PHP_FUNCTION(git_config_free)
 		RETURN_FALSE;
 	}
 
-	if (GIT2_SHOULD_FREE(_cfg)) {
+	// todo rework
+	if (0 /* GIT2_SHOULD_FREE(_cfg) */) {
 		git_config_free(PHP_GIT2_V(_cfg, config));
 		GIT2_SHOULD_FREE(_cfg) = 0;
 	}
 
-	zval_ptr_dtor(cfg);
+	//zval_ptr_dtor(cfg);
 }
 /* }}} */
 
@@ -538,12 +539,13 @@ PHP_FUNCTION(git_config_iterator_free)
 		RETURN_FALSE;
 	}
 
-	if (GIT2_SHOULD_FREE(_iter)) {
+	// todo rework
+	if (0 /* GIT2_SHOULD_FREE(_iter) */) {
 		git_config_iterator_free(PHP_GIT2_V(_iter, config_iterator));
 		GIT2_SHOULD_FREE(_iter) = 0;
 	}
 
-	zval_ptr_dtor(iter);
+	//zval_ptr_dtor(iter);
 }
 /* }}} */
 

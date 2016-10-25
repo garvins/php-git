@@ -125,12 +125,13 @@ PHP_FUNCTION(git_patch_free)
 		RETURN_FALSE;
 	}
 
-	if (GIT2_SHOULD_FREE(_patch)) {
+	// todo rework
+	if (0 /* GIT2_SHOULD_FREE(_patch) */) {
 		git_patch_free(PHP_GIT2_V(_patch, patch));
 		GIT2_SHOULD_FREE(_patch) = 0;
 	}
 
-	zval_ptr_dtor(patch);
+	//zval_ptr_dtor(patch);
 }
 /* }}} */
 

@@ -160,12 +160,13 @@ PHP_FUNCTION(git_filter_list_free)
 		RETURN_FALSE;
 	}
 
-	if (GIT2_SHOULD_FREE(_filters)) {
+	// todo rework
+	if (0 /* GIT2_SHOULD_FREE(_filters) */) {
 		git_filter_list_free(PHP_GIT2_V(_filters, filter_list));
 		GIT2_SHOULD_FREE(_filters) = 0;
 	}
 
-	zval_ptr_dtor(filters);
+	//zval_ptr_dtor(filters);
 }
 /* }}} */
 

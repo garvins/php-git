@@ -69,12 +69,13 @@ PHP_FUNCTION(git_index_free)
 		RETURN_FALSE;
 	}
 
-	if (GIT2_SHOULD_FREE(_index)) {
+	// todo rework
+	if (0 /* GIT2_SHOULD_FREE(_index) */) {
 		git_index_free(PHP_GIT2_V(_index, index));
 		GIT2_SHOULD_FREE(_index) = 0;
 	}
 
-	zval_ptr_dtor(index);
+	//zval_ptr_dtor(index);
 }
 /* }}} */
 
@@ -923,12 +924,13 @@ PHP_FUNCTION(git_index_conflict_iterator_free)
 		RETURN_FALSE;
 	}
 
-	if (GIT2_SHOULD_FREE(_iterator)) {
+	// todo rework
+	if (0 /* GIT2_SHOULD_FREE(_iterator) */) {
 		git_index_conflict_iterator_free(PHP_GIT2_V(_iterator, index_conflict_iterator));
 		GIT2_SHOULD_FREE(_iterator) = 0;
 	}
 
-	zval_ptr_dtor(iterator);
+	//zval_ptr_dtor(iterator);
 }
 /* }}} */
 

@@ -708,12 +708,13 @@ PHP_FUNCTION(git_remote_free)
 		RETURN_FALSE;
 	}
 
-	if (GIT2_SHOULD_FREE(_remote)) {
+	// todo rework
+	if (0 /* GIT2_SHOULD_FREE(_remote) */) {
 		git_remote_free(PHP_GIT2_V(_remote, remote));
 		GIT2_SHOULD_FREE(_remote) = 0;
 	}
 
-	zval_ptr_dtor(remote);
+	//zval_ptr_dtor(remote);
 }
 /* }}} */
 

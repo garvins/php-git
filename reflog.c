@@ -368,12 +368,13 @@ PHP_FUNCTION(git_reflog_free)
 		RETURN_FALSE;
 	}
 
-	if (GIT2_SHOULD_FREE(_reflog)) {
+	// todo rework
+	if (0 /* GIT2_SHOULD_FREE(_reflog) */) {
 		git_reflog_free(PHP_GIT2_V(_reflog, reflog));
 		GIT2_SHOULD_FREE(_reflog) = 0;
 	}
 
-	zval_ptr_dtor(reflog);
+	//zval_ptr_dtor(reflog);
 }
 /* }}} */
 

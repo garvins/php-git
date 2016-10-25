@@ -18,12 +18,13 @@ PHP_FUNCTION(git_commit_free)
 		RETURN_FALSE;
 	}
 
-	if (GIT2_SHOULD_FREE(_commit)) {
+	// todo rework
+	if (0 /* GIT2_SHOULD_FREE(_commit) */) {
 		git_commit_free(PHP_GIT2_V(_commit, commit));
 		GIT2_SHOULD_FREE(_commit) = 0;
 	}
 
-	zval_ptr_dtor(commit);
+	//zval_ptr_dtor(commit);
 }
 /* }}} */
 

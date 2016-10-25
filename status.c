@@ -214,12 +214,13 @@ PHP_FUNCTION(git_status_list_free)
 		RETURN_FALSE;
 	}
 
-	if (GIT2_SHOULD_FREE(_statuslist)) {
+	// todo rework
+	if (0 /* GIT2_SHOULD_FREE(_statuslist) */) {
 		git_status_list_free(PHP_GIT2_V(_statuslist, status_list));
 		GIT2_SHOULD_FREE(_statuslist) = 0;
 	}
 
-	zval_ptr_dtor(statuslist);
+	//zval_ptr_dtor(statuslist);
 }
 /* }}} */
 

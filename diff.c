@@ -18,12 +18,13 @@ PHP_FUNCTION(git_diff_free)
 		RETURN_FALSE;
 	}
 
-	if (GIT2_SHOULD_FREE(_diff)) {
+	// todo rework
+	if (0 /* GIT2_SHOULD_FREE(_diff) */) {
 		git_diff_free(PHP_GIT2_V(_diff, diff));
 		GIT2_SHOULD_FREE(_diff) = 0;
 	}
 
-	zval_ptr_dtor(diff);
+	//zval_ptr_dtor(diff);
 }
 /* }}} */
 

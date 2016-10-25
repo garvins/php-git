@@ -366,11 +366,12 @@ function printFile($table, $file) {
                 $buffer .= "\t}\n";
             } else {
                 if (isSavior($func)) {
-                    $buffer .= "\tif (GIT2_SHOULD_FREE(_{$func['args'][0]['name']})) {\n";
+                    $buffer .= "\t// todo rework\n";
+                    $buffer .= "\tif (0 /* GIT2_SHOULD_FREE(_{$func['args'][0]['name']}) */) {\n";
                     $buffer .= "\t\t" . ($func['retval']['type'] != "void" ? "result = " : "") . "{$func['name']}(" . join(", ", $temp) . ");\n";
                     $buffer .= "\t\tGIT2_SHOULD_FREE(_{$func['args'][0]['name']}) = 0;\n";
                     $buffer .= "\t}\n\n";
-                    $buffer .= "\tzval_ptr_dtor({$func['args'][0]['name']});\n";
+                    $buffer .= "\t//zval_ptr_dtor({$func['args'][0]['name']});\n";
                 } else if (preg_match("/void/", $func['retval']['type']) && $func['retval']['pointer'] > 0) {
                     $buffer .= "\tbuffer = {$func['name']}(" . join(", ", $temp) . ");\n";
                 } else {

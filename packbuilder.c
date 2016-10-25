@@ -332,12 +332,13 @@ PHP_FUNCTION(git_packbuilder_free)
 		RETURN_FALSE;
 	}
 
-	if (GIT2_SHOULD_FREE(_pb)) {
+	// todo rework
+	if (0 /* GIT2_SHOULD_FREE(_pb) */) {
 		git_packbuilder_free(PHP_GIT2_V(_pb, packbuilder));
 		GIT2_SHOULD_FREE(_pb) = 0;
 	}
 
-	zval_ptr_dtor(pb);
+	//zval_ptr_dtor(pb);
 }
 /* }}} */
 

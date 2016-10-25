@@ -146,12 +146,13 @@ PHP_FUNCTION(git_branch_iterator_free)
 		RETURN_FALSE;
 	}
 
-	if (GIT2_SHOULD_FREE(_iter)) {
+	// todo rework
+	if (0 /* GIT2_SHOULD_FREE(_iter) */) {
 		git_branch_iterator_free(PHP_GIT2_V(_iter, branch_iterator));
 		GIT2_SHOULD_FREE(_iter) = 0;
 	}
 
-	zval_ptr_dtor(iter);
+	//zval_ptr_dtor(iter);
 }
 /* }}} */
 

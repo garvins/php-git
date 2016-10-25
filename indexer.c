@@ -141,12 +141,13 @@ PHP_FUNCTION(git_indexer_free)
 		RETURN_FALSE;
 	}
 
-	if (GIT2_SHOULD_FREE(_idx)) {
+	// todo rework
+	if (0 /* GIT2_SHOULD_FREE(_idx) */) {
 		git_indexer_free(PHP_GIT2_V(_idx, indexer));
 		GIT2_SHOULD_FREE(_idx) = 0;
 	}
 
-	zval_ptr_dtor(idx);
+	//zval_ptr_dtor(idx);
 }
 /* }}} */
 

@@ -244,12 +244,13 @@ PHP_FUNCTION(git_push_free)
 		RETURN_FALSE;
 	}
 
-	if (GIT2_SHOULD_FREE(_push)) {
+	// todo rework
+	if (0 /* GIT2_SHOULD_FREE(_push) */) {
 		git_push_free(PHP_GIT2_V(_push, push));
 		GIT2_SHOULD_FREE(_push) = 0;
 	}
 
-	zval_ptr_dtor(push);
+	//zval_ptr_dtor(push);
 }
 /* }}} */
 

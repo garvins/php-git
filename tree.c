@@ -311,12 +311,13 @@ PHP_FUNCTION(git_tree_free)
 		RETURN_FALSE;
 	}
 
-	if (GIT2_SHOULD_FREE(_tree)) {
+	// todo rework
+	if (0 /* GIT2_SHOULD_FREE(_tree) */) {
 		git_tree_free(PHP_GIT2_V(_tree, tree));
 		GIT2_SHOULD_FREE(_tree) = 0;
 	}
 
-	zval_ptr_dtor(tree);
+	//zval_ptr_dtor(tree);
 }
 /* }}} */
 
@@ -336,12 +337,13 @@ PHP_FUNCTION(git_tree_entry_free)
 		RETURN_FALSE;
 	}
 
-	if (GIT2_SHOULD_FREE(_entry)) {
+	// todo rework
+	if (0 /* GIT2_SHOULD_FREE(_entry) */) {
 		git_tree_entry_free(PHP_GIT2_V(_entry, tree_entry));
 		GIT2_SHOULD_FREE(_entry) = 0;
 	}
 
-	zval_ptr_dtor(entry);
+	//zval_ptr_dtor(entry);
 }
 /* }}} */
 

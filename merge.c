@@ -211,12 +211,13 @@ PHP_FUNCTION(git_merge_head_free)
 		RETURN_FALSE;
 	}
 
-	if (GIT2_SHOULD_FREE(_head)) {
+	// todo rework
+	if (0 /* GIT2_SHOULD_FREE(_head) */) {
 		git_merge_head_free(PHP_GIT2_V(_head, merge_head));
 		GIT2_SHOULD_FREE(_head) = 0;
 	}
 
-	zval_ptr_dtor(head);
+	//zval_ptr_dtor(head);
 }
 /* }}} */
 
@@ -406,12 +407,13 @@ PHP_FUNCTION(git_merge_result_free)
 		RETURN_FALSE;
 	}
 
-	if (GIT2_SHOULD_FREE(_merge_result)) {
+	// todo rework
+	if (0 /* GIT2_SHOULD_FREE(_merge_result) */) {
 		git_merge_result_free(PHP_GIT2_V(_merge_result, merge_result));
 		GIT2_SHOULD_FREE(_merge_result) = 0;
 	}
 
-	zval_ptr_dtor(merge_result);
+	//zval_ptr_dtor(merge_result);
 }
 /* }}} */
 

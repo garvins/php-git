@@ -96,12 +96,13 @@ PHP_FUNCTION(git_tag_free)
 		RETURN_FALSE;
 	}
 
-	if (GIT2_SHOULD_FREE(_tag)) {
+	// todo rework
+	if (0 /* GIT2_SHOULD_FREE(_tag) */) {
 		git_tag_free(PHP_GIT2_V(_tag, tag));
 		GIT2_SHOULD_FREE(_tag) = 0;
 	}
 
-	zval_ptr_dtor(tag);
+	//zval_ptr_dtor(tag);
 }
 /* }}} */
 

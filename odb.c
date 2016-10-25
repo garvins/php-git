@@ -94,12 +94,13 @@ PHP_FUNCTION(git_odb_free)
 		RETURN_FALSE;
 	}
 
-	if (GIT2_SHOULD_FREE(_db)) {
+	// todo rework
+	if (0 /* GIT2_SHOULD_FREE(_db) */) {
 		git_odb_free(PHP_GIT2_V(_db, odb));
 		GIT2_SHOULD_FREE(_db) = 0;
 	}
 
-	zval_ptr_dtor(db);
+	//zval_ptr_dtor(db);
 }
 /* }}} */
 
@@ -465,12 +466,13 @@ PHP_FUNCTION(git_odb_stream_free)
 		RETURN_FALSE;
 	}
 
-	if (GIT2_SHOULD_FREE(_stream)) {
+	// todo rework
+	if (0 /* GIT2_SHOULD_FREE(_stream) */) {
 		git_odb_stream_free(PHP_GIT2_V(_stream, odb_stream));
 		GIT2_SHOULD_FREE(_stream) = 0;
 	}
 
-	zval_ptr_dtor(stream);
+	//zval_ptr_dtor(stream);
 }
 /* }}} */
 
@@ -657,12 +659,13 @@ PHP_FUNCTION(git_odb_object_free)
 		RETURN_FALSE;
 	}
 
-	if (GIT2_SHOULD_FREE(_object)) {
+	// todo rework
+	if (0 /* GIT2_SHOULD_FREE(_object) */) {
 		git_odb_object_free(PHP_GIT2_V(_object, odb_object));
 		GIT2_SHOULD_FREE(_object) = 0;
 	}
 
-	zval_ptr_dtor(object);
+	//zval_ptr_dtor(object);
 }
 /* }}} */
 
