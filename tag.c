@@ -268,7 +268,7 @@ PHP_FUNCTION(git_tag_name)
 PHP_FUNCTION(git_tag_tagger)
 {
 	const git_signature *result = NULL;
-	zval *tag = NULL, *array = NULL;
+	zval *tag = NULL;
 	php_git2_t *_tag = NULL;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
@@ -282,9 +282,10 @@ PHP_FUNCTION(git_tag_tagger)
 
 	result = git_tag_tagger(PHP_GIT2_V(_tag, tag));
 
-	php_git2_git_signature_to_array(result, array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_signature_to_array(result, return_value TSRMLS_CC);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 
@@ -495,8 +496,8 @@ PHP_FUNCTION(git_tag_delete)
  */
 PHP_FUNCTION(git_tag_list)
 {
-	zval *array, *repo = NULL;
 	git_strarray *tag_names = NULL;
+	zval *repo = NULL;
 	php_git2_t *_repo = NULL;
 	int error;
 	
@@ -515,10 +516,11 @@ PHP_FUNCTION(git_tag_list)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_strarray_to_array(tag_names, array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_strarray_to_array(tag_names, return_value TSRMLS_CC);
 	git_strarray_free(tag_names);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 
@@ -526,10 +528,10 @@ PHP_FUNCTION(git_tag_list)
  */
 PHP_FUNCTION(git_tag_list_match)
 {
-	zval *array, *repo = NULL;
 	git_strarray *tag_names = NULL;
 	char *pattern = NULL;
 	size_t pattern_len;
+	zval *repo = NULL;
 	php_git2_t *_repo = NULL;
 	int error;
 	
@@ -548,10 +550,11 @@ PHP_FUNCTION(git_tag_list_match)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_strarray_to_array(tag_names, array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_strarray_to_array(tag_names, return_value TSRMLS_CC);
 	git_strarray_free(tag_names);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 

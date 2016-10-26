@@ -493,8 +493,8 @@ PHP_FUNCTION(git_reference_delete)
  */
 PHP_FUNCTION(git_reference_list)
 {
-	zval *_array, *repo = NULL;
 	git_strarray *array = NULL;
+	zval *repo = NULL;
 	php_git2_t *_repo = NULL;
 	int error;
 	
@@ -513,10 +513,11 @@ PHP_FUNCTION(git_reference_list)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_strarray_to_array(array, _array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_strarray_to_array(array, return_value TSRMLS_CC);
 	git_strarray_free(array);
 
-	RETURN_ZVAL(_array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 

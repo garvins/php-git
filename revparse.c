@@ -88,8 +88,8 @@ PHP_FUNCTION(git_revparse_ext)
  */
 PHP_FUNCTION(git_revparse)
 {
-	zval *array, *repo = NULL;
 	git_revspec *revspec = NULL;
+	zval *repo = NULL;
 	php_git2_t *_repo = NULL;
 	char *spec = NULL;
 	size_t spec_len;
@@ -113,9 +113,10 @@ PHP_FUNCTION(git_revparse)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_revspec_to_array(revspec, array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_revspec_to_array(revspec, return_value TSRMLS_CC);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 

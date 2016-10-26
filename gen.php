@@ -438,13 +438,11 @@ function printFile($table, $file) {
                 $name = ($func['retval']['pointer'] < 1 ? "&" : "") . $name;
                 $funcPrefix = trim($func['retval']['type']);
 
-                $zvalName = (isset($func['retval']['name']) && $func['retval']['name'] == "array") ?
-                    "_array" : "array";
-
+                $buffer .= "\n\tarray_init(return_value);\n";
                 if (preg_match('/git_error/', $func['retval']['type'])) {
-                    $buffer .= "\n\tphp_git2_{$funcPrefix}_to_array($name, $zvalName);\n";
+                    $buffer .= "\tphp_git2_{$funcPrefix}_to_array($name, return_value);\n";
                 } else {
-                    $buffer .= "\n\tphp_git2_{$funcPrefix}_to_array($name, $zvalName TSRMLS_CC);\n";
+                    $buffer .= "\tphp_git2_{$funcPrefix}_to_array($name, return_value TSRMLS_CC);\n";
                 }
 
                 if (shouldBeFreed($func['retval']) && !$func['retval']['const']) {
@@ -467,9 +465,7 @@ function printFile($table, $file) {
                             $str = "GIT2_RVAL_P(__result)";
                         }
                     } else if (isArray($func['retval'], true)) {
-                        $zvalName = (isset($func['retval']['name']) && $func['retval']['name'] == "array") ?
-                            "_array" : "array";
-                        $str = "$zvalName, 0, 1";
+                        $str = "Z_ARRVAL_P(return_value)";
                     } else if (isOid($func['retval'])) {
                         if (hasOutValue($func)) {
                             $str = "__{$func['retval']['name']}";
@@ -618,14 +614,9 @@ function getDeclarations($func)
 {
     $const = ($func['retval']['const'] ? "const " : "");
     if (hasOutValue($func)) {
+        // if (isArray($func['retval'], true)) use return_value
         if (isResource($func['retval'])) {
             $result['php_git2_t'][] = "*result = NULL";
-        } else if (isArray($func['retval'], true)) {
-            if (isset($func['retval']['name']) && $func['retval']['name'] == "array") {
-                $result['zval'][] = "*_array";
-            } else {
-                $result['zval'][] = "*array";
-            }
         }
 
         $returnType = $const . $func['retval']['type'];
@@ -709,15 +700,14 @@ function getDeclarations($func)
         }
     }
 
-    if (isResource($func['retval'])
-        || isArray($func['retval'], true)
+
+    // if (isArray($func['retval'], true)) use return_value
+    if (hasOutValue($func) || isResource($func['retval'])
         || getPHPReturnType($func['retval']['type']) == "string"
         || (getPHPReturnType($func['retval']['type']) == "long" && $func['retval']['pointer'] > 0))
     {
         if (hasOutValue($func)) {
             $result['int'][] = "error";
-        } else if (isArray($func['retval'])) {
-            $result['zval'][] = "*array = NULL";
         } else if (getPHPReturnType($func['retval']['type']) != "string") {
             $result['php_git2_t'][] = "*__result = NULL";
         }
@@ -874,7 +864,7 @@ function getReturnMacro($cType)
         case "string":
             return "RETURN_STRING";
         case "array":
-            return "RETURN_ZVAL";
+            return "RETVAL_ARR";
         case "void":
             return "RETURN_STRINGL";
         default:

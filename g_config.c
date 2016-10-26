@@ -273,8 +273,8 @@ PHP_FUNCTION(git_config_free)
  */
 PHP_FUNCTION(git_config_get_entry)
 {
-	zval *array, *cfg = NULL;
 	const git_config_entry *out = NULL;
+	zval *cfg = NULL;
 	php_git2_t *_cfg = NULL;
 	char *name = NULL;
 	size_t name_len;
@@ -298,9 +298,10 @@ PHP_FUNCTION(git_config_get_entry)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_config_entry_to_array(out, array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_config_entry_to_array(out, return_value TSRMLS_CC);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 
@@ -494,8 +495,8 @@ PHP_FUNCTION(git_config_multivar_iterator_new)
  */
 PHP_FUNCTION(git_config_next)
 {
-	zval *array, *iter = NULL;
 	git_config_entry *entry = NULL;
+	zval *iter = NULL;
 	php_git2_t *_iter = NULL;
 	int error;
 	
@@ -517,9 +518,10 @@ PHP_FUNCTION(git_config_next)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_config_entry_to_array(entry, array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_config_entry_to_array(entry, return_value TSRMLS_CC);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 

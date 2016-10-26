@@ -6,7 +6,6 @@
  */
 PHP_FUNCTION(git_signature_new)
 {
-	zval *array;
 	git_signature *out = NULL;
 	char *name = NULL, *email = NULL;
 	size_t name_len, email_len;
@@ -24,10 +23,11 @@ PHP_FUNCTION(git_signature_new)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_signature_to_array(out, array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_signature_to_array(out, return_value TSRMLS_CC);
 	git_signature_free(out);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 
@@ -35,7 +35,6 @@ PHP_FUNCTION(git_signature_new)
  */
 PHP_FUNCTION(git_signature_now)
 {
-	zval *array;
 	git_signature *out = NULL;
 	char *name = NULL, *email = NULL;
 	size_t name_len, email_len;
@@ -52,10 +51,11 @@ PHP_FUNCTION(git_signature_now)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_signature_to_array(out, array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_signature_to_array(out, return_value TSRMLS_CC);
 	git_signature_free(out);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 
@@ -63,8 +63,8 @@ PHP_FUNCTION(git_signature_now)
  */
 PHP_FUNCTION(git_signature_default)
 {
-	zval *array, *repo = NULL;
 	git_signature *out = NULL;
+	zval *repo = NULL;
 	php_git2_t *_repo = NULL;
 	int error;
 	
@@ -83,10 +83,11 @@ PHP_FUNCTION(git_signature_default)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_signature_to_array(out, array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_signature_to_array(out, return_value TSRMLS_CC);
 	git_signature_free(out);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 

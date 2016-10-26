@@ -30,7 +30,7 @@ PHP_FUNCTION(git_blame_get_hunk_count)
 PHP_FUNCTION(git_blame_get_hunk_byindex)
 {
 	const git_blame_hunk *result = NULL;
-	zval *blame = NULL, *array = NULL;
+	zval *blame = NULL;
 	php_git2_t *_blame = NULL;
 	zend_long index;
 	
@@ -48,9 +48,10 @@ PHP_FUNCTION(git_blame_get_hunk_byindex)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_blame_hunk_to_array(result, array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_blame_hunk_to_array(result, return_value TSRMLS_CC);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 
@@ -59,7 +60,7 @@ PHP_FUNCTION(git_blame_get_hunk_byindex)
 PHP_FUNCTION(git_blame_get_hunk_byline)
 {
 	const git_blame_hunk *result = NULL;
-	zval *blame = NULL, *array = NULL;
+	zval *blame = NULL;
 	php_git2_t *_blame = NULL;
 	zend_long lineno;
 	
@@ -77,9 +78,10 @@ PHP_FUNCTION(git_blame_get_hunk_byline)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_blame_hunk_to_array(result, array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_blame_hunk_to_array(result, return_value TSRMLS_CC);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 

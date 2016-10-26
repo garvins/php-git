@@ -336,8 +336,8 @@ PHP_FUNCTION(git_remote_add_fetch)
  */
 PHP_FUNCTION(git_remote_get_fetch_refspecs)
 {
-	zval *_array, *remote = NULL;
 	git_strarray *array = NULL;
+	zval *remote = NULL;
 	php_git2_t *_remote = NULL;
 	int error;
 	
@@ -356,10 +356,11 @@ PHP_FUNCTION(git_remote_get_fetch_refspecs)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_strarray_to_array(array, _array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_strarray_to_array(array, return_value TSRMLS_CC);
 	git_strarray_free(array);
 
-	RETURN_ZVAL(_array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 
@@ -419,8 +420,8 @@ PHP_FUNCTION(git_remote_add_push)
  */
 PHP_FUNCTION(git_remote_get_push_refspecs)
 {
-	zval *_array, *remote = NULL;
 	git_strarray *array = NULL;
+	zval *remote = NULL;
 	php_git2_t *_remote = NULL;
 	int error;
 	
@@ -439,10 +440,11 @@ PHP_FUNCTION(git_remote_get_push_refspecs)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_strarray_to_array(array, _array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_strarray_to_array(array, return_value TSRMLS_CC);
 	git_strarray_free(array);
 
-	RETURN_ZVAL(_array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 
@@ -806,8 +808,8 @@ PHP_FUNCTION(git_remote_supported_url)
  */
 PHP_FUNCTION(git_remote_list)
 {
-	zval *array, *repo = NULL;
 	git_strarray *out = NULL;
+	zval *repo = NULL;
 	php_git2_t *_repo = NULL;
 	int error;
 	
@@ -826,10 +828,11 @@ PHP_FUNCTION(git_remote_list)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_strarray_to_array(out, array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_strarray_to_array(out, return_value TSRMLS_CC);
 	git_strarray_free(out);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 
@@ -912,7 +915,7 @@ PHP_FUNCTION(git_remote_set_callbacks)
 PHP_FUNCTION(git_remote_stats)
 {
 	const git_transfer_progress *result = NULL;
-	zval *remote = NULL, *array = NULL;
+	zval *remote = NULL;
 	php_git2_t *_remote = NULL;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
@@ -929,9 +932,10 @@ PHP_FUNCTION(git_remote_stats)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_transfer_progress_to_array(result, array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_transfer_progress_to_array(result, return_value TSRMLS_CC);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 

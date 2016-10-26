@@ -332,11 +332,11 @@ PHP_FUNCTION(git_resource_type)
 
 PHP_FUNCTION(git_checkout_opts_new)
 {
-	zval *tmp;
-	git_checkout_opts opt = GIT_CHECKOUT_OPTS_INIT;
+    array_init(return_value);
 
-	php_git2_git_checkout_opts_to_array(&opt, tmp TSRMLS_CC);
-	RETURN_ZVAL(tmp, 0, 1);
+	php_git2_git_checkout_opts_to_array(NULL, return_value TSRMLS_CC);
+
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 
 PHP_FUNCTION(git_libgit2_capabilities)

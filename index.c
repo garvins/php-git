@@ -364,7 +364,7 @@ PHP_FUNCTION(git_index_clear)
 PHP_FUNCTION(git_index_get_byindex)
 {
 	const git_index_entry *result = NULL;
-	zval *index = NULL, *array = NULL;
+	zval *index = NULL;
 	php_git2_t *_index = NULL;
 	zend_long n;
 	
@@ -382,9 +382,10 @@ PHP_FUNCTION(git_index_get_byindex)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_index_entry_to_array(result, array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_index_entry_to_array(result, return_value TSRMLS_CC);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 
@@ -393,7 +394,7 @@ PHP_FUNCTION(git_index_get_byindex)
 PHP_FUNCTION(git_index_get_bypath)
 {
 	const git_index_entry *result = NULL;
-	zval *index = NULL, *array = NULL;
+	zval *index = NULL;
 	php_git2_t *_index = NULL;
 	char *path = NULL;
 	size_t path_len;
@@ -413,9 +414,10 @@ PHP_FUNCTION(git_index_get_bypath)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_index_entry_to_array(result, array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_index_entry_to_array(result, return_value TSRMLS_CC);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 

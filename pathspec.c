@@ -312,7 +312,7 @@ PHP_FUNCTION(git_pathspec_match_list_entry)
 PHP_FUNCTION(git_pathspec_match_list_diff_entry)
 {
 	const git_diff_delta *result = NULL;
-	zval *m = NULL, *array = NULL;
+	zval *m = NULL;
 	php_git2_t *_m = NULL;
 	zend_long pos;
 	
@@ -330,9 +330,10 @@ PHP_FUNCTION(git_pathspec_match_list_diff_entry)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_diff_delta_to_array(result, array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_diff_delta_to_array(result, return_value TSRMLS_CC);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 

@@ -174,7 +174,7 @@ PHP_FUNCTION(git_status_list_entrycount)
 PHP_FUNCTION(git_status_byindex)
 {
 	const git_status_entry *result = NULL;
-	zval *statuslist = NULL, *array = NULL;
+	zval *statuslist = NULL;
 	php_git2_t *_statuslist = NULL;
 	zend_long idx;
 	
@@ -192,9 +192,10 @@ PHP_FUNCTION(git_status_byindex)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_status_entry_to_array(result, array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_status_entry_to_array(result, return_value TSRMLS_CC);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 

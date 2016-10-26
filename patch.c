@@ -140,7 +140,7 @@ PHP_FUNCTION(git_patch_free)
 PHP_FUNCTION(git_patch_get_delta)
 {
 	const git_diff_delta *result = NULL;
-	zval *patch = NULL, *array = NULL;
+	zval *patch = NULL;
 	php_git2_t *_patch = NULL;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
@@ -157,9 +157,10 @@ PHP_FUNCTION(git_patch_get_delta)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_diff_delta_to_array(result, array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_diff_delta_to_array(result, return_value TSRMLS_CC);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 

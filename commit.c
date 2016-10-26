@@ -72,7 +72,7 @@ PHP_FUNCTION(git_commit_lookup)
 PHP_FUNCTION(git_commit_author)
 {
 	const git_signature *result = NULL;
-	zval *commit = NULL, *array = NULL;
+	zval *commit = NULL;
 	php_git2_t *_commit = NULL;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
@@ -86,9 +86,10 @@ PHP_FUNCTION(git_commit_author)
 
 	result = git_commit_author(PHP_GIT2_V(_commit, commit));
 
-	php_git2_git_signature_to_array(result, array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_signature_to_array(result, return_value TSRMLS_CC);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 
@@ -336,7 +337,7 @@ PHP_FUNCTION(git_commit_time_offset)
 PHP_FUNCTION(git_commit_committer)
 {
 	const git_signature *result = NULL;
-	zval *commit = NULL, *array = NULL;
+	zval *commit = NULL;
 	php_git2_t *_commit = NULL;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
@@ -350,9 +351,10 @@ PHP_FUNCTION(git_commit_committer)
 
 	result = git_commit_committer(PHP_GIT2_V(_commit, commit));
 
-	php_git2_git_signature_to_array(result, array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_signature_to_array(result, return_value TSRMLS_CC);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 

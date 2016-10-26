@@ -398,7 +398,7 @@ PHP_FUNCTION(git_diff_num_deltas_of_type)
 PHP_FUNCTION(git_diff_get_delta)
 {
 	const git_diff_delta *result = NULL;
-	zval *diff = NULL, *array = NULL;
+	zval *diff = NULL;
 	php_git2_t *_diff = NULL;
 	zend_long idx;
 	
@@ -416,9 +416,10 @@ PHP_FUNCTION(git_diff_get_delta)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_diff_delta_to_array(result, array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_diff_delta_to_array(result, return_value TSRMLS_CC);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 

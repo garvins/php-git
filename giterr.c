@@ -7,13 +7,13 @@
 PHP_FUNCTION(giterr_last)
 {
 	const git_error *result = NULL;
-	zval *array = NULL;
 	
 	result = giterr_last();
 
-	php_git2_git_error_to_array(result, array);
+	array_init(return_value);
+	php_git2_git_error_to_array(result, return_value);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 
@@ -30,7 +30,6 @@ PHP_FUNCTION(giterr_clear)
  */
 PHP_FUNCTION(giterr_detach)
 {
-	zval *array;
 	git_error *cpy = NULL;
 	int error;
 	
@@ -40,9 +39,10 @@ PHP_FUNCTION(giterr_detach)
 		RETURN_FALSE;
 	}
 
-	php_git2_git_error_to_array(cpy, array);
+	array_init(return_value);
+	php_git2_git_error_to_array(cpy, return_value);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 

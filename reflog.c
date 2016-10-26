@@ -309,7 +309,7 @@ PHP_FUNCTION(git_reflog_entry_id_new)
 PHP_FUNCTION(git_reflog_entry_committer)
 {
 	const git_signature *result = NULL;
-	zval *entry = NULL, *array = NULL;
+	zval *entry = NULL;
 	php_git2_t *_entry = NULL;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
@@ -323,9 +323,10 @@ PHP_FUNCTION(git_reflog_entry_committer)
 
 	result = git_reflog_entry_committer(PHP_GIT2_V(_entry, reflog_entry));
 
-	php_git2_git_signature_to_array(result, array TSRMLS_CC);
+	array_init(return_value);
+	php_git2_git_signature_to_array(result, return_value TSRMLS_CC);
 
-	RETURN_ZVAL(array, 0, 1);
+	RETVAL_ARR(Z_ARRVAL_P(return_value));
 }
 /* }}} */
 
