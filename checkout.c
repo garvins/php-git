@@ -9,7 +9,7 @@ PHP_FUNCTION(git_checkout_head)
 	int result, should_free = 0;
 	zval *repo = NULL, *opts = NULL;
 	php_git2_t *_repo = NULL;
-	git_checkout_opts *_opts = NULL;
+	git_checkout_opts _opts = GIT_CHECKOUT_OPTS_INIT;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r|a", &repo, &opts) == FAILURE) {
@@ -17,7 +17,7 @@ PHP_FUNCTION(git_checkout_head)
 	}
 
 	if (opts != NULL) {
-		php_git2_array_to_git_checkout_opts(_opts, opts TSRMLS_CC);
+		php_git2_array_to_git_checkout_opts(&_opts, opts TSRMLS_CC);
 		should_free = 1;
 	}
 
@@ -25,10 +25,10 @@ PHP_FUNCTION(git_checkout_head)
 		RETURN_FALSE;
 	}
 
-	result = git_checkout_head(PHP_GIT2_V(_repo, repository), _opts);
+	result = git_checkout_head(PHP_GIT2_V(_repo, repository), &_opts);
 
 	if (should_free) {
-		php_git2_git_checkout_opts_free(_opts TSRMLS_CC);
+		php_git2_git_checkout_opts_free(&_opts TSRMLS_CC);
 	}
 
 	RETURN_LONG(result);
@@ -42,7 +42,7 @@ PHP_FUNCTION(git_checkout_index)
 	int result, should_free = 0;
 	zval *repo = NULL, *index = NULL, *opts = NULL;
 	php_git2_t *_repo = NULL, *_index = NULL;
-	git_checkout_opts *_opts = NULL;
+	git_checkout_opts _opts = GIT_CHECKOUT_OPTS_INIT;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rr|a", &repo, &index, &opts) == FAILURE) {
@@ -50,7 +50,7 @@ PHP_FUNCTION(git_checkout_index)
 	}
 
 	if (opts != NULL) {
-		php_git2_array_to_git_checkout_opts(_opts, opts TSRMLS_CC);
+		php_git2_array_to_git_checkout_opts(&_opts, opts TSRMLS_CC);
 		should_free = 1;
 	}
 
@@ -62,10 +62,10 @@ PHP_FUNCTION(git_checkout_index)
 		RETURN_FALSE;
 	}
 
-	result = git_checkout_index(PHP_GIT2_V(_repo, repository), PHP_GIT2_V(_index, index), _opts);
+	result = git_checkout_index(PHP_GIT2_V(_repo, repository), PHP_GIT2_V(_index, index), &_opts);
 
 	if (should_free) {
-		php_git2_git_checkout_opts_free(_opts TSRMLS_CC);
+		php_git2_git_checkout_opts_free(&_opts TSRMLS_CC);
 	}
 
 	RETURN_LONG(result);
@@ -79,7 +79,7 @@ PHP_FUNCTION(git_checkout_tree)
 	int result, should_free = 0;
 	zval *repo = NULL, *treeish = NULL, *opts = NULL;
 	php_git2_t *_repo = NULL, *_treeish = NULL;
-	git_checkout_opts *_opts = NULL;
+	git_checkout_opts _opts = GIT_CHECKOUT_OPTS_INIT;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"rr|a", &repo, &treeish, &opts) == FAILURE) {
@@ -87,7 +87,7 @@ PHP_FUNCTION(git_checkout_tree)
 	}
 
 	if (opts != NULL) {
-		php_git2_array_to_git_checkout_opts(_opts, opts TSRMLS_CC);
+		php_git2_array_to_git_checkout_opts(&_opts, opts TSRMLS_CC);
 		should_free = 1;
 	}
 
@@ -99,10 +99,10 @@ PHP_FUNCTION(git_checkout_tree)
 		RETURN_FALSE;
 	}
 
-	result = git_checkout_tree(PHP_GIT2_V(_repo, repository), PHP_GIT2_V(_treeish, object), _opts);
+	result = git_checkout_tree(PHP_GIT2_V(_repo, repository), PHP_GIT2_V(_treeish, object), &_opts);
 
 	if (should_free) {
-		php_git2_git_checkout_opts_free(_opts TSRMLS_CC);
+		php_git2_git_checkout_opts_free(&_opts TSRMLS_CC);
 	}
 
 	RETURN_LONG(result);

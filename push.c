@@ -41,7 +41,7 @@ PHP_FUNCTION(git_push_set_options)
 	int result, should_free = 0;
 	zval *push = NULL, *opts = NULL;
 	php_git2_t *_push = NULL;
-	git_push_options *_opts = NULL;
+	git_push_options _opts = {0};
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r|a", &push, &opts) == FAILURE) {
@@ -49,7 +49,7 @@ PHP_FUNCTION(git_push_set_options)
 	}
 
 	if (opts != NULL) {
-		php_git2_array_to_git_push_options(_opts, opts TSRMLS_CC);
+		php_git2_array_to_git_push_options(&_opts, opts TSRMLS_CC);
 		should_free = 1;
 	}
 
@@ -57,10 +57,10 @@ PHP_FUNCTION(git_push_set_options)
 		RETURN_FALSE;
 	}
 
-	result = git_push_set_options(PHP_GIT2_V(_push, push), _opts);
+	result = git_push_set_options(PHP_GIT2_V(_push, push), &_opts);
 
 	if (should_free) {
-		php_git2_git_push_options_free(_opts TSRMLS_CC);
+		php_git2_git_push_options_free(&_opts TSRMLS_CC);
 	}
 
 	RETURN_LONG(result);

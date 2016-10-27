@@ -278,7 +278,7 @@ PHP_FUNCTION(git_repository_init_ext)
 	git_repository *out = NULL;
 	char *repo_path = NULL;
 	size_t repo_path_len;
-	git_repository_init_options *_opts = NULL;
+	git_repository_init_options _opts = {0};
 	zval *opts = NULL;
 	int should_free = 0, error;
 	
@@ -288,18 +288,18 @@ PHP_FUNCTION(git_repository_init_ext)
 	}
 
 	if (opts != NULL) {
-		php_git2_array_to_git_repository_init_options(_opts, opts TSRMLS_CC);
+		php_git2_array_to_git_repository_init_options(&_opts, opts TSRMLS_CC);
 		should_free = 1;
 	}
 
-	error = git_repository_init_ext(&out, repo_path, _opts);
+	error = git_repository_init_ext(&out, repo_path, &_opts);
 
 	if (php_git2_check_error(error, "git_repository_init_ext" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
 
 	if (should_free) {
-		php_git2_git_repository_init_options_free(_opts TSRMLS_CC);
+		php_git2_git_repository_init_options_free(&_opts TSRMLS_CC);
 	}
 
 	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_REPOSITORY, out, 1 TSRMLS_CC)) {

@@ -228,7 +228,7 @@ PHP_FUNCTION(git_merge_trees)
 	php_git2_t *result = NULL, *_repo = NULL, *_ancestor_tree = NULL, *_our_tree = NULL, *_their_tree = NULL;
 	git_index *out = NULL;
 	zval *repo = NULL, *ancestor_tree = NULL, *our_tree = NULL, *their_tree = NULL, *opts = NULL;
-	git_merge_tree_opts *_opts = NULL;
+	git_merge_tree_opts _opts = {0};
 	int should_free = 0, error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
@@ -237,7 +237,7 @@ PHP_FUNCTION(git_merge_trees)
 	}
 
 	if (opts != NULL) {
-		php_git2_array_to_git_merge_tree_opts(_opts, opts TSRMLS_CC);
+		php_git2_array_to_git_merge_tree_opts(&_opts, opts TSRMLS_CC);
 		should_free = 1;
 	}
 
@@ -257,14 +257,14 @@ PHP_FUNCTION(git_merge_trees)
 		RETURN_FALSE;
 	}
 
-	error = git_merge_trees(&out, PHP_GIT2_V(_repo, repository), PHP_GIT2_V(_ancestor_tree, tree), PHP_GIT2_V(_our_tree, tree), PHP_GIT2_V(_their_tree, tree), _opts);
+	error = git_merge_trees(&out, PHP_GIT2_V(_repo, repository), PHP_GIT2_V(_ancestor_tree, tree), PHP_GIT2_V(_our_tree, tree), PHP_GIT2_V(_their_tree, tree), &_opts);
 
 	if (php_git2_check_error(error, "git_merge_trees" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
 
 	if (should_free) {
-		php_git2_git_merge_tree_opts_free(_opts TSRMLS_CC);
+		php_git2_git_merge_tree_opts_free(&_opts TSRMLS_CC);
 	}
 
 	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_INDEX, out, 1 TSRMLS_CC)) {

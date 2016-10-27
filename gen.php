@@ -267,7 +267,7 @@ function printFile($table, $file) {
             foreach ($func['args'] as $arg) {
                 if (isOption($arg)){
                     $buffer .= "\tif ({$arg['name']} != NULL) {\n";
-                    $buffer .= "\t\tphp_git2_array_to_{$arg['type']}(_{$arg['name']}, {$arg['name']} TSRMLS_CC);\n";
+                    $buffer .= "\t\tphp_git2_array_to_{$arg['type']}(&_{$arg['name']}, {$arg['name']} TSRMLS_CC);\n";
                     $buffer .= "\t\tshould_free = 1;\n";
                     $buffer .= "\t}\n\n";
                 } else if (isArray($arg, true)) {
@@ -340,7 +340,7 @@ function printFile($table, $file) {
                     $arr = explode("_", $arg['type'], 2);
                     $temp[] = "PHP_GIT2_V(_{$arg['name']}, " . array_pop($arr) . ")";
                 } else if (isOption($arg)) {
-                    $temp[] = "_{$arg['name']}";
+                    $temp[] = "&_{$arg['name']}";
                 } else if (isArray($arg, true)) {
                     if (preg_match("/git_signature/", $arg['type'])) {
                         $temp[] = "_{$arg['name']}";
@@ -394,7 +394,7 @@ function printFile($table, $file) {
             foreach ($func['args'] as $arg) {
                 if (isOption($arg)) {
                     $buffer .= "\n\tif (should_free) {\n";
-                    $buffer .= "\t\tphp_git2_{$arg['type']}_free(_{$arg['name']} TSRMLS_CC);\n";
+                    $buffer .= "\t\tphp_git2_{$arg['type']}_free(&_{$arg['name']} TSRMLS_CC);\n";
                     $buffer .= "\t}\n";
                     break;
                 } else if (isArray($arg, true)) {
@@ -647,7 +647,12 @@ function getDeclarations($func)
 
     foreach ($func['args'] as $key => $arg) {
         if (isOption($arg)) {
-            $result[$arg['type']][] = "*_{$arg['name']} = NULL";
+            if (preg_match('/git_checkout_opts/', $arg['type'])) {
+                $result[$arg['type']][] = "_{$arg['name']} = GIT_CHECKOUT_OPTS_INIT";
+            } else {
+                $result[$arg['type']][] = "_{$arg['name']} = {0}";
+            }
+            
             $result['zval'][] = "*{$arg['name']} = NULL";
             $result['int'][] = "should_free = 0";
         } else if (isArray($arg)) {

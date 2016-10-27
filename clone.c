@@ -10,7 +10,7 @@ PHP_FUNCTION(git_clone)
 	git_repository *out = NULL;
 	char *url = NULL, *local_path = NULL;
 	size_t url_len, local_path_len;
-	git_clone_options *_options = NULL;
+	git_clone_options _options = {0};
 	zval *options = NULL;
 	int should_free = 0, error;
 	
@@ -20,18 +20,18 @@ PHP_FUNCTION(git_clone)
 	}
 
 	if (options != NULL) {
-		php_git2_array_to_git_clone_options(_options, options TSRMLS_CC);
+		php_git2_array_to_git_clone_options(&_options, options TSRMLS_CC);
 		should_free = 1;
 	}
 
-	error = git_clone(&out, url, local_path, _options);
+	error = git_clone(&out, url, local_path, &_options);
 
 	if (php_git2_check_error(error, "git_clone" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
 
 	if (should_free) {
-		php_git2_git_clone_options_free(_options TSRMLS_CC);
+		php_git2_git_clone_options_free(&_options TSRMLS_CC);
 	}
 
 	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_REPOSITORY, out, 1 TSRMLS_CC)) {
@@ -49,7 +49,7 @@ PHP_FUNCTION(git_clone_into)
 	int result, should_free = 0;
 	zval *repo = NULL, *remote = NULL, *co_opts = NULL;
 	php_git2_t *_repo = NULL, *_remote = NULL;
-	git_checkout_opts *_co_opts = NULL;
+	git_checkout_opts _co_opts = GIT_CHECKOUT_OPTS_INIT;
 	char *branch = NULL;
 	size_t branch_len;
 	
@@ -59,7 +59,7 @@ PHP_FUNCTION(git_clone_into)
 	}
 
 	if (co_opts != NULL) {
-		php_git2_array_to_git_checkout_opts(_co_opts, co_opts TSRMLS_CC);
+		php_git2_array_to_git_checkout_opts(&_co_opts, co_opts TSRMLS_CC);
 		should_free = 1;
 	}
 
@@ -71,10 +71,10 @@ PHP_FUNCTION(git_clone_into)
 		RETURN_FALSE;
 	}
 
-	result = git_clone_into(PHP_GIT2_V(_repo, repository), PHP_GIT2_V(_remote, remote), _co_opts, branch);
+	result = git_clone_into(PHP_GIT2_V(_repo, repository), PHP_GIT2_V(_remote, remote), &_co_opts, branch);
 
 	if (should_free) {
-		php_git2_git_checkout_opts_free(_co_opts TSRMLS_CC);
+		php_git2_git_checkout_opts_free(&_co_opts TSRMLS_CC);
 	}
 
 	RETURN_LONG(result);

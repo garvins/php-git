@@ -40,7 +40,7 @@ PHP_FUNCTION(git_status_foreach_ext)
 	int result, should_free = 0;
 	zval *repo = NULL, *opts = NULL, *payload = NULL;
 	php_git2_t *_repo = NULL;
-	git_status_options *_opts = NULL;
+	git_status_options _opts = {0};
 	zend_fcall_info callback_fci = empty_fcall_info;
 	zend_fcall_info_cache callback_fcc = empty_fcall_info_cache;
 	php_git2_cb_t *callback_cb = NULL;
@@ -51,7 +51,7 @@ PHP_FUNCTION(git_status_foreach_ext)
 	}
 
 	if (opts != NULL) {
-		php_git2_array_to_git_status_options(_opts, opts TSRMLS_CC);
+		php_git2_array_to_git_status_options(&_opts, opts TSRMLS_CC);
 		should_free = 1;
 	}
 
@@ -63,10 +63,10 @@ PHP_FUNCTION(git_status_foreach_ext)
 		RETURN_FALSE;
 	}
 
-	result = git_status_foreach_ext(PHP_GIT2_V(_repo, repository), _opts, php_git2_git_status_cb, callback_cb);
+	result = git_status_foreach_ext(PHP_GIT2_V(_repo, repository), &_opts, php_git2_git_status_cb, callback_cb);
 
 	if (should_free) {
-		php_git2_git_status_options_free(_opts TSRMLS_CC);
+		php_git2_git_status_options_free(&_opts TSRMLS_CC);
 	}
 	php_git2_cb_free(callback_cb);
 
@@ -111,7 +111,7 @@ PHP_FUNCTION(git_status_list_new)
 	php_git2_t *result = NULL, *_repo = NULL;
 	git_status_list *out = NULL;
 	zval *repo = NULL, *opts = NULL;
-	git_status_options *_opts = NULL;
+	git_status_options _opts = {0};
 	int should_free = 0, error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
@@ -120,7 +120,7 @@ PHP_FUNCTION(git_status_list_new)
 	}
 
 	if (opts != NULL) {
-		php_git2_array_to_git_status_options(_opts, opts TSRMLS_CC);
+		php_git2_array_to_git_status_options(&_opts, opts TSRMLS_CC);
 		should_free = 1;
 	}
 
@@ -128,14 +128,14 @@ PHP_FUNCTION(git_status_list_new)
 		RETURN_FALSE;
 	}
 
-	error = git_status_list_new(&out, PHP_GIT2_V(_repo, repository), _opts);
+	error = git_status_list_new(&out, PHP_GIT2_V(_repo, repository), &_opts);
 
 	if (php_git2_check_error(error, "git_status_list_new" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
 
 	if (should_free) {
-		php_git2_git_status_options_free(_opts TSRMLS_CC);
+		php_git2_git_status_options_free(&_opts TSRMLS_CC);
 	}
 
 	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_STATUS_LIST, out, 1 TSRMLS_CC)) {

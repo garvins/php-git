@@ -94,7 +94,7 @@ PHP_FUNCTION(git_blame_file)
 	zval *repo = NULL, *options = NULL;
 	char *path = NULL;
 	size_t path_len;
-	git_blame_options *_options = NULL;
+	git_blame_options _options = {0};
 	int should_free = 0, error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
@@ -103,7 +103,7 @@ PHP_FUNCTION(git_blame_file)
 	}
 
 	if (options != NULL) {
-		php_git2_array_to_git_blame_options(_options, options TSRMLS_CC);
+		php_git2_array_to_git_blame_options(&_options, options TSRMLS_CC);
 		should_free = 1;
 	}
 
@@ -111,14 +111,14 @@ PHP_FUNCTION(git_blame_file)
 		RETURN_FALSE;
 	}
 
-	error = git_blame_file(&out, PHP_GIT2_V(_repo, repository), path, _options);
+	error = git_blame_file(&out, PHP_GIT2_V(_repo, repository), path, &_options);
 
 	if (php_git2_check_error(error, "git_blame_file" TSRMLS_CC)) {
 		RETURN_FALSE;
 	}
 
 	if (should_free) {
-		php_git2_git_blame_options_free(_options TSRMLS_CC);
+		php_git2_git_blame_options_free(&_options TSRMLS_CC);
 	}
 
 	if (php_git2_make_resource(&result, PHP_GIT2_TYPE_BLAME, out, 1 TSRMLS_CC)) {
