@@ -204,8 +204,8 @@ typedef struct php_git2_cb_t {
 } php_git2_cb_t;
 
 typedef struct php_git2_fcall_t {
-	zend_fcall_info fci;
-	zend_fcall_info_cache fcc;
+	zend_fcall_info *fci;
+	zend_fcall_info_cache *fcc;
 	zval *value;
 } php_git2_fcall_t;
 

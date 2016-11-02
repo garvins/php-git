@@ -1011,7 +1011,7 @@ function additionalFunctioToFile($fileName)
         $func .= "\tfilter->apply = php_git2_git_filter_apply_fn;\n";
         $func .= "\tfilter->cleanup = php_git2_git_filter_cleanup_fn;\n\n";
         $func .= "\tZ_ADDREF_P(mixed);\n";
-        $func .= "\tphp_git2_multi_cb_init(&_filter->multi, mixed TSRMLS_CC, 5,\n";
+        $func .= "\tphp_git2_multi_cb_init(&_filter->multi, mixed TSRMLS_CC, 10,\n";
         $func .= "\t\t&initialize_fci, &initialize_fcc,\n";
         $func .= "\t\t&shutdown_fci, &shutdown_fcc,\n";
         $func .= "\t\t&check_fci, &check_fcc,\n";
@@ -1081,7 +1081,7 @@ function additionalFunctioToFile($fileName)
         $func .= "\t\tphp_git2_fcall_info_wrapper2(tmp, &refresh_fci, &refresh_fcc TSRMLS_CC);\n";
         $func .= "\t}\n\n";
         $func .= "\tZ_ADDREF_P(callbacks);\n";
-        $func .= "\tphp_git2_multi_cb_init(&backend->multi, callbacks TSRMLS_CC, 9,\n";
+        $func .= "\tphp_git2_multi_cb_init(&backend->multi, callbacks TSRMLS_CC, 18,\n";
         $func .= "\t\t&read_fci, &read_fcc,\n";
         $func .= "\t\t&write_fci, &write_fcc,\n";
         $func .= "\t\t&read_prefix_fci, &read_prefix_fcc,\n";
