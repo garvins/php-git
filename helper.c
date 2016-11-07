@@ -94,6 +94,22 @@ void php_git2_array_to_git_signature(git_signature *signature, zval *author TSRM
 
 void php_git2_git_signature_to_array(const git_signature *signature, zval *out TSRMLS_DC)
 {
+	zval datetime, timezone;
+	php_timezone_obj *tzobj;
+	char time_str[12] = {0};
+
+	array_init(out);
+
+	snprintf(time_str,12,"%c%ld",'@', signature->when.time);
+
+    php_date_instantiate(php_date_get_date_ce(), &datetime TSRMLS_CC);
+    php_date_instantiate(php_date_get_timezone_ce(), &timezone TSRMLS_CC);
+    tzobj = (php_timezone_obj *) Z_OBJ_P(&timezone);
+    tzobj->initialized = 1;
+    tzobj->type = TIMELIB_ZONETYPE_OFFSET;
+
+    php_date_initialize(Z_PHPDATE_P(&datetime), ZEND_STRL(time_str), NULL, &timezone, 0 TSRMLS_CC);
+
 	if (signature->name == NULL) {
 		add_assoc_null_ex(out, ZEND_STRL("name"));
 	} else {
@@ -105,8 +121,7 @@ void php_git2_git_signature_to_array(const git_signature *signature, zval *out T
 	} else {
 		add_assoc_string_ex(out, ZEND_STRL("email"), signature->email);
 	}
-
-	add_assoc_long_ex(out, ZEND_STRL("time"), signature->when.time);
+	add_assoc_zval_ex(out, ZEND_STRL("time"), &datetime);
 }
 
 void php_git2_git_strarray_to_array(git_strarray *array, zval *out TSRMLS_DC)
