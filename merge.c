@@ -228,7 +228,7 @@ PHP_FUNCTION(git_merge_trees)
 	php_git2_t *result = NULL, *_repo = NULL, *_ancestor_tree = NULL, *_our_tree = NULL, *_their_tree = NULL;
 	git_index *out = NULL;
 	zval *repo = NULL, *ancestor_tree = NULL, *our_tree = NULL, *their_tree = NULL, *opts = NULL;
-	git_merge_tree_opts _opts = {0};
+	git_merge_tree_opts _opts = GIT_MERGE_TREE_OPTS_INIT;
 	int should_free = 0, error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,

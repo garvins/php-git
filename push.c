@@ -41,7 +41,7 @@ PHP_FUNCTION(git_push_set_options)
 	int result, should_free = 0;
 	zval *push = NULL, *opts = NULL;
 	php_git2_t *_push = NULL;
-	git_push_options _opts = {0};
+	git_push_options _opts = GIT_PUSH_OPTIONS_INIT;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"r|a", &push, &opts) == FAILURE) {

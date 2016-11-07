@@ -891,7 +891,7 @@ PHP_FUNCTION(git_remote_set_callbacks)
 	int result;
 	zval *remote = NULL, *callbacks = NULL;
 	php_git2_t *_remote = NULL;
-	git_remote_callbacks _callbacks = {0};
+	git_remote_callbacks _callbacks = GIT_REMOTE_CALLBACKS_INIT;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
 		"ra", &remote, &callbacks) == FAILURE) {

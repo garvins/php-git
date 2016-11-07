@@ -610,6 +610,22 @@ function hasOutValue($func) {
     return isset($func['retval']['write']);
 }
 
+function getOptionInit($type) {
+    if ($type == "git_checkout_opts") {
+        $value = "GIT_CHECKOUT_OPTS_INIT";
+    } else if ($type == "git_diff_options") {
+        $value = "GIT_DIFF_OPTIONS_INIT";
+    } else if ($type == "git_merge_tree_opts") {
+        $value = "GIT_MERGE_TREE_OPTS_INIT";
+    } else if ($type == "git_push_options") {
+        $value = "GIT_PUSH_OPTIONS_INIT";
+    } else {
+        $value = "{0}";
+    }
+        
+    return $value;
+}
+
 function getDeclarations($func)
 {
     $const = ($func['retval']['const'] ? "const " : "");
@@ -647,12 +663,9 @@ function getDeclarations($func)
 
     foreach ($func['args'] as $key => $arg) {
         if (isOption($arg)) {
-            if (preg_match('/git_checkout_opts/', $arg['type'])) {
-                $result[$arg['type']][] = "_{$arg['name']} = GIT_CHECKOUT_OPTS_INIT";
-            } else {
-                $result[$arg['type']][] = "_{$arg['name']} = {0}";
-            }
-            
+            $value = getOptionInit($arg['type']);
+
+            $result[$arg['type']][] = "_{$arg['name']} = $value";
             $result['zval'][] = "*{$arg['name']} = NULL";
             $result['int'][] = "should_free = 0";
         } else if (isArray($arg)) {

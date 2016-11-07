@@ -85,7 +85,7 @@ PHP_FUNCTION(git_diff_tree_to_index)
 	php_git2_t *result = NULL, *_repo = NULL, *_old_tree = NULL, *_index = NULL;
 	git_diff *diff = NULL;
 	zval *repo = NULL, *old_tree = NULL, *index = NULL, *opts = NULL;
-	git_diff_options _opts = {0};
+	git_diff_options _opts = GIT_DIFF_OPTIONS_INIT;
 	int should_free = 0, error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
@@ -135,7 +135,7 @@ PHP_FUNCTION(git_diff_index_to_workdir)
 	php_git2_t *result = NULL, *_repo = NULL, *_index = NULL;
 	git_diff *diff = NULL;
 	zval *repo = NULL, *index = NULL, *opts = NULL;
-	git_diff_options _opts = {0};
+	git_diff_options _opts = GIT_DIFF_OPTIONS_INIT;
 	int should_free = 0, error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
@@ -181,7 +181,7 @@ PHP_FUNCTION(git_diff_tree_to_workdir)
 	php_git2_t *result = NULL, *_repo = NULL, *_old_tree = NULL;
 	git_diff *diff = NULL;
 	zval *repo = NULL, *old_tree = NULL, *opts = NULL;
-	git_diff_options _opts = {0};
+	git_diff_options _opts = GIT_DIFF_OPTIONS_INIT;
 	int should_free = 0, error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
@@ -227,7 +227,7 @@ PHP_FUNCTION(git_diff_tree_to_workdir_with_index)
 	php_git2_t *result = NULL, *_repo = NULL, *_old_tree = NULL;
 	git_diff *diff = NULL;
 	zval *repo = NULL, *old_tree = NULL, *opts = NULL;
-	git_diff_options _opts = {0};
+	git_diff_options _opts = GIT_DIFF_OPTIONS_INIT;
 	int should_free = 0, error;
 	
 	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC,
