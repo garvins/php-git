@@ -3,17 +3,10 @@
 php-git2 is a PHP bindings to the libgit2 linkable C Git library. 
 
 * API Documentation: http://libgit2.github.com/libgit2/#v0.20.0 (also see Signature conversions section)
-* IRC: #php-git on irc.freenode.net.
 
 ## Requirements
 
-PHP 5.3 above
-
-## Status
-
-0.3.0 Alpha (switching to functions)
-
-https://docs.google.com/spreadsheet/ccc?key=0AjvShWAWqvfHdDRneEtIUF9GRUZMNVVVR1hpdURiUWc&usp=sharing
+PHP 7.0 above
 
 ## How to build
 
