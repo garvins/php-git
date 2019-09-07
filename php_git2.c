@@ -1062,7 +1062,11 @@ PHP_MINIT_FUNCTION(git2)
 
 	INIT_CLASS_ENTRY(ce, "Git2ODBBackendForeachCallback", 0);
 	php_git2_odb_backend_foreach_callback_class_entry = zend_register_internal_class(&ce TSRMLS_CC);
+#if PHP_MINOR_VERSION < 3
 	zend_register_class_alias_ex(ZEND_NS_NAME("Git2\\ODB\\Backend", "ForeachCallback"), sizeof(ZEND_NS_NAME("Git2\\ODB\\Backend", "ForeachCallback"))-1, php_git2_odb_backend_foreach_callback_class_entry TSRMLS_CC);
+#else
+	zend_register_class_alias_ex(ZEND_NS_NAME("Git2\\ODB\\Backend", "ForeachCallback"), sizeof(ZEND_NS_NAME("Git2\\ODB\\Backend", "ForeachCallback"))-1, php_git2_odb_backend_foreach_callback_class_entry TSRMLS_CC, php_git2_odb_backend_foreach_callback_class_entry->type != ZEND_USER_CLASS);
+#endif
 	php_git2_odb_backend_foreach_callback_class_entry->create_object = php_git2_odb_backend_foreach_callback_new;
 
 	git2_resource_handle = zend_register_list_destructors_ex(destruct_git2, NULL, PHP_GIT2_RESOURCE_NAME, module_number);
